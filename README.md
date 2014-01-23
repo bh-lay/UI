@@ -29,7 +29,7 @@
 * [打杂工程师](http://weibo.com/zosong)
 
 ##说明
-*这个UI，细节实现依赖于[jquery](http://jquery.com)
+*细节实现依赖于[jquery](http://jquery.com)
 
 ##关于作者
 
