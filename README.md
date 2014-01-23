@@ -69,13 +69,13 @@
  
 ###demo
 ```javascript
-var pop = P.pop({
+var pop = UI.pop({
   'title' : '我的弹框',
   'top' : 200,
   'left' : '600',
   'html' : 'this is html'
 });
-P.pop({
+UI.pop({
   'title' : '我是自定义按钮的弹框',
   'confirm' : {
     'btns' : ['好的','不干'],
@@ -106,7 +106,7 @@ P.pop({
 
 ###demo
 ```javascript
-P.confirm({
+UI.confirm({
   'text' : '请我吃饭吧！',
   'btns' : ['好的呀','不愿意'],
   'callback' : function(){
