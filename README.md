@@ -1,13 +1,13 @@
-#简介
+#一、简介
 
-##这个UI是什么?
+##1.1、UI是什么?
 剧中人在个人博客以及项目中反复使用的功能的公用视觉类的代码集合，
 
 不是一个大而全的东西，仅仅是根据自己的需求整理，如果你对我的代码感兴趣，也欢迎你来使用！
 
 你可以先尝试体验下：[demo](http://htmlpreview.github.io/?https://github.com/bh-lay/UI/blob/master/demo.html)
 
-##UI目前有哪儿些内容？
+##1.2、UI目前有哪儿些内容？
 
 * 目前有虚拟弹层、弹框、提示框、确认框等功能
 * 支持对象化事件的调用
@@ -15,7 +15,7 @@
 * 支持`自定义位置`，方便控制对象在页面中的呈现
 * 对象被注销有`回调支持`，方便确认对象
 
-##问题反馈
+##1.3、问题反馈
 在使用中有任何问题，欢迎反馈给我，可以用以下联系方式跟我交流
 
 * 邮件：bh-lay#126.com, 把#换成@
@@ -23,17 +23,17 @@
 * weibo: [@剧中人](http://weibo.com/bhlay)
 
 
-##感激
+##1.4、感激
 前端路上的成长，离不开精神上的导师以及生活上的好基友
 
 * [Z_Mofei](http://weibo.com/zwl1027) 
 * [-筱-傑-](http://weibo.com/bbllii)
 * [打杂工程师](http://weibo.com/zosong)
 
-##说明
+##1.5、说明
 *细节实现依赖于[jquery](http://jquery.com)
 
-##关于作者
+##1.6、关于作者
 
 ```javascript
   var ihubo = {
@@ -42,10 +42,10 @@
   }
 ```
 
-#使用
+#二、使用
 
 
-## 弹出框组件 @method UI.pop
+## 2.1、弹出框组件 @method UI.pop
 ### 传入参数
  * @param {Object} param the main paramter
  * @param {String} param.title 弹框标题
@@ -91,7 +91,7 @@ UI.pop({
 });
 ```
 
-## 确认对话框 @method UI.confirm
+## 2.2、确认对话框 @method UI.confirm
 ### 传入参数
  * 	@param {Object} param the main paramter
  * 	@param {String} param.text 提示内容
@@ -117,7 +117,7 @@ UI.confirm({
 });
 ```
 
-## 虚拟弹层 @method UI.plane
+## 2.3、虚拟弹层 @method UI.plane
  `特性`：没有样式，页面中只能同时存在一个plane实例化后的对象，点击自己以外的DOM，就会关掉自己，生命体征较弱的屌丝。
 ### 传入参数
  * 	@param {Object} param the main paramter
@@ -133,7 +133,7 @@ UI.confirm({
  * 	@returns {Object} plane.dom
  * 	@returns {Function} plane.closeFn
 
-## 提示信息 @method UI.prompt
+## 2.4、提示信息 @method UI.prompt
 ###传入参数
  * 	@param {String} text
  * 	@param {String|Number} [time]
