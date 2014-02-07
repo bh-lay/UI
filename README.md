@@ -5,6 +5,8 @@
 
 不是一个大而全的东西，仅仅是根据自己的需求整理，如果你对我的代码感兴趣，也欢迎你来使用！
 
+你可以先尝试体验下：[demo](http://htmlpreview.github.io/?https://github.com/bh-lay/UI/blob/master/demo.html)
+
 ##UI目前有哪儿些内容？
 
 * 目前有虚拟弹层、弹框、提示框、确认框等功能
