@@ -42,6 +42,10 @@
  *     		}
  *   		}
  * 	});
+ 
+ * @method UI.pop.config.gap 为pop弹框配置页面显示边界
+ * 	@param {String} name 设置边界名（top/right/bottom/left）
+ * 	@param {Number} vlue 设置边界尺寸
  * 
  * @method UI.confirm
  * 	@param {Object} param the main paramter
@@ -104,11 +108,11 @@ window.UI = window.UI || {};
 	var popCSS = ['<style type="text/css" data-module="UI-pop-prompt-plane">',
 		'@font-face {',
 			'font-family:"UI";',
-			'src:url("asset/ui-webfont.eot");',
-			'src:url("asset/ui-webfont.eot?#iefix") format("embedded-opentype"),',
-			'url("asset/ui-webfont.woff") format("woff"),',
-			'url("asset/ui-webfont.ttf")  format("truetype"),',
-			'url("asset/ui-webfont.svg#icon") format("svg");',
+			'src:url("/js/api/UI/images/ui-webfont.eot");',
+			'src:url("/js/api/UI/images/ui-webfont.eot?#iefix") format("embedded-opentype"),',
+			'url("/js/api/UI/images/ui-webfont.woff") format("woff"),',
+			'url("/js/api/UI/images/ui-webfont.ttf")  format("truetype"),',
+			'url("/js/api/UI/images/ui-webfont.svg#icon") format("svg");',
 			'font-weight: normal;',
 			'font-style: normal;',
 		'}',
@@ -121,13 +125,13 @@ window.UI = window.UI || {};
 		'.pro_pop_cpt{position:relative;height:40px;line-height:40px;margin-right:41px;overflow:hidden;border-bottom:1px solid #ebebeb;background:#f6f6f6;',
 			'color:#333;font-size:18px;text-indent:15px;cursor: default;}',
 		'.pro_pop_cnt{position:relative;min-height:100px;overflow:hidden;width:100%;}',
-		'.pro_pop_close{display:block;position:absolute;top:0px;right:0px;width:40px;height:40px;text-align:center;line-height:40px;color:#ddd;font-family:"UI";font-size:40px;background:#fafafa;border:1px solid #ebebeb;border-width:0px 0px 1px 1px;text-decoration:none;}',
+		'.pro_pop_close{display:block;position:absolute;top:0px;right:0px;width:40px;height:40px;text-align:center;line-height:40px;color:#ddd;font-family:"UI";font-size:40px;background:#fafafa;border:1px solid #ebebeb;border-width:0px 0px 1px 1px;}',
 		'.pro_pop_close:hover{background-color:#eee;border-left-color:#ddd;text-decoration:none;}',
 		'.pro_pop_close:active{background-color:#ddd;border-left-color:#ccc;color:#ccc;}',
 		'.pro_confirm{_border:1px solid #eee;position:absolute;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}',
 		'.pro_confirm_text{padding:30px 0px 20px;height:40px;line-height:40px;text-align:center;font-size:20px;color:#333;}',
 		'.pro_pop_confirm{padding:10px 0px 15px 30px;text-align:center;}',
-		'.pro_pop_confirm a{display:inline-block;height:30px;padding:0px 15px;border-radius:3px;font-size:14px;line-height:30px;background:#38b;color:#fff;margin-right:30px;text-decoration:none;}',
+		'.pro_pop_confirm a{display:inline-block;height:30px;padding:0px 15px;border-radius:3px;font-size:14px;line-height:30px;background:#38b;color:#fff;margin-right:30px;}',
 		'.pro_pop_confirm a:hover{text-decoration: none;background:#49c;}',
 		'.pro_pop_confirm a:active{text-decoration: none;background:#27a}',
 		'.pro_plane{width:200px;position:absolute;top:400px;left:300px;}',
@@ -155,8 +159,8 @@ window.UI = window.UI || {};
 		 private_win = $(window),
 		 private_winW,
 		 private_winH,
-		 privita_doc = $(document),
-		 privita_docH,
+		 private_doc = $(document),
+		 private_docH,
 		 private_scrollTop;
 
 	$(function(){
@@ -167,7 +171,7 @@ window.UI = window.UI || {};
 			private_winW = private_body.width();
 			private_scrollTop = private_win.scrollTop()
 			private_winH = private_win.height();
-			privita_docH = privita_doc.height();
+			private_docH = private_doc.height();
 		}
 		
 		countSize();
@@ -175,15 +179,16 @@ window.UI = window.UI || {};
 		if(isIE67){
 			private_maskDom.css({
 				'width' : private_winW,
-				'height' : privita_docH
+				'height' : private_docH
 			});
 			private_win.on('resize scroll',function(){
+				countSize();
 				private_promptDom.animate({
 					'top' : private_scrollTop
 				},100);
 				private_maskDom.css({
 					'width' : private_winW,
-					'height' : privita_docH
+					'height' : private_docH
 				});
 			});
 		}else{
@@ -197,14 +202,14 @@ window.UI = window.UI || {};
 				'width' : private_winW,
 				'height' : private_winH
 			});
-			private_win.on('resize',function(){
+			private_win.on('resize scroll',function(){
+				countSize();
 				private_maskDom.css({
 					'width' : private_winW,
 					'height' : private_winH
 				});
 			});
 		}
-		private_win.on('resize scroll',countSize);
 	});
 	
 	var dragMask = $('<div style="width:100%;height:100%;position:absolute;top:0px;left:0px;z-index:100000;cursor:default;"></div>');
@@ -229,7 +234,7 @@ window.UI = window.UI || {};
 			t_start = parseInt(dom.css('top'));
 			w_start = parseInt(dom.outerWidth());
 			h_start = parseInt(dom.outerHeight());
-			privita_doc.mousemove(move).mouseup(up);
+			private_doc.mousemove(move).mouseup(up);
 			dragMask.css({
 				'width' : private_winW,
 				'height' : private_winH,
@@ -249,29 +254,29 @@ window.UI = window.UI || {};
 		}
 		function up(e) {
 			dragMask.remove();
-			privita_doc.unbind("mousemove", move).unbind("mouseup", up);
+			private_doc.unbind("mousemove", move).unbind("mouseup", up);
 			end&&end();
 		}
 	}	
 	
-	function fix_position(top,left,width,height){
-		if(top<private_scrollTop){
+	function fix_position(top,left,width,height,gap){
+		if(top<private_scrollTop + gap.top){
 			//Beyond the screen(top)
-			top = private_scrollTop;
-		}else if(top + height - private_scrollTop > private_winH) {
+			top = private_scrollTop  + gap.top;
+		}else if(top + height - private_scrollTop > private_winH - gap.bottom) {
 			//Beyond the screen(bottom)
-			if(height > private_winH){
+			if(height > private_winH - gap.top - gap.bottom){
 				//Is higher than the screen
-				top = private_scrollTop;
+				top = private_scrollTop + gap.top;
 			}else{
 				//Is shorter than the screen
-				top = private_scrollTop + private_winH - height;
+				top = private_scrollTop + private_winH - height - gap.bottom;
 			}
 		}
-		if(left<0){
-			left = 0;
-		}else if(left + width > private_winW){
-			left = private_winW - width;
+		if(left < gap.left){
+			left =  gap.left;
+		}else if(left + width > private_winW - gap.right){
+			left = private_winW - width - gap.right;
 		}
 		return {
 			'top' : top,
@@ -350,7 +355,7 @@ window.UI = window.UI || {};
 		var top = typeof(param['top']) == 'number' ? param['top'] : 300;
 		var left = typeof(param['left']) == 'number' ? param['left'] : private_winW/2 - this_width/2;
 		//fix position get size
-		var fixSize = fix_position(top,left,this_width,this_height+41);
+		var fixSize = fix_position(top,left,this_width,this_height+41,private_CONFIG.gap);
 		top = fixSize.top;
 		left = fixSize.left;
 		//can drag is pop
@@ -358,7 +363,7 @@ window.UI = window.UI || {};
 			'move' : function(dx,dy,l_start,t_start,w_start,h_start){
 				var top = dy + t_start;
 				var left = dx + l_start;
-				var newSize = fix_position(top,left,w_start,h_start);
+				var newSize = fix_position(top,left,w_start,h_start,private_CONFIG.gap);
 				this_pop.dom.css({
 					'left' : newSize.left,
 					'top' : newSize.top
@@ -385,6 +390,23 @@ window.UI = window.UI || {};
 		
 		private_mainDom.append(this.dom);
 	}
+	private_CONFIG = {
+		'gap' : {
+			'top' : 0,
+			'left' : 0,
+			'bottom' : 0,
+			'right' : 0
+		}
+	}
+	POP.config = {
+		'gap' : function(name,value){
+			if(name && name.match(/(top|right|bottom|left)/)){
+				if(parseInt(value)){
+					private_CONFIG.gap[name] = value;
+				}
+			}
+		}
+	};
 	POP.prototype = {
 		'close' : function (effect,time){
 			this.closeFn && this.closeFn();
@@ -438,6 +460,10 @@ window.UI = window.UI || {};
 			'top' : 200
 		});
 		
+		maskCount++
+		if(maskCount==1){
+			private_maskDom.fadeIn(80);
+		}
 		private_promptDom.append(this.dom);
 	}
 	CONFIRM.prototype = {
@@ -457,6 +483,10 @@ window.UI = window.UI || {};
 				this.dom[method](time,function(){
 					$(this).remove();
 				});
+			}
+			maskCount--
+			if(maskCount==0){
+				private_maskDom.fadeOut(80);
 			}
 		}
 	};
@@ -487,7 +517,7 @@ window.UI = window.UI || {};
 	activePlane = null;
 	//check click
 	var bingoDom = false;
-	privita_doc.on('mousedown',function checkClick(){
+	private_doc.on('mousedown',function checkClick(){
 		
 		setTimeout(function(){
 			if(!bingoDom){
@@ -546,6 +576,8 @@ window.UI = window.UI || {};
 	exports.pop = function(){
 		return new POP(arguments[0]);
 	};
+	exports.pop.config = POP.config;
+	
 	exports.confirm = function(){
 		return new CONFIRM(arguments[0]);
 	};
@@ -567,11 +599,11 @@ window.UI = window.UI || {};
 	var scrollBar_css = ['<style type="text/css" data-module="UI_scrollBar">',
 		'@font-face {',
 			'font-family:"UI";',
-			'src:url("asset/ui-webfont.eot");',
-			'src:url("asset/ui-webfont.eot?#iefix") format("embedded-opentype"),',
-			'url("asset/ui-webfont.woff") format("woff"),',
-			'url("asset/ui-webfont.ttf")  format("truetype"),',
-			'url("asset/ui-webfont.svg#icon") format("svg");',
+			'src:url("/js/api/UI/images/ui-webfont.eot");',
+			'src:url("/js/api/UI/images/ui-webfont.eot?#iefix") format("embedded-opentype"),',
+			'url("/js/api/UI/images/ui-webfont.woff") format("woff"),',
+			'url("/js/api/UI/images/ui-webfont.ttf")  format("truetype"),',
+			'url("/js/api/UI/images/ui-webfont.svg#icon") format("svg");',
 			'font-weight: normal;',
 			'font-style: normal;',
 		'}',
