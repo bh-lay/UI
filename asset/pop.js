@@ -75,7 +75,22 @@
  * 
  * @method UI.prompt
  * 	@param {String} text
- * 	@param {String|Number} [time]
+ * 	@param {String|Number} [time] 默认为1300ms，0为不自动关闭
+ * 
+ * 	@returns {Object} prompt
+ * 	@returns {Object} prompt.dom prompt所属DOM
+ * 	@returns {Function} prompt.tips 为prompt设置内容
+ * 	@returns {Function} confirm.close 关闭prompt
+ * 
+ * 	@example 
+ * 	//默认时间
+ * 		P.prompt('操作失败');
+ * 	//指定时间
+ * 		P.prompt('操作失败',2400);
+ * 	//主动控制
+ * 		var a = P.prompt('正在发送',0);
+ * 		a.tips('发送成功');
+ * 		a.close()
  * 
  **/
 
@@ -495,23 +510,36 @@ window.UI = window.UI || {};
 	 * 
 	 **/
 	function prompt(txt,time){
+		var this_prompt = this;
 		var txt = txt || '\u8BF7\u8F93\u5165\u5185\u5BB9';
-		var delay = time ? parseInt(time) :	1300;
-		var dom = $(prompt_tpl);		
-		//insert text
-		dom.find('.pro_cnt').html(txt);
-		dom.css({
+		var delay = typeof(time) == "undefined" ? 1300 : parseInt(time);
+		this.dom = $(prompt_tpl);		
+		
+		this.tips(txt);
+		this.dom.css({
 			'top' : private_winH/2-50,
 			'left' : private_winW/2 - 120
 		});
-		private_promptDom.append(dom);
-		setTimeout(function(){
-			dom.fadeOut(200,function(){
-				dom.remove();
-			});
-		},delay);
+		private_promptDom.append(this.dom);
+		if(delay != 0){
+			setTimeout(function(){
+				this_prompt.close();
+			},delay);
+		}
 	}
-	
+	prompt.prototype = {
+		'tips' : function(txt){
+			if(txt){
+				this.dom.find('.pro_cnt').html(txt);
+			}
+		},
+		'close' : function(){
+			var this_prompt = this;
+			this.dom.fadeOut(200,function(){
+				this_prompt.dom.remove();
+			});
+		}
+	};
 
 	//the active plane
 	activePlane = null;
@@ -581,7 +609,9 @@ window.UI = window.UI || {};
 	exports.confirm = function(){
 		return new CONFIRM(arguments[0]);
 	};
-	exports.prompt = prompt;
+	exports.prompt = function(txt,time){
+		return new prompt(txt,time);
+	};
 	exports.plane = function(){
 		//close the active plane
 		activePlane&&activePlane.close();
