@@ -512,7 +512,6 @@ window.UI = window.UI || {};
 	function prompt(txt,time){
 		var this_prompt = this;
 		var txt = txt || '\u8BF7\u8F93\u5165\u5185\u5BB9';
-		var delay = typeof(time) == "undefined" ? 1300 : parseInt(time);
 		this.dom = $(prompt_tpl);		
 		
 		this.tips(txt);
@@ -521,10 +520,8 @@ window.UI = window.UI || {};
 			'left' : private_winW/2 - 120
 		});
 		private_promptDom.append(this.dom);
-		if(delay != 0){
-			setTimeout(function(){
-				this_prompt.close();
-			},delay);
+		if(time != 0){
+			this_prompt.close(time);
 		}
 	}
 	prompt.prototype = {
@@ -533,11 +530,15 @@ window.UI = window.UI || {};
 				this.dom.find('.pro_cnt').html(txt);
 			}
 		},
-		'close' : function(){
+		'close' : function(time){
+			var delay = time ? parseInt(time) : 1300 ;
 			var this_prompt = this;
-			this.dom.fadeOut(200,function(){
-				this_prompt.dom.remove();
-			});
+			
+			setTimeout(function(){
+				this_prompt.dom.fadeOut(200,function(){
+					this_prompt.dom.remove();
+				});
+			},delay);
 		}
 	};
 
