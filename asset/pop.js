@@ -1,6 +1,8 @@
 /**
  * @author bh-lay
  * 
+ * @github https://github.com/bh-lay/UI
+ * 
  * Function depends on
  *		JQUERY
  * 
