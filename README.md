@@ -1,3 +1,4 @@
+
 #一、简介
 
 ##1.1、UI是什么?
@@ -44,6 +45,13 @@
 
 #二、使用
 
+## 2.0 基本配置 UI.pop.config.gap
+ 为pop弹框配置页面显示的边界，可用在弹框展开时与拖动处理时限定自身位置。
+
+## 传入参数
+
+ * @param {String} name 设置边界名（top/right/bottom/left）
+ * @param {Number} vlue 设置边界尺寸
 
 ## 2.1、弹出框组件 @method UI.pop
 ### 传入参数
@@ -56,7 +64,6 @@
  * @param {String} [param.left] 弹框与页面左侧距离
  * @param {String} [param.mask] 是否显示蒙层
  * @param {Function} [param.closeFn] 弹框关闭时的回调
- * @param {Function} [param.closeFn]
  * @param {Object|Function} [param.confirm] 使用对话方式（详细定义或只定义回调）
  * @param {Array} [param.confirm.btns] 按钮自定义名称
  * @param {Array} [param.confirm.callback] 确定时的回调方法
@@ -90,13 +97,12 @@ UI.pop({
 //  }
 });
 ```
-
+ 
 ## 2.2、确认对话框 @method UI.confirm
 ### 传入参数
- * 	@param {Object} param the main paramter
+ *  @param {Object} param the main paramter
  * 	@param {String} param.text 提示内容
  * 	@param {Function} [param.closeFn] 关闭时的回调
- * 	@param {Function} [param.closeFn]
  * 	@param {Array} [param.btns] 按钮自定义名称
  * 	@param {Array} [param.callback] 确定时的回调方法
 
@@ -136,4 +142,23 @@ UI.confirm({
 ## 2.4、提示信息 @method UI.prompt
 ###传入参数
  * 	@param {String} text
- * 	@param {String|Number} [time]
+ * 	@param {String|Number} [time] 默认为1300ms，0为不自动关闭
+
+### 返回值
+
+ * 	@returns {Object} prompt
+ * 	@returns {Object} prompt.dom prompt所属DOM
+ * 	@returns {Function} prompt.tips 为prompt设置内容
+ * 	@returns {Function} confirm.close 关闭prompt
+
+###demo
+```javascript
+//默认时间
+    P.prompt('操作失败');
+//指定时间
+    P.prompt('操作失败',2400);
+//主动控制
+    var a = P.prompt('正在发送',0);
+    a.tips('发送成功');
+    a.close()
+```
