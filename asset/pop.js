@@ -1,3 +1,4 @@
+
 /**
  * @author bh-lay
  * 
@@ -5,94 +6,6 @@
  * 
  * Function depends on
  *		JQUERY
- * 
- * @method UI.pop
- * 	@param {Object} param the main paramter
- * 	@param {String} param.title 弹框标题
- * 	@param {String} param.html 弹框内容
- * 	@param {String} [param.width] 弹框宽度
- * 	@param {String} [param.height] 弹框高度
- * 	@param {String} [param.top] 弹框与页面顶部距离
- * 	@param {String} [param.left] 弹框与页面左侧距离
- * 	@param {String} [param.mask] 是否显示蒙层
- * 	@param {Function} [param.closeFn] 弹框关闭时的回调
- * 	@param {Function} [param.closeFn]
- * 	@param {Object|Function} [param.confirm] 使用对话方式（详细定义或只定义回调）
- * 	@param {Array} [param.confirm.btns] 按钮自定义名称
- * 	@param {Array} [param.confirm.callback] 确定时的回调方法
- * 
- * 	@returns {Object} pop
- * 	@returns {String} pop.title 弹框标题
- * 	@returns {Object} pop.dom 弹框所属DOM
- * 	@returns {Object} pop.cntDom 弹框内容部分DOM
- * 	@returns {Function} pop.close 关闭弹框的方法
- * 	@returns {Function} pop.closeFn 弹框关闭时的回调
- * 	@example 
- * 	UI.pop({
- * 	  	'width' : 300,
- * 		'confirm' : function(){
- *       	alert(1);
- *   		}
- * 	});	
- *		UI.pop({
- * 		'title' : '我的弹框',
- * 	  	'width' : 300,
- * 		'confirm' : {
- *   	 		'btns' : ['好的','不干'],
- *    		'callback' : function(){
- *       		alert(1);
- *     		}
- *   		}
- * 	});
- 
- * @method UI.pop.config.gap 为pop弹框配置页面显示边界
- * 	@param {String} name 设置边界名（top/right/bottom/left）
- * 	@param {Number} vlue 设置边界尺寸
- * 
- * @method UI.confirm
- * 	@param {Object} param the main paramter
- * 	@param {String} param.text 提示内容
- * 	@param {Function} [param.closeFn] 关闭时的回调
- * 	@param {Function} [param.closeFn]
- * 	@param {Array} [param.btns] 按钮自定义名称
- * 	@param {Array} [param.callback] 确定时的回调方法
- * 
- * 	@returns {Object} confirm
- * 	@returns {Object} confirm.dom 弹框所属DOM
- * 	@returns {Function} confirm.close 关闭弹框的方法
- * 	@returns {Function} confirm.closeFn 弹框关闭时的回调
- * 
- * @method UI.plane
- * 	@param {Object} param the main paramter
- * 	@param {String} param.html
- * 	@param {String} [param.width]
- * 	@param {String} [param.height]
- * 	@param {String} [param.top]
- * 	@param {String} [param.left]
- * 	@param {Function} [param.closeFn]
- * 
- * 	@returns {Object} plane
- * 	@returns {Object} plane.dom
- * 	@returns {Function} plane.closeFn
- * 
- * @method UI.prompt
- * 	@param {String} text
- * 	@param {String|Number} [time] 默认为1300ms，0为不自动关闭
- * 
- * 	@returns {Object} prompt
- * 	@returns {Object} prompt.dom prompt所属DOM
- * 	@returns {Function} prompt.tips 为prompt设置内容
- * 	@returns {Function} confirm.close 关闭prompt
- * 
- * 	@example 
- * 	//默认时间
- * 		P.prompt('操作失败');
- * 	//指定时间
- * 		P.prompt('操作失败',2400);
- * 	//主动控制
- * 		var a = P.prompt('正在发送',0);
- * 		a.tips('发送成功');
- * 		a.close()
  * 
  **/
 
@@ -107,6 +20,10 @@ window.UI = window.UI || {};
 		'<div class="pro_pop_cpt"></div>',
 		'<div class="pro_pop_cnt"></div>',
 		'<a href="javascript:void(0)" class="pro_pop_close" title="\u5173\u95ED">X</a>',
+	'</div>'].join('');
+	
+	var miniChat_tpl = ['<div class="pro_miniChat">',
+		'<div class="pro_miniChat_text">{text}</div>',
 	'</div>'].join('');
 	
 	var confirm_tpl = ['<div class="pro_confirm">',
@@ -147,6 +64,9 @@ window.UI = window.UI || {};
 		'.pro_pop_close:active{background-color:#ddd;border-left-color:#ccc;color:#ccc;}',
 		'.pro_confirm{_border:1px solid #eee;position:absolute;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}',
 		'.pro_confirm_text{padding:30px 0px 20px;height:40px;line-height:40px;text-align:center;font-size:20px;color:#333;}',
+		'.pro_miniChat{width:220px;_border:1px solid #eee;position:absolute;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}',
+		'.pro_miniChat_text{padding:20px 10px 10px;line-height:24px;text-align:center;font-size:14px;color:#333;}',
+		'.pro_miniChat .pro_pop_confirm a{height:26px;line-height:26px;}',
 		'.pro_pop_confirm{padding:10px 0px 15px 30px;text-align:center;}',
 		'.pro_pop_confirm a{display:inline-block;height:30px;padding:0px 15px;border-radius:3px;font-size:14px;line-height:30px;background:#38b;color:#fff;margin-right:30px;}',
 		'.pro_pop_confirm a:hover{text-decoration: none;background:#49c;}',
@@ -603,12 +523,46 @@ window.UI = window.UI || {};
 		}
 	};
 	
+	function miniChat(param){
+		var param = param || {};
+		var this_chat = this;
+
+		this.text = param['text'] || '\u8BF7\u8F93\u5165\u6807\u9898';
+		this.closeFn = param['closeFn'] || null;
+		var this_tpl = miniChat_tpl.replace('{text}',this.text);
+		this.dom = $(this_tpl);
+		//当有确认参数时
+		add_confirm(this.dom,param['confirm'],function(){
+			this_chat.close();
+		});
+		
+		var top = typeof(param['top']) == 'number' ? param['top'] : 300;
+		var left = typeof(param['left']) == 'number' ? param['left'] : 300;
+		
+		// create pop
+		this.dom.css({
+			'left' : left,
+			'top' : top
+		});
+		private_mainDom.append(this.dom);
+	}
+	miniChat.prototype = {
+		'close' : function (effect,time){
+			this.closeFn && this.closeFn();
+			this.dom['slideUp'](140,function(){
+				$(this).remove();
+			});
+		}
+	};
+	
 	// Set the interface
 	exports.pop = function(){
 		return new POP(arguments[0]);
 	};
 	exports.pop.config = POP.config;
-	
+	exports.miniChat = function(){
+		return new miniChat(arguments[0]);
+	};
 	exports.confirm = function(){
 		return new CONFIRM(arguments[0]);
 	};
