@@ -1,11 +1,99 @@
-
 /**
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
+ * @modified 2014-2-27 14:55
  * 
  * Function depends on
  *		JQUERY
+ * 
+ * @method UI.pop
+ * 	@param {Object} param the main paramter
+ * 	@param {String} param.title 弹框标题
+ * 	@param {String} param.html 弹框内容
+ * 	@param {String} [param.width] 弹框宽度
+ * 	@param {String} [param.height] 弹框高度
+ * 	@param {String} [param.top] 弹框与页面顶部距离
+ * 	@param {String} [param.left] 弹框与页面左侧距离
+ * 	@param {String} [param.mask] 是否显示蒙层
+ * 	@param {Function} [param.closeFn] 弹框关闭时的回调
+ * 	@param {Function} [param.closeFn]
+ * 	@param {Object|Function} [param.confirm] 使用对话方式（详细定义或只定义回调）
+ * 	@param {Array} [param.confirm.btns] 按钮自定义名称
+ * 	@param {Array} [param.confirm.callback] 确定时的回调方法
+ * 
+ * 	@returns {Object} pop
+ * 	@returns {String} pop.title 弹框标题
+ * 	@returns {Object} pop.dom 弹框所属DOM
+ * 	@returns {Object} pop.cntDom 弹框内容部分DOM
+ * 	@returns {Function} pop.close 关闭弹框的方法
+ * 	@returns {Function} pop.closeFn 弹框关闭时的回调
+ * 	@example 
+ * 	UI.pop({
+ * 	  	'width' : 300,
+ * 		'confirm' : function(){
+ *       	alert(1);
+ *   		}
+ * 	});	
+ *		UI.pop({
+ * 		'title' : '我的弹框',
+ * 	  	'width' : 300,
+ * 		'confirm' : {
+ *   	 		'btns' : ['好的','不干'],
+ *    		'callback' : function(){
+ *       		alert(1);
+ *     		}
+ *   		}
+ * 	});
+ 
+ * @method UI.pop.config.gap 为pop弹框配置页面显示边界
+ * 	@param {String} name 设置边界名（top/right/bottom/left）
+ * 	@param {Number} vlue 设置边界尺寸
+ * 
+ * @method UI.confirm
+ * 	@param {Object} param the main paramter
+ * 	@param {String} param.text 提示内容
+ * 	@param {Function} [param.closeFn] 关闭时的回调
+ * 	@param {Function} [param.closeFn]
+ * 	@param {Array} [param.btns] 按钮自定义名称
+ * 	@param {Array} [param.callback] 确定时的回调方法
+ * 
+ * 	@returns {Object} confirm
+ * 	@returns {Object} confirm.dom 弹框所属DOM
+ * 	@returns {Function} confirm.close 关闭弹框的方法
+ * 	@returns {Function} confirm.closeFn 弹框关闭时的回调
+ * 
+ * @method UI.plane
+ * 	@param {Object} param the main paramter
+ * 	@param {String} param.html
+ * 	@param {String} [param.width]
+ * 	@param {String} [param.height]
+ * 	@param {String} [param.top]
+ * 	@param {String} [param.left]
+ * 	@param {Function} [param.closeFn]
+ * 
+ * 	@returns {Object} plane
+ * 	@returns {Object} plane.dom
+ * 	@returns {Function} plane.closeFn
+ * 
+ * @method UI.prompt
+ * 	@param {String} text
+ * 	@param {String|Number} [time] 默认为1300ms，0为不自动关闭
+ * 
+ * 	@returns {Object} prompt
+ * 	@returns {Object} prompt.dom prompt所属DOM
+ * 	@returns {Function} prompt.tips 为prompt设置内容
+ * 	@returns {Function} confirm.close 关闭prompt
+ * 
+ * 	@example 
+ * 	//默认时间
+ * 		P.prompt('操作失败');
+ * 	//指定时间
+ * 		P.prompt('操作失败',2400);
+ * 	//主动控制
+ * 		var a = P.prompt('正在发送',0);
+ * 		a.tips('发送成功');
+ * 		a.close()
  * 
  **/
 
@@ -22,9 +110,9 @@ window.UI = window.UI || {};
 		'<a href="javascript:void(0)" class="pro_pop_close" title="\u5173\u95ED">X</a>',
 	'</div>'].join('');
 	
-	var miniChat_tpl = ['<div class="pro_miniChat">',
+	var miniChat_tpl = ['<div class="pro_miniChatSlideCnt"><div class="pro_miniChat">',
 		'<div class="pro_miniChat_text">{text}</div>',
-	'</div>'].join('');
+	'</div></div>'].join('');
 	
 	var confirm_tpl = ['<div class="pro_confirm">',
 		'<div class="pro_confirm_text">{text}</div>',
@@ -64,7 +152,8 @@ window.UI = window.UI || {};
 		'.pro_pop_close:active{background-color:#ddd;border-left-color:#ccc;color:#ccc;}',
 		'.pro_confirm{_border:1px solid #eee;position:absolute;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}',
 		'.pro_confirm_text{padding:30px 0px 20px;height:40px;line-height:40px;text-align:center;font-size:20px;color:#333;}',
-		'.pro_miniChat{width:220px;_border:1px solid #eee;position:absolute;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}',
+		'.pro_miniChatSlideCnt{width:220px;height:0px;overflow:hidden;position:absolute;border-radius:4px;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}',
+		'.pro_miniChat{position:absolute;left:0px;bottom:0px;width:100%;_border:1px solid #eee;background:#fff;overflow:hidden;}',
 		'.pro_miniChat_text{padding:20px 10px 10px;line-height:24px;text-align:center;font-size:14px;color:#333;}',
 		'.pro_miniChat .pro_pop_confirm a{height:26px;line-height:26px;}',
 		'.pro_pop_confirm{padding:10px 0px 15px 30px;text-align:center;}',
@@ -99,18 +188,18 @@ window.UI = window.UI || {};
 		 private_doc = $(document),
 		 private_docH,
 		 private_scrollTop;
-
+	//重新计算窗口尺寸
+	function countSize(){
+		private_winW = document.body.clientWidth;
+		private_scrollTop = private_win.scrollTop();
+		private_winH = window.innerHeight;
+		private_docH = private_doc.height();
+	}
 	$(function(){
 		$('head').append(popCSS);
 		$('body').append(DOM);
-		//count window size
-		function countSize(){
-			private_winW = private_body.width();
-			private_scrollTop = private_win.scrollTop()
-			private_winH = private_win.height();
-			private_docH = private_doc.height();
-		}
-		
+
+		//更新窗口尺寸
 		countSize();
 		//fix Prompt Mask position & size
 		if(isIE67){
@@ -119,6 +208,7 @@ window.UI = window.UI || {};
 				'height' : private_docH
 			});
 			private_win.on('resize scroll',function(){
+				//更新窗口尺寸
 				countSize();
 				private_promptDom.animate({
 					'top' : private_scrollTop
@@ -140,6 +230,7 @@ window.UI = window.UI || {};
 				'height' : private_winH
 			});
 			private_win.on('resize scroll',function(){
+				//更新窗口尺寸
 				countSize();
 				private_maskDom.css({
 					'width' : private_winW,
@@ -163,6 +254,8 @@ window.UI = window.UI || {};
 			}
 		});
 		function down(e){
+			//更新窗口尺寸
+			countSize();
 //			e.preventDefault();
 //			e.stopPropagation();
 			dx = e.pageX;
@@ -223,15 +316,20 @@ window.UI = window.UI || {};
 	//增加确认方法
 	function add_confirm(dom,param,close){
 		var callback = null;
-		var btns = ['确认','取消'];
+		var cancel = null;
+		var btns = ['\u786E\u8BA4','\u53D6\u6D88'];
 		if(typeof(param) == "function"){
 			callback = param;
 		}else if(typeof(param) == "object"){
 			if(param['btns']){
-				btns = [param['btns'][0],param['btns'][1]];
+				btns[0] = param['btns'][0];
+				btns[1] = param['btns'][1];
 			}
 			if(typeof(param['callback']) == "function"){
 				callback = param['callback'];
+			}
+			if(typeof(param['cancel']) == "function"){
+				cancel = param['cancel'];
 			}
 		}
 		var this_html = confirmBar_tpl.replace(/{(\w+)}/g,function(){
@@ -243,10 +341,11 @@ window.UI = window.UI || {};
 			}
 		});
 		dom.append(this_html);
-		dom.on('click','.pro_pop_confirm_ok',function(){
+		dom.on('mousedown','.pro_pop_confirm_ok',function(){
 			callback && callback();
 			close();
-		}).on('click','.pro_pop_confirm_cancel',function(){
+		}).on('mousedown','.pro_pop_confirm_cancel',function(){
+			cancel && cancel();
 			close();
 		});
 		
@@ -289,7 +388,7 @@ window.UI = window.UI || {};
 			});
 		}
 		
-		var top = typeof(param['top']) == 'number' ? param['top'] : 300;
+		var top = typeof(param['top']) == 'number' ? param['top'] : (private_scrollTop + 300);
 		var left = typeof(param['left']) == 'number' ? param['left'] : private_winW/2 - this_width/2;
 		//fix position get size
 		var fixSize = fix_position(top,left,this_width,this_height+41,private_CONFIG.gap);
@@ -379,7 +478,7 @@ window.UI = window.UI || {};
 		var param = param || {};
 		var this_pop = this;
 		
-		var this_text = param['text'] || '请输入确认信息！';
+		var this_text = param['text'] || '\u8BF7\u8F93\u5165\u786E\u8BA4\u4FE1\u606F！';
 		var callback = param['callback'] || null;
 		var this_html = confirm_tpl.replace(/{text}/,this_text);
 		
@@ -438,9 +537,10 @@ window.UI = window.UI || {};
 		
 		this.tips(txt);
 		this.dom.css({
-			'top' : private_winH/2-50,
+			'top' : (private_winH < 700 ? 100 : private_winH/2-300),
 			'left' : private_winW/2 - 120
 		});
+		//console.log(private_winH,12);
 		private_promptDom.append(this.dom);
 		if(time != 0){
 			this_prompt.close(time);
@@ -532,7 +632,7 @@ window.UI = window.UI || {};
 		var this_tpl = miniChat_tpl.replace('{text}',this.text);
 		this.dom = $(this_tpl);
 		//当有确认参数时
-		add_confirm(this.dom,param['confirm'],function(){
+		add_confirm(this.dom.find('.pro_miniChat'),param,function(){
 			this_chat.close();
 		});
 		
@@ -545,6 +645,10 @@ window.UI = window.UI || {};
 			'top' : top
 		});
 		private_mainDom.append(this.dom);
+		var height = this.dom.find('.pro_miniChat').height();
+		this.dom.animate({
+			'height' : height
+		},200);
 	}
 	miniChat.prototype = {
 		'close' : function (effect,time){
