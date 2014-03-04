@@ -342,11 +342,17 @@ window.UI = window.UI || {};
 		});
 		dom.append(this_html);
 		dom.on('mousedown','.pro_pop_confirm_ok',function(){
-			callback && callback();
-			close();
+			if(callback){
+				//根据执行结果判断是否要关闭弹框
+				var result = callback();
+				result && close();
+			}
 		}).on('mousedown','.pro_pop_confirm_cancel',function(){
-			cancel && cancel();
-			close();
+			if(cancel){
+				//根据执行结果判断是否要关闭弹框
+				var result = cancel();
+				result && close();
+			}
 		});
 		
 	}
