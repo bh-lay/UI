@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2014-2-27 14:55
+ * @modified 2014-3-4 10:29
  * 
  * Function depends on
  *		JQUERY
@@ -345,13 +345,21 @@ window.UI = window.UI || {};
 			if(callback){
 				//根据执行结果判断是否要关闭弹框
 				var result = callback();
-				result && close();
+				if(result != false){
+					close();
+				}
+			}else{
+				close();
 			}
 		}).on('mousedown','.pro_pop_confirm_cancel',function(){
 			if(cancel){
 				//根据执行结果判断是否要关闭弹框
 				var result = cancel();
-				result && close();
+				if(result != false){
+					close();
+				}
+			}else{
+				close();
 			}
 		});
 		
