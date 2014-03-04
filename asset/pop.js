@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2014-3-4 10:29
+ * @modified 2014-3-4 19:10
  * 
  * Function depends on
  *		JQUERY
@@ -195,50 +195,48 @@ window.UI = window.UI || {};
 		private_winH = window.innerHeight;
 		private_docH = private_doc.height();
 	}
-	$(function(){
-		$('head').append(popCSS);
-		$('body').append(DOM);
+	$('head').append(popCSS);
+	$('body').append(DOM);
 
-		//更新窗口尺寸
-		countSize();
-		//fix Prompt Mask position & size
-		if(isIE67){
+	//更新窗口尺寸
+	countSize();
+	//fix Prompt Mask position & size
+	if(isIE67){
+		private_maskDom.css({
+			'width' : private_winW,
+			'height' : private_docH
+		});
+		private_win.on('resize scroll',function(){
+			//更新窗口尺寸
+			countSize();
+			private_promptDom.animate({
+				'top' : private_scrollTop
+			},100);
 			private_maskDom.css({
 				'width' : private_winW,
 				'height' : private_docH
 			});
-			private_win.on('resize scroll',function(){
-				//更新窗口尺寸
-				countSize();
-				private_promptDom.animate({
-					'top' : private_scrollTop
-				},100);
-				private_maskDom.css({
-					'width' : private_winW,
-					'height' : private_docH
-				});
-			});
-		}else{
-			private_promptDom.css({
-				'position' : 'fixed',
-				'top' : 0
-			});
+		});
+	}else{
+		private_promptDom.css({
+			'position' : 'fixed',
+			'top' : 0
+		});
+		private_maskDom.css({
+			'position' : 'fixed',
+			'top' : 0,
+			'width' : private_winW,
+			'height' : private_winH
+		});
+		private_win.on('resize scroll',function(){
+			//更新窗口尺寸
+			countSize();
 			private_maskDom.css({
-				'position' : 'fixed',
-				'top' : 0,
 				'width' : private_winW,
 				'height' : private_winH
 			});
-			private_win.on('resize scroll',function(){
-				//更新窗口尺寸
-				countSize();
-				private_maskDom.css({
-					'width' : private_winW,
-					'height' : private_winH
-				});
-			});
-		}
-	});
+		});
+	}
 	
 	var dragMask = $('<div style="width:100%;height:100%;position:absolute;top:0px;left:0px;z-index:100000;cursor:default;"></div>');
 	function drag(handle_dom,dom,param){
