@@ -151,17 +151,17 @@ window.UI = window.UI || {};
 		'.pro_pop_close:hover{background-color:#eee;border-left-color:#ddd;text-decoration:none;}',
 		'.pro_pop_close:active{background-color:#ddd;border-left-color:#ccc;color:#ccc;}',
 		'.pro_confirm{_border:1px solid #eee;position:absolute;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}',
-		'.pro_confirm_text{padding:30px 0px 20px;height:40px;line-height:40px;text-align:center;font-size:20px;color:#333;}',
+		'.pro_confirm_text{padding:30px 0px 20px;box-sizing:content-box;height:40px;line-height:40px;text-align:center;font-size:20px;color:#333;}',
 		'.pro_miniChatSlideCnt{width:220px;height:0px;overflow:hidden;position:absolute;border-radius:4px;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}',
 		'.pro_miniChat{position:absolute;left:0px;bottom:0px;width:100%;_border:1px solid #eee;background:#fff;overflow:hidden;}',
-		'.pro_miniChat_text{padding:20px 10px 10px;line-height:24px;text-align:center;font-size:14px;color:#333;}',
+		'.pro_miniChat_text{padding:20px 10px 10px;box-sizing:content-box;line-height:24px;text-align:center;font-size:14px;color:#333;}',
 		'.pro_miniChat .pro_pop_confirm a{height:26px;line-height:26px;}',
-		'.pro_pop_confirm{padding:10px 0px 15px 30px;text-align:center;}',
-		'.pro_pop_confirm a{display:inline-block;height:30px;padding:0px 15px;border-radius:3px;font-size:14px;line-height:30px;background:#38b;color:#fff;margin-right:30px;}',
+		'.pro_pop_confirm{padding:10px 0px 15px 30px;box-sizing:content-box;text-align:center;}',
+		'.pro_pop_confirm a{display:inline-block;height:30px;padding:0px 15px;box-sizing:content-box;border-radius:3px;font-size:14px;line-height:30px;background:#38b;color:#fff;margin-right:30px;}',
 		'.pro_pop_confirm a:hover{text-decoration: none;background:#49c;}',
 		'.pro_pop_confirm a:active{text-decoration: none;background:#27a}',
 		'.pro_plane{width:200px;position:absolute;top:400px;left:300px;}',
-		'.pro_prompt{width:240px;position:absolute;padding:30px 10px;background:#fff;_border:1px solid #fafafa;border-radius:4px;box-shadow:2px 2px 10px rgba(0,0,0,0.5);}',
+		'.pro_prompt{width:240px;position:absolute;padding:30px 10px;box-sizing:content-box;background:#fff;_border:1px solid #fafafa;border-radius:4px;box-shadow:2px 2px 10px rgba(0,0,0,0.5);}',
 		'.pro_cnt{font-size:18px;color:#222;text-align:center;}',
 	'</style>'].join('');
 	var isIE67 = false;
@@ -504,7 +504,7 @@ window.UI = window.UI || {};
 		// create pop
 		this.dom.css({
 			'width' : 300,
-			'left' : 800,
+			'left' : private_winW/2 - 150,
 			'top' : 200
 		});
 		
@@ -935,3 +935,15 @@ window.UI = window.UI || {};
 		return new scrollBar(dom);
 	};
 })(window.UI);
+
+//提供CommonJS规范的接口
+define && define(function(require,exports,module){
+	//对外接口
+	exports.asas = 1212;
+	exports.pop = window.UI.pop;
+	exports.miniChat = window.UI.miniChat;
+	exports.confirm = window.UI.confirm;
+	exports.prompt = window.UI.prompt;
+	exports.plane = window.UI.plane;
+	exports.drag = window.UI.drag;
+});
