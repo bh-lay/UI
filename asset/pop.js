@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2014-3-7 19:10
+ * @modified 2014-3-12 15:34
  * 
  * Function depends on
  *		JQUERY
@@ -151,7 +151,7 @@ window.UI = window.UI || {};
 		'.pro_pop_close:hover{background-color:#eee;border-left-color:#ddd;text-decoration:none;}',
 		'.pro_pop_close:active{background-color:#ddd;border-left-color:#ccc;color:#ccc;}',
 		'.pro_confirm{_border:1px solid #eee;position:absolute;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}',
-		'.pro_confirm_text{padding:30px 0px 20px;box-sizing:content-box;height:40px;line-height:40px;text-align:center;font-size:20px;color:#333;}',
+		'.pro_confirm_text{padding:30px 10px 20px;line-height:26px;text-align:center;font-size:20px;color:#333;}',
 		'.pro_miniChatSlideCnt{width:220px;height:0px;overflow:hidden;position:absolute;border-radius:4px;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}',
 		'.pro_miniChat{position:absolute;left:0px;bottom:0px;width:100%;_border:1px solid #eee;background:#fff;overflow:hidden;}',
 		'.pro_miniChat_text{padding:20px 10px 10px;box-sizing:content-box;line-height:24px;text-align:center;font-size:14px;color:#333;}',
