@@ -937,7 +937,7 @@ window.UI = window.UI || {};
 })(window.UI);
 
 //提供CommonJS规范的接口
-define && define(function(require,exports,module){
+window.define && define(function(require,exports,module){
 	//对外接口
 	exports.asas = 1212;
 	exports.pop = window.UI.pop;
