@@ -305,7 +305,7 @@ window.UI = window.UI || {};
 			end&&end();
 		}
 	}
-	//通用调整位置的方法
+	//通用限制位置区域的方法
 	function fix_position(top,left,width,height){
 		var gap = private_CONFIG.gap;
 		if(top<private_scrollTop + gap.top){
@@ -329,6 +329,24 @@ window.UI = window.UI || {};
 		return {
 			'top' : top,
 			'left' : left
+		}
+	}
+	//计算自适应页面位置的方法
+	function adaption(width,height){
+		var top = (private_winH - height)/2 + private_scrollTop;
+		var left = (private_winW - width)/2;
+		var newPosition = fix_position(top,left,width,height);
+		
+		var gap = private_CONFIG.gap;
+		var clientTop = (private_winH - height)/2;
+		if(clientTop<gap.top){
+			clientTop = gap.top;
+		}
+		return {
+			'top' : newPosition.top,
+			'left' : newPosition.left,
+			'clientTop' : clientTop,
+			'clientLeft' : newPosition.left
 		}
 	}
 	//增加确认方法
@@ -388,31 +406,32 @@ window.UI = window.UI || {};
 	 *  
 	 */
 	function CLOSEMETHOD(effect,time){
-			this.closeFn && this.closeFn();
+		this.closeFn && this.closeFn();
 
-			if(!effect){
-				this.dom.remove();
-			}else{
-				var method = 'fadeOut';
-				var time = time ? parseInt(time) : 80;
-				if(effect == 'fade'){
-					method = 'fadeOut'
-				}else if(effect == 'slide'){
-					method = 'slideUp'
-				}
-				this.dom[method](time,function(){
-					$(this).remove();
-				});
+		if(!effect){
+			this.dom.remove();
+		}else{
+			var method = 'fadeOut';
+			var time = time ? parseInt(time) : 80;
+			if(effect == 'fade'){
+				method = 'fadeOut'
+			}else if(effect == 'slide'){
+				method = 'slideUp'
 			}
+			this.dom[method](time,function(){
+				$(this).remove();
+			});
+		}
 
-			if(this._mask){
-				private_maskCount--
-				if(private_maskCount==0){
-					private_maskDom.fadeOut(80);
-				}
+		if(this._mask){
+			private_maskCount--
+			if(private_maskCount==0){
+				private_maskDom.fadeOut(80);
 			}
 		}
+	}
 	/***
+	 * 弹框
 	 * pop 
 	 */
 	function POP(param){
@@ -449,12 +468,11 @@ window.UI = window.UI || {};
 			});
 		}
 		
-		var top = typeof(param['top']) == 'number' ? param['top'] : (private_scrollTop + 300);
-		var left = typeof(param['left']) == 'number' ? param['left'] : private_winW/2 - this_width/2;
+		
 		//fix position get size
-		var fixSize = fix_position(top,left,this_width,this_height+41);
-		top = fixSize.top;
-		left = fixSize.left;
+		var fixSize = adaption(this_width,this_height||300);
+		var top = typeof(param['top']) == 'number' ? param['top'] : fixSize.top;
+		var left = typeof(param['left']) == 'number' ? param['left'] : fixSize.left;
 		//can drag is pop
 		UI.drag(this.dom.find('.pro_pop_cpt'),this.dom,{
 			'move' : function(dx,dy,l_start,t_start,w_start,h_start){
@@ -506,6 +524,18 @@ window.UI = window.UI || {};
 	};
 	//使用close方法
 	POP.prototype['close'] = CLOSEMETHOD;
+	POP.prototype['adapt'] = function(){
+		var offset = this.dom.offset();
+		var width = this.dom.width();
+		var height = this.dom.height();
+		
+		var fixSize = adaption(width,height);
+	//	console.log(offset,fixSize,'-----------');
+		this.dom.animate({
+			'top' : fixSize.top,
+			'left' : fixSize.left
+		},100);
+	};
 	
 	/***
 	 * CONFIRM 
@@ -525,11 +555,13 @@ window.UI = window.UI || {};
 			this_pop.close();
 		});
 		
+		//
+		var newPosition = adaption(300,160);
 		// create pop
 		this.dom.css({
 			'width' : 300,
-			'left' : private_winW/2 - 150,
-			'top' : 200
+			'left' : newPosition.clientLeft,
+			'top' : newPosition.clientTop
 		});
 		
 		private_maskCount++
@@ -577,11 +609,12 @@ window.UI = window.UI || {};
 			this_pop.close();
 		});
 		
+		var newPosition = adaption(300,160);
 		// create pop
 		this.dom.css({
 			'width' : 300,
-			'left' : private_winW/2 - 150,
-			'top' : 200
+			'left' : newPosition.clientLeft,
+			'top' : newPosition.clientTop
 		});
 	
 		private_fixedScreenDom.append(this.dom);
@@ -603,9 +636,14 @@ window.UI = window.UI || {};
 		this.dom = $(prompt_tpl);		
 		
 		this.tips(txt);
+		
+		
+		var newPosition = adaption(260,100);
+		// create pop
+		
 		this.dom.css({
-			'top' : (private_winH < 700 ? 100 : private_winH/2-300),
-			'left' : private_winW/2 - 120
+			'left' : newPosition.clientLeft,
+			'top' : newPosition.clientTop
 		});
 		//console.log(private_winH,12);
 		private_fixedScreenDom.append(this.dom);
