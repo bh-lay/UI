@@ -187,7 +187,7 @@ window.UI = window.UI || {};
 		'.pro_plane{width:200px;position:absolute;top:400px;left:300px;}',
 		'.pro_prompt{width:240px;position:absolute;padding:30px 10px;box-sizing:content-box;background:#fff;_border:1px solid #fafafa;border-radius:4px;box-shadow:2px 2px 10px rgba(0,0,0,0.5);}',
 		'.pro_cnt{font-size:18px;color:#222;text-align:center;}',
-		'.pro_cover{position:relative;width:100%;height:100px;}',
+		'.pro_cover{position:absolute;top:0px;left:0px;width:100%;height:100px;}',
 		'.pro_coverCnt{position:relative;width:100%;height:100%;background:#fff;}',
 		'.pro_coverClose{display:block;position:absolute;top:50%;left:0px;width:20px;height:60px;padding-left:5px;text-align:center;line-height:60px;color:#ddd;font-family:"Simsun";font-size:30px;background:#555;}',
 		'.pro_coverClose:hover{background-color:#333;color:#fff;text-decoration:none;}',
@@ -787,9 +787,7 @@ window.UI = window.UI || {};
 		this.closeDom.hide();
 		// create pop
 		this.dom.css({
-		 	'height' : private_winH,
-			'left' : 0,
-			'top' : 0
+		 	'height' : private_winH
 		});
 		this.cntDom.css({
 			'top' : 0,
