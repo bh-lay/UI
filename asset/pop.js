@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2014-34-17 13:52
+ * @modified 2014-5-7 14:13
  * 
  * Function depends on
  *		JQUERY
@@ -149,6 +149,7 @@ window.UI = window.UI || {};
 	var popCSS = ['<style type="text/css" data-module="UI-pop-prompt-plane">',
 		//基础框架
 		'.pop_lawyer{position:absolute;top:0px;left:0px;z-index:4999;width:100%;height:0px;overflow:visible;font-family:"Microsoft Yahei"}',
+		'.pop_lawyer a{text-decoration:none}',
 		'.pop_mask{position:absolute;top:0px;left:0px;width:100%;background:#000;display:none;opacity:0.2}',
 		'.pop_main_cnt{width:0px;height:0px;overflow:visible;}',
 		'.pop_fixedScreen_cnt{position:absolute;top:0px;left:0px;width:100%;height:0px;overflow:visible;}',
@@ -227,9 +228,10 @@ window.UI = window.UI || {};
 	}
 	$('head').append(popCSS);
 	$('body').append(DOM);
-
+	
 	//更新窗口尺寸
 	countSize();
+	setTimeout(countSize,500);
 	/**
 	 *	fix Prompt Mask position & size 
 	 */ 
