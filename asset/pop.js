@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2014-5-7 14:13
+ * @modified 2014-5-11 15:00
  * 
  * Function depends on
  *		JQUERY
@@ -117,35 +117,35 @@ window.UI = window.UI || {};
 		'<div class="pro_pop_cnt"></div>',
 		'<a href="javascript:void(0)" class="pro_pop_close" title="\u5173\u95ED">×</a>',
 	'</div>'].join('');
-	
+
 	var miniChat_tpl = ['<div class="pro_miniChatSlideCnt"><div class="pro_miniChat">',
 		'<div class="pro_miniChat_text">{text}</div>',
 	'</div></div>'].join('');
-	
+
 	var confirm_tpl = ['<div class="pro_confirm">',
 		'<div class="pro_confirm_text">{text}</div>',
 	'</div>'].join('');
-	
+
 	var ask_tpl = ['<div class="pro_ask">',
 		'<div class="pro_ask_text">{text}</div>',
 		'<input type="text" name="pro_ask_key"/>',
 	'</div>'].join('');
-	
+
 	var confirmBar_tpl = ['<div class="pro_pop_confirm">',
 		'<a href="javascript:void(0)" class="pro_pop_confirm_ok">{confirm}</a>',
 		'<a href="javascript:void(0)" class="pro_pop_confirm_cancel">{cancel}</a>',
 	'</div>'].join('');
-	
+
 	var plane_tpl = ['<div class="pro_plane"></div>'].join('');
 	var prompt_tpl = ['<div class="pro_prompt">',
 		'<div class="pro_cnt"></div>',
 	'</div>'].join('');
-	
+
 	var cover_tpl = ['<div class="pro_cover">',
 		'<div class="pro_coverCnt"></div>',
 		'<a href="javascript:void(0)" class="pro_coverClose">〉</a>',
 	'</div>'].join('');
-	
+
 	var popCSS = ['<style type="text/css" data-module="UI-pop-prompt-plane">',
 		//基础框架
 		'.pop_lawyer{position:absolute;top:0px;left:0px;z-index:4999;width:100%;height:0px;overflow:visible;font-family:"Microsoft Yahei"}',
@@ -191,7 +191,7 @@ window.UI = window.UI || {};
 		}
 	}
 	var DOM = $(allCnt);
-	
+
 	/**
 	 * 
 	 * define private variables
@@ -200,6 +200,7 @@ window.UI = window.UI || {};
 	var private_body = $('html,body'),
 		 private_maskDom = DOM.find('.pop_mask'),
 		 private_mainDom = DOM.find('.pop_main_cnt'),
+		 private_isSupportTouch = "ontouchend" in document ? true : false,
 		 private_fixedScreenDom = DOM.find('.pop_fixedScreen_cnt'),
 		 private_win = $(window),
 		 private_winW,
@@ -208,7 +209,7 @@ window.UI = window.UI || {};
 		 private_docH,
 		 private_scrollTop,
 		 private_maskCount = 0;
-		 
+
 	var private_CONFIG = {
 		'gap' : {
 			'top' : 0,
@@ -218,7 +219,7 @@ window.UI = window.UI || {};
 		},
 		'zIndex' : 499
 	};
-	
+
 	//重新计算窗口尺寸
 	function countSize(){
 		private_winW = document.body.clientWidth;
@@ -228,7 +229,7 @@ window.UI = window.UI || {};
 	}
 	$('head').append(popCSS);
 	$('body').append(DOM);
-	
+
 	//更新窗口尺寸
 	countSize();
 	setTimeout(countSize,500);
@@ -277,7 +278,7 @@ window.UI = window.UI || {};
 		var start = param['start'] || null;
 		var end = param['end'] || null;
 		var dragMask = $('<div style="width:100%;height:100%;position:absolute;top:0px;left:0px;z-index:100000;cursor:default;"></div>');
-	
+
 		var dx, dy,l_start,t_start,w_start,h_start;
 		handle_dom.mousedown(function(e){
 			if(e.button == 0){
@@ -350,7 +351,7 @@ window.UI = window.UI || {};
 		var top = (private_winH - height)/2 + private_scrollTop;
 		var left = (private_winW - width)/2;
 		var newPosition = fix_position(top,left,width,height);
-		
+
 		var gap = private_CONFIG.gap;
 		var clientTop = (private_winH - height)/2;
 		if(clientTop<gap.top){
@@ -412,9 +413,9 @@ window.UI = window.UI || {};
 				close();
 			}
 		});
-		
+
 	}
-	
+
 	/**
 	 * 公用关闭方法
 	 *  
@@ -457,7 +458,7 @@ window.UI = window.UI || {};
 		this.cntDom = this.dom.find('.pro_pop_cnt');
 		this.closeFn = param['closeFn'] || null;
 		this._mask = param['mask'] || false;
-		
+
 		var this_html = param['html'] || '';
 		var this_width = param['width'] || 240;
 		var this_height = param['height'] ? parseInt(param['height']) - 41 : null;
@@ -481,8 +482,8 @@ window.UI = window.UI || {};
 				this_pop.close();
 			});
 		}
-		
-		
+
+
 		//fix position get size
 		var fixSize = adaption(this_width,this_height||300);
 		var top = typeof(param['top']) == 'number' ? param['top'] : fixSize.top;
@@ -501,7 +502,7 @@ window.UI = window.UI || {};
 		});
 		//insert html
 		this.cntDom.prepend(this_html);
-		
+
 		// create pop
 		this.dom.css({
 			'width' : this_width,
@@ -516,7 +517,7 @@ window.UI = window.UI || {};
 				private_maskDom.fadeIn(80);
 			}
 		}
-		
+
 		private_mainDom.append(this.dom);
 	}
 	POP.config = {
@@ -534,7 +535,7 @@ window.UI = window.UI || {};
 		var offset = this.dom.offset();
 		var width = this.dom.width();
 		var height = this.dom.height();
-		
+
 		var fixSize = adaption(width,height);
 	//	console.log(offset,fixSize,'-----------');
 		this.dom.animate({
@@ -542,25 +543,25 @@ window.UI = window.UI || {};
 			'left' : fixSize.left
 		},100);
 	};
-	
+
 	/***
 	 * CONFIRM 
 	 */
 	function CONFIRM(param){
 		var param = param || {};
 		var this_pop = this;
-		
+
 		var this_text = param['text'] || '\u8BF7\u8F93\u5165\u786E\u8BA4\u4FE1\u606F！';
 		var callback = param['callback'] || null;
 		var this_html = confirm_tpl.replace(/{text}/,this_text);
 		this._mask = true;
 		this.dom = $(this_html);
 		this.closeFn = param['closeFn'] || null;
-		
+
 		add_confirm(this.dom,param,function(){
 			this_pop.close();
 		});
-		
+
 		//
 		var newPosition = adaption(300,160);
 		// create pop
@@ -569,7 +570,7 @@ window.UI = window.UI || {};
 			'left' : newPosition.clientLeft,
 			'top' : newPosition.clientTop
 		});
-		
+
 		private_maskCount++
 		if(private_maskCount==1){
 			private_maskDom.fadeIn(80);
@@ -577,21 +578,21 @@ window.UI = window.UI || {};
 		private_fixedScreenDom.append(this.dom);
 	}
 	CONFIRM.prototype['close'] = CLOSEMETHOD
-	
-	
+
+
 	/***
 	 * ASK 
 	 */
 	function ASK(text,callback){
 		var this_pop = this;
-		
+
 		var this_text = text || '\u8BF7\u8F93\u5165\u786E\u8BA4\u4FE1\u606F！';
 		var this_html = ask_tpl.replace(/{text}/,this_text);
-		
+
 		this.dom = $(this_html);
 		this.closeFn =  null;
 		this.callback = callback || null;
-		
+
 		var this_html = confirmBar_tpl.replace(/{(\w+)}/g,function(a,key){
 			if(key == 'confirm'){
 				return '确定';
@@ -614,7 +615,7 @@ window.UI = window.UI || {};
 		}).on('click','.pro_pop_confirm_cancel',function(){
 			this_pop.close();
 		});
-		
+
 		var newPosition = adaption(300,160);
 		// create pop
 		this.dom.css({
@@ -622,7 +623,7 @@ window.UI = window.UI || {};
 			'left' : newPosition.clientLeft,
 			'top' : newPosition.clientTop
 		});
-	
+
 		private_fixedScreenDom.append(this.dom);
 	}
 	ASK.prototype['close'] = CLOSEMETHOD;
@@ -630,8 +631,8 @@ window.UI = window.UI || {};
 		var text = text ? text.toString() : '';
 		this.dom.find('input').val(text);
 	};
-	
-	
+
+
 	/**
 	 * prompt
 	 * 
@@ -640,13 +641,13 @@ window.UI = window.UI || {};
 		var this_prompt = this;
 		var txt = txt || '\u8BF7\u8F93\u5165\u5185\u5BB9';
 		this.dom = $(prompt_tpl);		
-		
+
 		this.tips(txt);
-		
-		
+
+
 		var newPosition = adaption(260,100);
 		// create pop
-		
+
 		this.dom.css({
 			'left' : newPosition.clientLeft,
 			'top' : newPosition.clientTop
@@ -666,7 +667,7 @@ window.UI = window.UI || {};
 		'close' : function(time){
 			var delay = time ? parseInt(time) : 1300 ;
 			var this_prompt = this;
-			
+
 			setTimeout(function(){
 				this_prompt.dom.fadeOut(200,function(){
 					this_prompt.dom.remove();
@@ -674,41 +675,66 @@ window.UI = window.UI || {};
 			},delay);
 		}
 	};
-	
+
 	/**
 	 *	PLANE 
 	 */
 	//the active plane
 	private_activePlane = null;
-	//check click
-	var bingoDom = false;
-	private_doc.on('mousedown',function checkClick(){
-		
-		setTimeout(function(){
-			if(!bingoDom){
+	/**
+	 * 检查class在不在多个class中 
+	 */
+	function hasClass(classAll,classSingle){
+		var classAll= classAll || '';
+		var classArray = classAll.split(/\s/g);
+		for(var i=0,total=classArray.length;i<total;i++){
+			if(classArray[i] == classSingle){
+				return true;
+			}
+		}
+	}
+	/**
+	 * 简单的事件委托模型 
+	 */
+	function checkClick(event) {
+		var target = event.target;
+		while (!hasClass(target.className,'pro_plane')) {
+			target = target.parentNode;
+			if(!target){
+		//		console.log('not target')
 				//close the active plane
 				private_activePlane&&private_activePlane.close();
-			}else{
-				bingoDom = false;
+				break
 			}
-		},20);
-	}).on('mousedown','.pro_plane',function(){
-		bingoDom = true;
-	});
+		}
+	//	console.log('target',target)
+	}
 	
+	if(private_isSupportTouch){
+		//移动端使用touch
+		var DOM = private_doc[0];
+		DOM.addEventListener('touchstart',checkClick);
+		DOM.addEventListener('MSPointerDown',checkClick);
+		DOM.addEventListener('pointerdown',checkClick);
+	}else{
+		//PC鼠标事件
+		private_doc.on('mousedown',checkClick);
+	}
+
+
 	function PLANE(param){
 		//如果有已展开的PLANE，干掉他
 		private_activePlane&&private_activePlane.close();
 		private_activePlane = this;
-		
+
 		var param = param || {};
 		var this_plane = this;		
 
 		var this_html = param['html'] || '';
 		this.closeFn = param['closeFn'] || null;
-		
+
 		this.dom = $(plane_tpl);
-		
+
 		//insert html
 		this.dom.html(this_html);
 		this.dom.css({
@@ -720,11 +746,11 @@ window.UI = window.UI || {};
 		private_mainDom.append(this.dom);
 	}
 	PLANE.prototype['close'] = CLOSEMETHOD;
-	
+
 	/**
 	 *	miniChat 
 	 */
-	
+
 	function miniChat(param){
 		var param = param || {};
 		var this_chat = this;
@@ -737,10 +763,10 @@ window.UI = window.UI || {};
 		add_confirm(this.dom.find('.pro_miniChat'),param,function(){
 			this_chat.close();
 		});
-		
+
 		var top = typeof(param['top']) == 'number' ? param['top'] : 300;
 		var left = typeof(param['left']) == 'number' ? param['left'] : 300;
-		
+
 		// create pop
 		this.dom.css({
 			'left' : left,
@@ -753,9 +779,9 @@ window.UI = window.UI || {};
 		},200);
 	}
 	miniChat.prototype['close'] = CLOSEMETHOD;
-	
-	
-	
+
+
+
 	/***
 	 * 全屏弹框
 	 * COVER 
@@ -767,15 +793,15 @@ window.UI = window.UI || {};
 		this.cntDom = this.dom.find('.pro_coverCnt');
 		this.closeDom = this.dom.find('.pro_coverClose');
 		this.closeFn = param['closeFn'] || null;
-		
+
 		var this_html = param['html'] || '';
 		//insert html
 		this.cntDom.prepend(this_html);
-		
+
 		this.dom.on('click','.pro_coverClose',function(){
 			this_cover.close();
 		});
-		
+
 		this.closeDom.hide();
 		// create pop
 		this.dom.css({
@@ -802,8 +828,8 @@ window.UI = window.UI || {};
 		});
 	};
 
-	
-	
+
+
 	/**
 	 *  抛出对外接口
 	 */
@@ -874,7 +900,7 @@ window.UI = window.UI || {};
 			dom.addEventListener('DOMMouseScroll',mouse,false);
 		}
 		dom.onmousewheel=mouse;
-		
+
 	}
 	function handuleAnimate(dom,is){
 		is = is || {};
@@ -882,7 +908,7 @@ window.UI = window.UI || {};
 		if(is.draging){
 			return
 		}
-		
+
 		if(is.hoverCnt && is.fromOut){
 			right = 0;
 			time = 40;
@@ -946,7 +972,7 @@ window.UI = window.UI || {};
 		}).on('click','.UI_scrollBar_up',function(){
 			this_scroll.upward();
 		});
-		
+
 		//监听鼠标滚动
 		scroll(this.dom['origin'][0],function(){
 			//console.log('mouse is scrolling!');
@@ -967,7 +993,7 @@ window.UI = window.UI || {};
 				}
 			},100);
 		});
-		
+
 		//定时刷新滚动条（内部高度可能会自动变化）
 		setInterval(function(){
 			this_scroll.fix_scrollBar();
@@ -986,7 +1012,7 @@ window.UI = window.UI || {};
 				handuleAnimate(this_scroll.dom['all'],IS);
 			}
 		});
-		
+
 		this.dom['origin'].append(this.dom['all']);
 		this_scroll.dom['all'].css('right', -10);
 		//hide default scroll bar
@@ -1010,7 +1036,7 @@ window.UI = window.UI || {};
 		this.dom['all'] = $(scrollBar_tpl);
 		this.dom['bar'] = this.dom['all'].find('.UI_scrollBar');
 		this.onScroll = null;
-		
+
 		this.origin = {
 			'scrollTop' : 0,
 			'height' : 0,
@@ -1062,7 +1088,7 @@ window.UI = window.UI || {};
 			this.fix_content(top);
 		}
 	};
-	
+
 	exports.scrollBar = function(dom){
 		return new scrollBar(dom);
 	};
