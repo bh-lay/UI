@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2014-5-11 15:00
+ * @modified 2014-5-12 11:21
  * 
  * Function depends on
  *		JQUERY
@@ -158,7 +158,7 @@ window.UI = window.UI || {};
 			'background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}',
 		'.pro_pop_cpt{position:relative;height:40px;line-height:40px;margin-right:41px;overflow:hidden;border-bottom:1px solid #ebebeb;background:#f6f6f6;',
 			'color:#333;font-size:18px;text-indent:15px;cursor: default;}',
-		'.pro_pop_cnt{position:relative;min-height:100px;overflow:hidden;width:100%;}',
+		'.pro_pop_cnt{position:relative;min-height:100px;overflow:auto;width:100%;}',
 		'.pro_pop_close{display:block;position:absolute;top:0px;right:0px;width:40px;height:40px;text-align:center;line-height:40px;color:#ddd;font-family:"Simsun";font-size:40px;background:#fafafa;border:1px solid #ebebeb;border-width:0px 0px 1px 1px;text-decoration:none;}',
 		'.pro_pop_close:hover{background-color:#eee;border-left-color:#ddd;text-decoration:none;}',
 		'.pro_pop_close:active{background-color:#ddd;border-left-color:#ccc;color:#ccc;}',
@@ -231,8 +231,10 @@ window.UI = window.UI || {};
 	$('body').append(DOM);
 
 	//更新窗口尺寸
-	countSize();
-	setTimeout(countSize,500);
+	$(function(){
+		countSize();
+		setTimeout(countSize,500);
+	});
 	/**
 	 *	fix Prompt Mask position & size 
 	 */ 
@@ -462,6 +464,13 @@ window.UI = window.UI || {};
 		var this_html = param['html'] || '';
 		var this_width = param['width'] || 240;
 		var this_height = param['height'] ? parseInt(param['height']) - 41 : null;
+		
+		if(this_height){
+			this.cntDom.css({
+				'height' : this_height
+			});
+		}
+		/*
 		//预定高度时
 		if(this_height){
 			this.onScrollToEnd = null;
@@ -476,6 +485,7 @@ window.UI = window.UI || {};
 			};
 			this.cntDom = this.cntDom.find('.UI_scroll_body');
 		}
+		*/
 		//当有确认参数时
 		if(param['confirm']){
 			add_confirm(this.dom,param['confirm'],function(){
