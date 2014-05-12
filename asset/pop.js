@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2014-5-12 11:21
+ * @modified 2014-5-12 15:13
  * 
  * Function depends on
  *		JQUERY
@@ -463,15 +463,16 @@ window.UI = window.UI || {};
 
 		var this_html = param['html'] || '';
 		var this_width = param['width'] || 240;
-		var this_height = param['height'] ? parseInt(param['height']) - 41 : null;
-		
+		var this_height = param['height'] ? parseInt(param['height']) : null;
+
+
+		//预定高度时
 		if(this_height){
 			this.cntDom.css({
-				'height' : this_height
+				'height' : this_height-41
 			});
 		}
-		/*
-		//预定高度时
+		/*	
 		if(this_height){
 			this.onScrollToEnd = null;
 			this.cntDom.css({
@@ -494,10 +495,6 @@ window.UI = window.UI || {};
 		}
 
 
-		//fix position get size
-		var fixSize = adaption(this_width,this_height||300);
-		var top = typeof(param['top']) == 'number' ? param['top'] : fixSize.top;
-		var left = typeof(param['left']) == 'number' ? param['left'] : fixSize.left;
 		//can drag is pop
 		UI.drag(this.dom.find('.pro_pop_cpt'),this.dom,{
 			'move' : function(dx,dy,l_start,t_start,w_start,h_start){
@@ -512,7 +509,14 @@ window.UI = window.UI || {};
 		});
 		//insert html
 		this.cntDom.prepend(this_html);
-
+		
+		private_mainDom.append(this.dom);
+		
+		//fix position get size
+		var fixSize = adaption(this_width,(this_height?this_height:this.dom.height()));
+		var top = typeof(param['top']) == 'number' ? param['top'] : fixSize.top;
+		var left = typeof(param['left']) == 'number' ? param['left'] : fixSize.left;
+		
 		// create pop
 		this.dom.css({
 			'width' : this_width,
@@ -527,8 +531,7 @@ window.UI = window.UI || {};
 				private_maskDom.fadeIn(80);
 			}
 		}
-
-		private_mainDom.append(this.dom);
+		
 	}
 	POP.config = {
 		'gap' : function(name,value){
