@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2014-5-12 15:13
+ * @modified 2014-6-3 22:
  * 
  * Function depends on
  *		JQUERY
@@ -539,6 +539,13 @@ window.UI = window.UI || {};
 				if(parseInt(value)){
 					private_CONFIG.gap[name] = value;
 				}
+			}
+		},
+		'zIndex' : function(num){
+			var num = parseInt(num);
+			if(num > 0){
+				private_CONFIG.zIndex = num;
+				DOM.css('zIndex',num);
 			}
 		}
 	};
