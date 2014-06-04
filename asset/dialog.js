@@ -2,106 +2,11 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2014-6-3 22:
+ * @modified 2014-6-4 10:08
  * 
  * Function depends on
  *		JQUERY
  * 
- * @method UI.pop
- * 	@param {Object} param the main paramter
- * 	@param {String} param.title 弹框标题
- * 	@param {String} param.html 弹框内容
- * 	@param {String} [param.width] 弹框宽度
- * 	@param {String} [param.height] 弹框高度
- * 	@param {String} [param.top] 弹框与页面顶部距离
- * 	@param {String} [param.left] 弹框与页面左侧距离
- * 	@param {String} [param.mask] 是否显示蒙层
- * 	@param {Function} [param.closeFn] 弹框关闭时的回调
- * 	@param {Function} [param.closeFn]
- * 	@param {Object|Function} [param.confirm] 使用对话方式（详细定义或只定义回调）
- * 	@param {Array} [param.confirm.btns] 按钮自定义名称
- * 	@param {Array} [param.confirm.callback] 确定时的回调方法
- * 
- * 	@returns {Object} pop
- * 	@returns {String} pop.title 弹框标题
- * 	@returns {Object} pop.dom 弹框所属DOM
- * 	@returns {Object} pop.cntDom 弹框内容部分DOM
- * 	@returns {Function} pop.close 关闭弹框的方法
- * 	@returns {Function} pop.closeFn 弹框关闭时的回调
- * 	@example 
- * 	UI.pop({
- * 	  	'width' : 300,
- * 		'confirm' : function(){
- *       	alert(1);
- *   		}
- * 	});	
- *		UI.pop({
- * 		'title' : '我的弹框',
- * 	  	'width' : 300,
- * 		'confirm' : {
- *   	 		'btns' : ['好的','不干'],
- *    		'callback' : function(){
- *       		alert(1);
- *     		}
- *   		}
- * 	});
- 
- * @method UI.pop.config.gap 为pop弹框配置页面显示边界
- * 	@param {String} name 设置边界名（top/right/bottom/left）
- * 	@param {Number} vlue 设置边界尺寸
- * 
- * @method UI.confirm
- * 	@param {Object} param the main paramter
- * 	@param {String} param.text 提示内容
- * 	@param {Function} [param.closeFn] 关闭时的回调
- * 	@param {Function} [param.closeFn]
- * 	@param {Array} [param.btns] 按钮自定义名称
- * 	@param {Array} [param.callback] 确定时的回调方法
- * 
- * 	@returns {Object} confirm
- * 	@returns {Object} confirm.dom 弹框所属DOM
- * 	@returns {Function} confirm.close 关闭弹框的方法
- * 	@returns {Function} confirm.closeFn 弹框关闭时的回调
- * 
- * @method UI.ask
- * 	@param {String} text 标题
- * 	@param {String} callback 回调
- * 
- * 	@returns {Object} ask
- * 	@returns {Object} ask.dom prompt所属DOM
- * 	@returns {Function} ask.close 关闭
- * 
- * @method UI.plane
- * 	@param {Object} param the main paramter
- * 	@param {String} param.html
- * 	@param {String} [param.width]
- * 	@param {String} [param.height]
- * 	@param {String} [param.top]
- * 	@param {String} [param.left]
- * 	@param {Function} [param.closeFn]
- * 
- * 	@returns {Object} plane
- * 	@returns {Object} plane.dom
- * 	@returns {Function} plane.closeFn
- * 
- * @method UI.prompt
- * 	@param {String} text
- * 	@param {String|Number} [time] 默认为1300ms，0为不自动关闭
- * 
- * 	@returns {Object} prompt
- * 	@returns {Object} prompt.dom prompt所属DOM
- * 	@returns {Function} prompt.tips 为prompt设置内容
- * 	@returns {Function} confirm.close 关闭prompt
- * 
- * 	@example 
- * 	//默认时间
- * 		P.prompt('操作失败');
- * 	//指定时间
- * 		P.prompt('操作失败',2400);
- * 	//主动控制
- * 		var a = P.prompt('正在发送',0);
- * 		a.tips('发送成功');
- * 		a.close()
  * 
  **/
 
@@ -454,8 +359,7 @@ window.UI = window.UI || {};
 	function POP(param){
 		var param = param || {};
 		var this_pop = this;
-
-		this.title = param['title'] || '\u8BF7\u8F93\u5165\u6807\u9898';
+		
 		this.dom = $(pop_tpl);
 		this.cntDom = this.dom.find('.pro_pop_cnt');
 		this.closeFn = param['closeFn'] || null;
@@ -493,20 +397,27 @@ window.UI = window.UI || {};
 				this_pop.close();
 			});
 		}
+		//处理title参数
+		if(param['title'] == false){
+			this.dom.find('.pro_pop_cpt').remove();
+		}else{
+			var title = param['title'] || '\u8BF7\u8F93\u5165\u6807\u9898';
+			this.dom.find('.pro_pop_cpt').html(title);
+			//can drag is pop
+			UI.drag(this.dom.find('.pro_pop_cpt'),this.dom,{
+				'move' : function(dx,dy,l_start,t_start,w_start,h_start){
+					var top = dy + t_start;
+					var left = dx + l_start;
+					var newSize = fix_position(top,left,w_start,h_start);
+					this_pop.dom.css({
+						'left' : newSize.left,
+						'top' : newSize.top
+					});
+				}
+			});
+		}
 
 
-		//can drag is pop
-		UI.drag(this.dom.find('.pro_pop_cpt'),this.dom,{
-			'move' : function(dx,dy,l_start,t_start,w_start,h_start){
-				var top = dy + t_start;
-				var left = dx + l_start;
-				var newSize = fix_position(top,left,w_start,h_start);
-				this_pop.dom.css({
-					'left' : newSize.left,
-					'top' : newSize.top
-				});
-			}
-		});
 		//insert html
 		this.cntDom.prepend(this_html);
 		
@@ -524,7 +435,7 @@ window.UI = window.UI || {};
 			'top' : top
 		}).on('click','.pro_pop_close',function(){
 			this_pop.close();
-		}).find('.pro_pop_cpt').html(this.title);
+		});
 		if(this._mask){
 			private_maskCount++
 			if(private_maskCount==1){
