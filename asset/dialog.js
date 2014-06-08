@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2014-6-8 17:43
+ * @modified 2014-6-9 00:41
  * 
  * Function depends on
  *		JQUERY
@@ -105,6 +105,12 @@
 		'.pro_coverCnt{position:relative;width:100%;height:100%;background:#fff;}',
 		'.pro_coverClose{display:block;position:absolute;top:50%;left:0px;width:20px;height:60px;padding-left:5px;text-align:center;line-height:60px;color:#ddd;font-family:"Simsun";font-size:30px;background:#555;}',
 		'.pro_coverClose:hover{background-color:#333;color:#fff;text-decoration:none;}',
+		'@media screen and (max-width: 460px){',
+			'.pro_confirm{width:100%;width:100%;height:300px;left:0px;border-radius:0px;box-shadow:0px 0px 5px rgba(0,0,0,0.8);}',
+			'.pro_confirm .pro_pop_confirm{position:absolute;width:100%;bottom:0px;padding:10px 0px 30px}',
+			'.pro_confirm a{display:block;height:40px;line-height:40px;border-radius:8px;margin:0px 20px;font-size:16px}',
+			'.pro_confirm  a.pro_pop_confirm_ok{margin-bottom:20px;}',
+		'}',
 	'</style>'].join('');
 	var isIE67 = false;
 	if(navigator.appName == "Microsoft Internet Explorer"){
@@ -487,14 +493,20 @@
 			this_pop.close();
 		});
 
-		//
-		var newPosition = adaption(300,160);
-		// create pop
-		this.dom.css({
-			'width' : 300,
-			'left' : newPosition.clientLeft,
-			'top' : newPosition.clientTop
-		});
+		if(private_winW > 460){
+			var newPosition = adaption(300,160);
+			// create pop
+			this.dom.css({
+				'width' : 300,
+				'left' : newPosition.clientLeft,
+				'top' : newPosition.clientTop
+			});
+		}else{
+			// create pop
+			this.dom.css({
+				'top' : private_winH - 300
+			});
+		}
 		//显示蒙层
 		showMask();
 		private_fixedScreenDom.append(this.dom);
