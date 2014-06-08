@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2014-6-4 10:08
+ * @modified 2014-6-8 17:43
  * 
  * Function depends on
  *		JQUERY
@@ -10,8 +10,26 @@
  * 
  **/
 
-window.UI = window.UI || {};
-(function(exports){
+(function(global,doc,$,factoryFn){
+	//初始化工具
+	var factory = factoryFn(global,doc,$);
+	
+	//提供window.UI的接口
+	global.UI = global.UI || {};
+	global.UI.ask = factory.ask;
+	global.UI.pop = factory.pop;
+	global.UI.miniChat = factory.miniChat;
+	global.UI.confirm = factory.confirm;
+	global.UI.prompt = factory.prompt;
+	global.UI.plane = factory.plane;
+	global.UI.cover = factory.cover;
+	global.UI.drag = factory.drag;
+	
+	//提供CommonJS规范的接口
+	global.define && define(function(){
+		return factory;
+	});
+})(this,document,$,function(window,document,$){
 	var allCnt = ['<div class="pop_lawyer">',
 		'<div class="pop_mask"></div>',
 		'<div class="pop_main_cnt"></div>',
@@ -55,7 +73,7 @@ window.UI = window.UI || {};
 		//基础框架
 		'.pop_lawyer{position:absolute;top:0px;left:0px;z-index:4999;width:100%;height:0px;overflow:visible;font-family:"Microsoft Yahei"}',
 		'.pop_lawyer a{text-decoration:none}',
-		'.pop_mask{position:absolute;top:0px;left:0px;width:100%;background:#000;display:none;opacity:0.2}',
+		'.pop_mask{position:absolute;top:0px;left:0px;width:100%;background-color:#000;display:none;opacity:0.2}',
 		'.pop_main_cnt{width:0px;height:0px;overflow:visible;}',
 		'.pop_fixedScreen_cnt{position:absolute;top:0px;left:0px;width:100%;height:0px;overflow:visible;}',
 		//各模块样式
@@ -95,18 +113,17 @@ window.UI = window.UI || {};
 			isIE67 = true; 
 		}
 	}
-	var DOM = $(allCnt);
 
 	/**
-	 * 
-	 * define private variables
+	 * 定义私有变量
 	 * 
 	 **/ 
-	var private_body = $('html,body'),
-		 private_maskDom = DOM.find('.pop_mask'),
-		 private_mainDom = DOM.find('.pop_main_cnt'),
+	var private_allCnt = $(allCnt),
+		 private_body = $('html,body'),
+		 private_maskDom = private_allCnt.find('.pop_mask'),
+		 private_mainDom = private_allCnt.find('.pop_main_cnt'),
 		 private_isSupportTouch = "ontouchend" in document ? true : false,
-		 private_fixedScreenDom = DOM.find('.pop_fixedScreen_cnt'),
+		 private_fixedScreenDom = private_allCnt.find('.pop_fixedScreen_cnt'),
 		 private_win = $(window),
 		 private_winW,
 		 private_winH,
@@ -133,7 +150,7 @@ window.UI = window.UI || {};
 		private_docH = private_doc.height();
 	}
 	$('head').append(popCSS);
-	$('body').append(DOM);
+	$('body').append(private_allCnt);
 
 	//更新窗口尺寸
 	$(function(){
@@ -322,7 +339,17 @@ window.UI = window.UI || {};
 		});
 
 	}
-
+	
+	/**
+	 * 显示蒙层 
+	 */
+	function showMask(){
+		private_maskCount++
+		if(private_maskCount==1){
+	//		private_maskDom.fadeIn(80);
+			private_maskDom.show();
+		}
+	}
 	/**
 	 * 公用关闭方法
 	 *  
@@ -352,7 +379,7 @@ window.UI = window.UI || {};
 			}
 		}
 	}
-	/***
+	/**
 	 * 弹框
 	 * pop 
 	 */
@@ -376,21 +403,7 @@ window.UI = window.UI || {};
 				'height' : this_height-41
 			});
 		}
-		/*	
-		if(this_height){
-			this.onScrollToEnd = null;
-			this.cntDom.css({
-				'height' : this_height
-			}).html('<div class="UI_scroll_body"></div>');
-			var scrollbar = UI.scrollBar(this.cntDom);
-			scrollbar.onScroll = function(gap){
-				if(gap.bottom<20 && this_pop.onScrollToEnd){
-					this_pop.onScrollToEnd && this_pop.onScrollToEnd();
-				}
-			};
-			this.cntDom = this.cntDom.find('.UI_scroll_body');
-		}
-		*/
+
 		//当有确认参数时
 		if(param['confirm']){
 			add_confirm(this.dom,param['confirm'],function(){
@@ -437,29 +450,10 @@ window.UI = window.UI || {};
 			this_pop.close();
 		});
 		if(this._mask){
-			private_maskCount++
-			if(private_maskCount==1){
-				private_maskDom.fadeIn(80);
-			}
+			showMask();
 		}
 		
 	}
-	POP.config = {
-		'gap' : function(name,value){
-			if(name && name.match(/(top|right|bottom|left)/)){
-				if(parseInt(value)){
-					private_CONFIG.gap[name] = value;
-				}
-			}
-		},
-		'zIndex' : function(num){
-			var num = parseInt(num);
-			if(num > 0){
-				private_CONFIG.zIndex = num;
-				DOM.css('zIndex',num);
-			}
-		}
-	};
 	//使用close方法
 	POP.prototype['close'] = CLOSEMETHOD;
 	POP.prototype['adapt'] = function(){
@@ -475,7 +469,7 @@ window.UI = window.UI || {};
 		},100);
 	};
 
-	/***
+	/**
 	 * CONFIRM 
 	 */
 	function CONFIRM(param){
@@ -501,17 +495,14 @@ window.UI = window.UI || {};
 			'left' : newPosition.clientLeft,
 			'top' : newPosition.clientTop
 		});
-
-		private_maskCount++
-		if(private_maskCount==1){
-			private_maskDom.fadeIn(80);
-		}
+		//显示蒙层
+		showMask();
 		private_fixedScreenDom.append(this.dom);
 	}
 	CONFIRM.prototype['close'] = CLOSEMETHOD
 
 
-	/***
+	/**
 	 * ASK 
 	 */
 	function ASK(text,callback){
@@ -643,10 +634,10 @@ window.UI = window.UI || {};
 	
 	if(private_isSupportTouch){
 		//移动端使用touch
-		var DOM = private_doc[0];
-		DOM.addEventListener('touchstart',checkClick);
-		DOM.addEventListener('MSPointerDown',checkClick);
-		DOM.addEventListener('pointerdown',checkClick);
+		var doc = private_doc[0];
+		doc.addEventListener('touchstart',checkClick);
+		doc.addEventListener('MSPointerDown',checkClick);
+		doc.addEventListener('pointerdown',checkClick);
 	}else{
 		//PC鼠标事件
 		private_doc.on('mousedown',checkClick);
@@ -750,12 +741,12 @@ window.UI = window.UI || {};
 	}
 	//使用close方法
 	COVER.prototype['close'] = function(){
-		var DOM = this.dom;
+		var dom_all = this.dom;
 		this.closeDom.fadeOut(100);
 		this.cntDom.animate({
 			'left' : private_winW
 		},400, function(){
-			DOM.remove();
+			dom_all.remove();
 		});
 	};
 
@@ -764,276 +755,44 @@ window.UI = window.UI || {};
 	/**
 	 *  抛出对外接口
 	 */
-	exports.pop = function(){
-		return new POP(arguments[0]);
-	};
-	exports.pop.config = POP.config;
-	exports.miniChat = function(){
-		return new miniChat(arguments[0]);
-	};
-	exports.confirm = function(){
-		return new CONFIRM(arguments[0]);
-	};
-	exports.ask = function(text,callback){
-		return new ASK(text,callback);
-	};
-	exports.prompt = function(txt,time){
-		return new prompt(txt,time);
-	};
-	exports.plane = function(){
-		return new PLANE(arguments[0]);
-	};
-	exports.cover = function(){
-		return new COVER(arguments[0]);
-	};
-	exports.drag = drag;
-})(UI);
-
-/**
- *	UI.scrollBar();
- *
- **/
-(function(exports){
-	var scrollBar_css = ['<style type="text/css" data-module="UI_scrollBar">',
-		'@font-face {',
-			'font-family:"UI";',
-			'src:url("/js/api/UI/images/ui-webfont.eot");',
-			'src:url("/js/api/UI/images/ui-webfont.eot?#iefix") format("embedded-opentype"),',
-			'url("/js/api/UI/images/ui-webfont.woff") format("woff"),',
-			'url("/js/api/UI/images/ui-webfont.ttf")  format("truetype"),',
-			'url("/js/api/UI/images/ui-webfont.svg#icon") format("svg");',
-			'font-weight: normal;',
-			'font-style: normal;',
-		'}',
-		'.UI_scroll_body{position:relative;width:100%;height:100%;overflow-y:scroll;}',
-		'.UI_scrollBar_module{position:absolute;top:0px;right:0px;width:10px;height:100%;background:#fff;}',
-		'.UI_scrollBar_cnt{top:15px;bottom:15px;position:absolute;width:100%;background:#eee;}',
-		'.UI_scrollBar{position:absolute;top:10px;right:0px;width:100%;height:20px;border-radius:4px;background:#ccc;}',
-		'.UI_scrollBar_up,.UI_scrollBar_down{position:absolute;width:100%;height:15px;right:0px;line-height:15px;text-align:center;color:#888;font-size:14px;font-family:"UI";background:#fff;}',
-		'.UI_scrollBar_up{top:0px;}',
-		'.UI_scrollBar_down{bottom:0px;}',
-		'.UI_scrollBar_module a:hover{text-decoration:none;background:#aaa;color:#444;}',
-		'.UI_scrollBar_module a:active{background:#666;}',
-	'</style>'].join('');
-	var scrollBar_tpl = ['<div class="UI_scrollBar_module">',
-		'<a href="javascript:void(0)" class="UI_scrollBar_up">u</a>',
-		'<div class="UI_scrollBar_cnt">',
-			'<a href="javascript:void(0)" class="UI_scrollBar"></a>',
-		'</div>',
-		'<a href="javascript:void(0)" class="UI_scrollBar_down">d</a>',
-	'</div>'].join('');
-	$(function(){
-		$('head').append(scrollBar_css);
-	});
-	//注册滚轮事件
-	function scroll(dom,mouse){
-		if(document.addEventListener){
-			dom.addEventListener('DOMMouseScroll',mouse,false);
-		}
-		dom.onmousewheel=mouse;
-
-	}
-	function handuleAnimate(dom,is){
-		is = is || {};
-		var right,time,delayTime;
-		if(is.draging){
-			return
-		}
-
-		if(is.hoverCnt && is.fromOut){
-			right = 0;
-			time = 40;
-			delayTime = 0;
-			if(is.hoverBar){
-			}
-		}else if(is.hoverBar){
-			right = 0;
-			time = 80;
-			delayTime = 80;
-		}else if(is.hoverCnt){
-			right = 0;
-			time = 200;
-			delayTime = 600;
-		}else{
-			right = -10;
-			time = 300;
-			delayTime = 600;
-		}
-
-		clearTimeout(is.delay);
-		is.delay = setTimeout(function(){
-			dom.stop().animate({
-				'right' : right
-			},time);
-		},delayTime);
-	}
-	function initScroll(){
-		var this_scroll = this;
-		var IS = {
-			'fromOut' : false,
-			'draging' : false,
-			'hoverBar' : false,
-			'hoverCnt' : false,
-			'delay' : 0
-		};
-		if(this.dom['origin'].css('position') == 'static'){
-			this.dom['origin'].css({'position' : 'relative'});
-		}
-		//鼠标经过滚动条
-		this_scroll.dom['all'].on('mouseenter',function(){
-			IS.fromOut = false;
-			IS.hoverBar = true;
-			handuleAnimate(this_scroll.dom['all'],IS);
-		}).on('mouseleave',function(){
-			IS.fromOut = false;
-			IS.hoverBar = false;
-			handuleAnimate(this_scroll.dom['all'],IS);
-		});
-		//鼠标经过大框框、点击上下滚动
-		this.dom['origin'].on('mouseenter',function(){
-			IS.fromOut = true;
-			IS.hoverCnt = true;
-			handuleAnimate(this_scroll.dom['all'],IS);
-		}).on('mouseleave',function(){
-			IS.fromOut = false;
-			IS.hoverCnt = false;
-			handuleAnimate(this_scroll.dom['all'],IS);
-		}).on('click','.UI_scrollBar_down',function(){
-			this_scroll.downward();
-		}).on('click','.UI_scrollBar_up',function(){
-			this_scroll.upward();
-		});
-
-		//监听鼠标滚动
-		scroll(this.dom['origin'][0],function(){
-			//console.log('mouse is scrolling!');
-			this_scroll.fix_scrollBar();
-		});
-		//滚动时，判断滚动到的位置,触发回调
-		var scrollDelay;
-		this.dom['body'].on('scroll',function(){
-			clearTimeout(scrollDelay);
-			scrollDelay = setTimeout(function(){
-				if(this_scroll.onScroll){
-					var top = parseInt(this_scroll['origin'].scrollTop);
-					var bottom = parseInt(this_scroll['origin'].totalH - this_scroll['origin'].scrollTop - this_scroll['origin'].height);
-					this_scroll.onScroll({
-						'top' : top,
-						'bottom' : bottom
-					});
+	return {
+		'pop' : function(){
+			return new POP(arguments[0]);
+		},
+		'config' : {
+			'gap' : function(name,value){
+				if(name && name.match(/(top|right|bottom|left)/)){
+					if(parseInt(value)){
+						private_CONFIG.gap[name] = value;
+					}
 				}
-			},100);
-		});
-
-		//定时刷新滚动条（内部高度可能会自动变化）
-		setInterval(function(){
-			this_scroll.fix_scrollBar();
-		},1200);
-		//拖动触发滚动
-		UI.drag(this.dom['bar'],this.dom['bar'],{
-			'start' : function(){
-				IS.draging = true;
 			},
-			'move' : function(dx,dy,l_start,t_start,w_start,h_start){
-				var top = dy + t_start;
-				this_scroll.fix_content(top);
-			},
-			'end' : function(){
-				IS.draging = false;
-				handuleAnimate(this_scroll.dom['all'],IS);
+			'zIndex' : function(num){
+				var num = parseInt(num);
+				if(num > 0){
+					private_CONFIG.zIndex = num;
+					private_allCnt.css('zIndex',num);
+				}
 			}
-		});
-
-		this.dom['origin'].append(this.dom['all']);
-		this_scroll.dom['all'].css('right', -10);
-		//hide default scroll bar
-		setTimeout(function(){
-			//console.log(1,this_scroll.dom['body'].width(),this_scroll.dom['body'][0].clientWidth);
-			this_scroll.dom['body'].css({
-				'width' : this_scroll.dom['body'].width()*2 - this_scroll.dom['body'][0].clientWidth
-			});
-		},100);
-	}
-	function scrollBar(cnt_dom){
-		if(typeof(cnt_dom) != 'object'){
-			return
-		}
-		if(cnt_dom.find('.UI_scroll_body').length == 0){
-			return
-		} 
-		this.dom = {};
-		this.dom['origin'] = cnt_dom;
-		this.dom['body'] = this.dom['origin'].find('.UI_scroll_body')
-		this.dom['all'] = $(scrollBar_tpl);
-		this.dom['bar'] = this.dom['all'].find('.UI_scrollBar');
-		this.onScroll = null;
-
-		this.origin = {
-			'scrollTop' : 0,
-			'height' : 0,
-			'totalH' : 0
-		};
-		this.bar = {
-			'top' : 0,
-			'height' : 0,
-			'totalH' : 0
-		};
-		initScroll.call(this);
-	}
-	scrollBar.prototype = {
-		'fix_scrollBar' : function(){
-			//刷新目标对象的尺寸位置
-			this.origin.totalH = this.dom['body'][0].scrollHeight;
-			this.origin.height = this.dom['origin'].height();
-			this.origin.scrollTop = this.dom['body'].scrollTop();
-			//计算滚动条尺寸及位置
-			this.bar.totalH = this.origin.height-30;
-			this.bar.top = (this.origin.scrollTop/this.origin.totalH)*this.bar.totalH;
-			this.bar.height = (this.origin.height/this.origin.totalH)*this.bar.totalH;
-			//设置滚动条
-			this.dom['bar'].stop().animate({
-				'top' : this.bar.top,
-				'height' : this.bar.height
-			},80);
 		},
-		'fix_content' : function(top){
-			if(top < 0){
-				this.bar.top = 0;
-			}else if(top > this.bar.totalH - this.bar.height){
-				this.bar.top = this.bar.totalH - this.bar.height;
-			}else{
-				this.bar.top = top;
-			}
-			this.dom['bar'].css({
-				'top' : this.bar.top
-			});
-			this.origin.scrollTop = this.bar.top/this.bar.totalH * this.origin.totalH;
-			this.dom['body'].scrollTop(this.origin.scrollTop);
+		'miniChat' : function(){
+			return new miniChat(arguments[0]);
 		},
-		'downward' : function(){
-			var top = this.bar.top + 10;
-			this.fix_content(top);
+		'confirm' : function(){
+			return new CONFIRM(arguments[0]);
 		},
-		'upward' : function(){
-			var top = this.bar.top - 10;
-			this.fix_content(top);
-		}
+		'ask' : function(text,callback){
+			return new ASK(text,callback);
+		},
+		'prompt' : function(txt,time){
+			return new prompt(txt,time);
+		},
+		'plane' : function(){
+			return new PLANE(arguments[0]);
+		},
+		'cover' : function(){
+			return new COVER(arguments[0]);
+		},
+		'drag' : drag
 	};
-
-	exports.scrollBar = function(dom){
-		return new scrollBar(dom);
-	};
-})(window.UI);
-
-//提供CommonJS规范的接口
-window.define && define(function(require,exports,module){
-	//对外接口
-	exports.ask = window.UI.ask;
-	exports.pop = window.UI.pop;
-	exports.miniChat = window.UI.miniChat;
-	exports.confirm = window.UI.confirm;
-	exports.prompt = window.UI.prompt;
-	exports.plane = window.UI.plane;
-	exports.cover = window.UI.cover;
-	exports.drag = window.UI.drag;
 });
