@@ -30,7 +30,7 @@
 ##1.5、关于作者
 
 ```javascript
-  var ihubo = {
+  var bh_lay = {
     nickName  : "剧中人",
     site : "http://bh-lay.com/"
   }
@@ -38,10 +38,26 @@
 
 #二、使用
 
-## 2.0 基本配置 UI.pop.config.gap
- 为pop弹框配置页面显示的边界，可用在弹框展开时与拖动处理时限定自身位置。
+## 2.0 基本配置
 
-## 传入参数
+### 2.0.1 UI.config.gap
+为pop弹框配置页面显示的边界，可用在弹框展开时与拖动处理时限定自身位置。
+ 
+ * @param {String} name 设置边界名（top/right/bottom/left）
+ * @param {Number} vlue 设置边界尺寸
+
+### 2.0.2 UI.config.zIndex
+全局设置弹框交互在页面中的层级
+
+###demo
+```javascript
+//设置边界
+UI.config.gap('top',100);
+//设置层级
+UI.config.zIndex(5000);
+```
+
+### 传入参数
 
  * @param {String} name 设置边界名（top/right/bottom/left）
  * @param {Number} vlue 设置边界尺寸
