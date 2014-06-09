@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2014-6-9 00:41
+ * @modified 2014-6-9 10:36
  * 
  * Function depends on
  *		JQUERY
