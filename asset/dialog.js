@@ -33,7 +33,8 @@
 	var allCnt = ['<div class="pop_lawyer">',
 		'<div class="pop_mask"></div>',
 		'<div class="pop_main_cnt"></div>',
-		'<div class="pop_fixedScreen_cnt"></div>',
+		'<div class="pop_fixedScreenTop_cnt"></div>',
+		'<div class="pop_fixedScreenBottom_cnt"></div>',
 	'</div>'].join('');
 	var pop_tpl = ['<div class="pro_pop">',
 		'<div class="pro_pop_cpt"></div>',
@@ -75,7 +76,8 @@
 		'.pop_lawyer a{text-decoration:none}',
 		'.pop_mask{position:absolute;top:0px;left:0px;width:100%;background-color:#000;display:none;opacity:0.2}',
 		'.pop_main_cnt{width:0px;height:0px;overflow:visible;}',
-		'.pop_fixedScreen_cnt{position:absolute;top:0px;left:0px;width:100%;height:0px;overflow:visible;}',
+		'.pop_fixedScreenTop_cnt{position:absolute;top:0px;left:0px;width:100%;height:0px;overflow:visible;}',
+		'.pop_fixedScreenBottom_cnt{position:absolute;left:0px;width:100%;height:0px;overflow:visible;}',
 		//各模块样式
 		'.pro_pop{width:200px;_border:1px solid #eee;position:absolute;top:400px;left:300px;',
 			'background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}',
@@ -102,14 +104,14 @@
 		'.pro_prompt{width:240px;position:absolute;padding:30px 10px;box-sizing:content-box;background:#fff;_border:1px solid #fafafa;border-radius:4px;box-shadow:2px 2px 10px rgba(0,0,0,0.5);}',
 		'.pro_cnt{font-size:18px;color:#222;text-align:center;}',
 		'.pro_cover{position:absolute;top:0px;left:0px;width:100%;height:100px;}',
-		'.pro_coverCnt{position:relative;width:100%;height:100%;background:#fff;}',
-		'.pro_coverClose{display:block;position:absolute;top:50%;left:0px;width:20px;height:60px;padding-left:5px;text-align:center;line-height:60px;color:#ddd;font-family:"Simsun";font-size:30px;background:#555;}',
+		'.pro_coverCnt{position:relative;width:100%;height:100%;background:#fff;}',	'.pro_coverClose{display:block;position:absolute;top:50%;left:0px;width:20px;height:60px;padding-left:5px;text-align:center;line-height:60px;color:#ddd;font-family:"Simsun";font-size:30px;background:#555;}',
 		'.pro_coverClose:hover{background-color:#333;color:#fff;text-decoration:none;}',
 		'@media screen and (max-width: 460px){',
-			'.pro_confirm{width:100%;width:100%;height:300px;left:0px;border-radius:0px;box-shadow:0px 0px 5px rgba(0,0,0,0.8);}',
-			'.pro_confirm .pro_pop_confirm{position:absolute;width:100%;bottom:0px;padding:10px 0px 30px}',
-			'.pro_confirm a{display:block;height:40px;line-height:40px;border-radius:8px;margin:0px 20px;font-size:16px}',
-			'.pro_confirm  a.pro_pop_confirm_ok{margin-bottom:20px;}',
+			'.pro_confirm{width:100%;width:100%;left:0px;bottom:0;border-radius:0px;box-shadow:0px 0px 5px rgba(0,0,0,0.8);}',
+			'.pro_confirm_text{padding:50px 10px;font-size:18px}',
+			'.pro_confirm .pro_pop_confirm{width:100%;padding:10px 0px 30px}',
+			'.pro_confirm a{display:block;height:40px;line-height:40px;border-radius:22px;margin:0px 20px;font-size:16px}',
+			'.pro_confirm  a.pro_pop_confirm_ok{margin-bottom:15px;}',
 		'}',
 	'</style>'].join('');
 	var isIE67 = false;
@@ -129,7 +131,8 @@
 		 private_maskDom = private_allCnt.find('.pop_mask'),
 		 private_mainDom = private_allCnt.find('.pop_main_cnt'),
 		 private_isSupportTouch = "ontouchend" in document ? true : false,
-		 private_fixedScreenDom = private_allCnt.find('.pop_fixedScreen_cnt'),
+		 private_fixedScreenTopDom = private_allCnt.find('.pop_fixedScreenTop_cnt'),
+		 private_fixedScreenBottomDom = private_allCnt.find('.pop_fixedScreenBottom_cnt'),
 		 private_win = $(window),
 		 private_winW,
 		 private_winH,
@@ -159,6 +162,7 @@
 	$('body').append(private_allCnt);
 
 	//更新窗口尺寸
+	countSize();
 	$(function(){
 		countSize();
 		setTimeout(countSize,500);
@@ -168,15 +172,22 @@
 	 */ 
 	if(isIE67){
 		private_maskDom.css({
-			'position' : 'absolute',
-			'height' : private_winH,
-			'top' : 0
+			'height' : private_docH
+		});
+		private_fixedScreenTopDom.css({
+			'top' : private_scrollTop
+		});
+		private_fixedScreenBottomDom.css({
+			'top' : private_scrollTop + private_winH
 		});
 		private_win.on('resize scroll',function(){
 			//更新窗口尺寸
 			countSize();
-			private_fixedScreenDom.animate({
+			private_fixedScreenTopDom.animate({
 				'top' : private_scrollTop
+			},100);
+			private_fixedScreenBottomDom.animate({
+				'top' : private_scrollTop + private_winH
 			},100);
 			private_maskDom.css({
 				'top' : private_scrollTop,
@@ -184,20 +195,22 @@
 			});
 		});
 	}else{
-		private_fixedScreenDom.css({
+		private_fixedScreenTopDom.css({
 			'position' : 'fixed',
 			'top' : 0
 		});
-		private_maskDom.css({
+		private_fixedScreenBottomDom.css({
 			'position' : 'fixed',
-			'height' : private_winH,
-			'top' : 0
+			'bottom' : 0
+		});
+		private_maskDom.css({
+			'height' : private_docH
 		});
 		private_win.on('resize scroll',function(){
 			//更新窗口尺寸
 			countSize();
 			private_maskDom.css({
-				'height' : private_winH
+				'height' : private_docH
 			});
 		});
 	}
@@ -234,7 +247,7 @@
 				'left' : 0,
 				'cursor' : handle_dom.css('cursor')
 			});
-			private_fixedScreenDom.append(dragMask);
+			private_fixedScreenTopDom.append(dragMask);
 			start&&start();
 		}
 		function move(e){
@@ -352,8 +365,10 @@
 	function showMask(){
 		private_maskCount++
 		if(private_maskCount==1){
-	//		private_maskDom.fadeIn(80);
-			private_maskDom.show();
+			private_maskDom.fadeIn(200,function(){
+				private_maskDom.show();
+			});
+			
 		}
 	}
 	/**
@@ -489,11 +504,12 @@
 		this.dom = $(this_html);
 		this.closeFn = param['closeFn'] || null;
 
-		add_confirm(this.dom,param,function(){
-			this_pop.close();
-		});
-
+		//显示蒙层
+		showMask();
 		if(private_winW > 460){
+			add_confirm(this.dom,param,function(){
+				this_pop.close();
+			});
 			var newPosition = adaption(300,160);
 			// create pop
 			this.dom.css({
@@ -501,15 +517,18 @@
 				'left' : newPosition.clientLeft,
 				'top' : newPosition.clientTop
 			});
+			private_fixedScreenTopDom.append(this.dom);
 		}else{
-			// create pop
-			this.dom.css({
-				'top' : private_winH - 300
+			add_confirm(this.dom,param,function(){
+				this_pop.close('slide',100);
 			});
+			this.dom.css('bottom',-500);
+			// create pop
+			private_fixedScreenBottomDom.append(this.dom);
+			this.dom.animate({
+				'bottom' : 0
+			},200);
 		}
-		//显示蒙层
-		showMask();
-		private_fixedScreenDom.append(this.dom);
 	}
 	CONFIRM.prototype['close'] = CLOSEMETHOD
 
@@ -558,7 +577,7 @@
 			'top' : newPosition.clientTop
 		});
 
-		private_fixedScreenDom.append(this.dom);
+		private_fixedScreenTopDom.append(this.dom);
 	}
 	ASK.prototype['close'] = CLOSEMETHOD;
 	ASK.prototype['setValue'] = function(text){
@@ -587,7 +606,7 @@
 			'top' : newPosition.clientTop
 		});
 		//console.log(private_winH,12);
-		private_fixedScreenDom.append(this.dom);
+		private_fixedScreenTopDom.append(this.dom);
 		if(time != 0){
 			this_prompt.close(time);
 		}
@@ -749,7 +768,7 @@
 		},200,function(){
 			this_cover.closeDom.fadeIn(100);
 		});
-		private_fixedScreenDom.append(this.dom);
+		private_fixedScreenTopDom.append(this.dom);
 	}
 	//使用close方法
 	COVER.prototype['close'] = function(){
