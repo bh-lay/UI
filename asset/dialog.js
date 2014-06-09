@@ -76,8 +76,8 @@
 		'.pop_lawyer a{text-decoration:none}',
 		'.pop_mask{position:absolute;top:0px;left:0px;width:100%;background-color:#000;display:none;opacity:0.2}',
 		'.pop_main_cnt{width:0px;height:0px;overflow:visible;}',
-		'.pop_fixedScreenTop_cnt{position:absolute;top:0px;left:0px;width:100%;height:0px;overflow:visible;}',
-		'.pop_fixedScreenBottom_cnt{position:absolute;left:0px;width:100%;height:0px;overflow:visible;}',
+		'.pop_fixedScreenTop_cnt{position:absolute;z-index:4999;top:0px;left:0px;width:100%;height:0px;overflow:visible;}',
+		'.pop_fixedScreenBottom_cnt{position:absolute;z-index:4999;left:0px;width:100%;height:0px;overflow:visible;}',
 		//各模块样式
 		'.pro_pop{width:200px;_border:1px solid #eee;position:absolute;top:400px;left:300px;',
 			'background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}',
@@ -803,6 +803,8 @@
 				if(num > 0){
 					private_CONFIG.zIndex = num;
 					private_allCnt.css('zIndex',num);
+					private_fixedScreenBottomDom('zIndex',num);
+					private_fixedScreenTopDom('zIndex',num);
 				}
 			}
 		},
