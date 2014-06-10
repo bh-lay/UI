@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2014-6-10 18:07
+ * @modified 2014-6-10 20:46
  * 
  * Function depends on
  *		JQUERY
@@ -73,13 +73,13 @@
 	
 	var select_tpl = ['<div class="UI_select">',
 		'<div class="UI_selectCnt">{list}</div>',
-		'<div class="UI_selectCancel"><a href="javascript:void(0)">取消</a></div>',
+		'<div class="UI_selectCancel"><a href="javascript:void(0)" data-index="-1">取消</a></div>',
 	'</div>'].join('');
-
+	
 	var popCSS = ['<style type="text/css" data-module="UI-pop-prompt-plane">',
 		//基础框架
 		'.UI_lawyer{position:absolute;top:0px;left:0px;z-index:4999;width:100%;height:0px;overflow:visible;font-family:"Microsoft Yahei"}',
-		'.UI_lawyer a{text-decoration:none}',
+		'.UI_lawyer a,.UI_lawyer a:hover{text-decoration:none;-webkit-tap-highlight-color: rgba(0,0,0,0);-webkit-tap-highlight-color: transparent;}',
 		'.UI_mask{position:absolute;top:0px;left:0px;width:100%;background-color:#000;display:none;opacity:0.2}',
 		'.UI_main_cnt{width:0px;height:0px;overflow:visible;}',
 		'.UI_fixedScreenTop_cnt{position:absolute;z-index:4999;top:0px;left:0px;width:100%;height:0px;overflow:visible;}',
@@ -113,17 +113,18 @@
 		'.UI_coverCnt{position:relative;width:100%;height:100%;background:#fff;}',
 		'.UI_coverClose{display:block;position:absolute;top:50%;left:0px;width:20px;height:60px;padding-left:5px;text-align:center;line-height:60px;color:#ddd;font-family:"Simsun";font-size:30px;background:#555;}',
 		'.UI_coverClose:hover{background-color:#333;color:#fff;text-decoration:none;}',
-		'.UI_select{position:absolute;width:100%;bottom:0px;padding-bottom:20px;}',
-		'.UI_select a{display:block;height:35px;line-height:35px;border-radius:4px;text-align:center;color:#444;font-size:16px;background:#fff;margin:0px 20px;}',
-		'.UI_selectCnt a{margin-top:10px;}',
-		'.UI_selectCancel{margin-top:20px;opacity:0.6;}',
-		'@media screen and (max-width: 460px){',
-			'.UI_confirm{width:100%;width:100%;left:0px;bottom:0;border-radius:0px;box-shadow:0px 0px 5px rgba(0,0,0,0.8);}',
-			'.UI_confirm_text{padding:50px 10px;font-size:18px}',
-			'.UI_confirm .UI_pop_confirm{width:100%;padding:10px 0px 30px}',
-			'.UI_confirm a{display:block;height:40px;line-height:40px;border-radius:22px;margin:0px 20px;font-size:16px}',
-			'.UI_confirm  a.UI_pop_confirm_ok{margin-bottom:15px;}',
-		'}',
+		
+		'.UI_select{position:absolute;width:100%;bottom:0px;padding-bottom:10px;}',
+		'.UI_select a{display:block;height:35px;line-height:35px;text-align:center;color:#09f;font-size:16px;background:#fff;}',
+		'.UI_selectCnt{margin:0px 10px 10px;border-radius:8px;overflow:hidden;}',
+		'.UI_selectCnt a{border-top:1px solid #eee;margin-top:-1px;}',
+		'.UI_selectCancel{margin:0px 10px;border-radius:8px;overflow:hidden;}',
+		
+		'.UI_fixedScreenBottom_cnt .UI_confirm{width:100%;width:100%;left:0px;bottom:0;border-radius:0px;box-shadow:0px 0px 5px rgba(0,0,0,0.8);}',
+		'.UI_fixedScreenBottom_cnt .UI_confirm_text{padding:50px 10px;font-size:18px}',
+		'.UI_fixedScreenBottom_cnt .UI_confirm .UI_pop_confirm{width:100%;padding:10px 0px 30px}',
+		'.UI_fixedScreenBottom_cnt .UI_confirm a{display:block;height:40px;line-height:40px;border-radius:22px;margin:0px 20px;font-size:16px}',
+		'.UI_fixedScreenBottom_cnt .UI_confirm  a.UI_pop_confirm_ok{margin-bottom:15px;}',
 	'</style>'].join('');
 	var isIE67 = false;
 	if(navigator.appName == "Microsoft Internet Explorer"){
@@ -376,7 +377,7 @@
 	function showMask(){
 		private_maskCount++
 		if(private_maskCount==1){
-			private_maskDom.fadeIn(200,function(){
+			private_maskDom.fadeIn(100,function(){
 				private_maskDom.show();
 			});
 			
@@ -798,18 +799,32 @@
 	function SELECT(list){
 		var this_sel = this;
 		var html ='';
+		var fns = [];
 		for(var i=0,total=list.length;i<total;i++){
-			html += '<a href="javascript:void(0)">' + list[i][0] + '</a>';
+			html += '<a href="javascript:void(0)" data-index="' + i + '">' + list[i][0] + '</a>';
+			fns.push(list[i][1]);
 		}
 		var this_html = select_tpl.replace(/\{list\}/,html);
+		
 		this.dom = $(this_html);
 		this._mask = true;
 		
-		private_fixedScreenBottomDom.append(this.dom);
+		
 		//显示蒙层
 		showMask();
+		this.dom.css('bottom',-500);
+		private_fixedScreenBottomDom.append(this.dom);
+		this.dom.animate({
+			'bottom' : 0
+		},200);	
+		
 		this.dom.on('click','a',function(){
-			this_sel.close();
+			var txt = $(this).html();
+			var index = $(this).attr('data-index');
+			if(index != '-1'){
+				fns[index] && fns[index]();
+			}
+			this_sel.close('slide',200);
 		});
 	}
 	SELECT.prototype['close'] = CLOSEMETHOD;

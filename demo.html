@@ -5,7 +5,7 @@
 	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
 	<title>UI_demo</title>
 	<style type="text/css">
-	.cnt{width:400px;margin:auto;}
+	.cnt{max-width:400px;margin:auto;}
 	input{width:150px;display:block;margin:0px auto;}
 	textarea{width:90%;display:block;margin:0px auto 40px;padding:5px 10px;font-size:12px;color:#666;border-color:#ddd;resize:none;}
 	</style>
@@ -88,21 +88,20 @@ UI.prompt('我快死了');
 	<script type="text/javascript" src="asset/jquery.js"></script>
 	<script type="text/javascript" src="asset/dialog.js"></script>
 <script type="text/javascript">
-/**
-setTimeout(function(){
+
+//setTimeout(function(){
 	UI.select([
 		['删除',function(){
-			//;;;;
+			alert('删除');
 		}],
 		['编辑',function(){
-			//;;;;
+			alert('编辑');
 		}],
 		['复制',function(){
-			//;;;;
+			alert('复制');
 		}]
 	]);
-},2000);
-**/
+//},2000);
 </script>
 </div>
 </body>
