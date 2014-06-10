@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2014-6-9 10:36
+ * @modified 2014-6-10 18:07
  * 
  * Function depends on
  *		JQUERY
@@ -23,6 +23,7 @@
 	global.UI.prompt = factory.prompt;
 	global.UI.plane = factory.plane;
 	global.UI.cover = factory.cover;
+	global.UI.select = factory.select;
 	global.UI.drag = factory.drag;
 	
 	//提供CommonJS规范的接口
@@ -30,88 +31,98 @@
 		return factory;
 	});
 })(this,document,$,function(window,document,$){
-	var allCnt = ['<div class="pop_lawyer">',
-		'<div class="pop_mask"></div>',
-		'<div class="pop_main_cnt"></div>',
-		'<div class="pop_fixedScreenTop_cnt"></div>',
-		'<div class="pop_fixedScreenBottom_cnt"></div>',
+	var allCnt = ['<div class="UI_lawyer">',
+		'<div class="UI_mask"></div>',
+		'<div class="UI_main_cnt"></div>',
+		'<div class="UI_fixedScreenTop_cnt"></div>',
+		'<div class="UI_fixedScreenBottom_cnt"></div>',
 	'</div>'].join('');
-	var pop_tpl = ['<div class="pro_pop">',
-		'<div class="pro_pop_cpt"></div>',
-		'<div class="pro_pop_cnt"></div>',
-		'<a href="javascript:void(0)" class="pro_pop_close" title="\u5173\u95ED">×</a>',
+	var pop_tpl = ['<div class="UI_pop">',
+		'<div class="UI_pop_cpt"></div>',
+		'<div class="UI_pop_cnt"></div>',
+		'<a href="javascript:void(0)" class="UI_pop_close" title="\u5173\u95ED">×</a>',
 	'</div>'].join('');
 
-	var miniChat_tpl = ['<div class="pro_miniChatSlideCnt"><div class="pro_miniChat">',
-		'<div class="pro_miniChat_text">{text}</div>',
+	var miniChat_tpl = ['<div class="UI_miniChatSlideCnt"><div class="UI_miniChat">',
+		'<div class="UI_miniChat_text">{text}</div>',
 	'</div></div>'].join('');
 
-	var confirm_tpl = ['<div class="pro_confirm">',
-		'<div class="pro_confirm_text">{text}</div>',
+	var confirm_tpl = ['<div class="UI_confirm">',
+		'<div class="UI_confirm_text">{text}</div>',
 	'</div>'].join('');
 
-	var ask_tpl = ['<div class="pro_ask">',
-		'<div class="pro_ask_text">{text}</div>',
-		'<input type="text" name="pro_ask_key"/>',
+	var ask_tpl = ['<div class="UI_ask">',
+		'<div class="UI_ask_text">{text}</div>',
+		'<input type="text" name="UI_ask_key"/>',
 	'</div>'].join('');
 
-	var confirmBar_tpl = ['<div class="pro_pop_confirm">',
-		'<a href="javascript:void(0)" class="pro_pop_confirm_ok">{confirm}</a>',
-		'<a href="javascript:void(0)" class="pro_pop_confirm_cancel">{cancel}</a>',
+	var confirmBar_tpl = ['<div class="UI_pop_confirm">',
+		'<a href="javascript:void(0)" class="UI_pop_confirm_ok">{confirm}</a>',
+		'<a href="javascript:void(0)" class="UI_pop_confirm_cancel">{cancel}</a>',
 	'</div>'].join('');
 
-	var plane_tpl = ['<div class="pro_plane"></div>'].join('');
-	var prompt_tpl = ['<div class="pro_prompt">',
-		'<div class="pro_cnt"></div>',
+	var plane_tpl = ['<div class="UI_plane"></div>'].join('');
+	var prompt_tpl = ['<div class="UI_prompt">',
+		'<div class="UI_cnt"></div>',
 	'</div>'].join('');
 
-	var cover_tpl = ['<div class="pro_cover">',
-		'<div class="pro_coverCnt"></div>',
-		'<a href="javascript:void(0)" class="pro_coverClose">〉</a>',
+	var cover_tpl = ['<div class="UI_cover">',
+		'<div class="UI_coverCnt"></div>',
+		'<a href="javascript:void(0)" class="UI_coverClose">〉</a>',
+	'</div>'].join('');
+	
+	var select_tpl = ['<div class="UI_select">',
+		'<div class="UI_selectCnt">{list}</div>',
+		'<div class="UI_selectCancel"><a href="javascript:void(0)">取消</a></div>',
 	'</div>'].join('');
 
 	var popCSS = ['<style type="text/css" data-module="UI-pop-prompt-plane">',
 		//基础框架
-		'.pop_lawyer{position:absolute;top:0px;left:0px;z-index:4999;width:100%;height:0px;overflow:visible;font-family:"Microsoft Yahei"}',
-		'.pop_lawyer a{text-decoration:none}',
-		'.pop_mask{position:absolute;top:0px;left:0px;width:100%;background-color:#000;display:none;opacity:0.2}',
-		'.pop_main_cnt{width:0px;height:0px;overflow:visible;}',
-		'.pop_fixedScreenTop_cnt{position:absolute;z-index:4999;top:0px;left:0px;width:100%;height:0px;overflow:visible;}',
-		'.pop_fixedScreenBottom_cnt{position:absolute;z-index:4999;left:0px;width:100%;height:0px;overflow:visible;}',
+		'.UI_lawyer{position:absolute;top:0px;left:0px;z-index:4999;width:100%;height:0px;overflow:visible;font-family:"Microsoft Yahei"}',
+		'.UI_lawyer a{text-decoration:none}',
+		'.UI_mask{position:absolute;top:0px;left:0px;width:100%;background-color:#000;display:none;opacity:0.2}',
+		'.UI_main_cnt{width:0px;height:0px;overflow:visible;}',
+		'.UI_fixedScreenTop_cnt{position:absolute;z-index:4999;top:0px;left:0px;width:100%;height:0px;overflow:visible;}',
+		'.UI_fixedScreenBottom_cnt{position:absolute;z-index:4999;left:0px;width:100%;height:0px;overflow:visible;}',
 		//各模块样式
-		'.pro_pop{width:200px;_border:1px solid #eee;position:absolute;top:400px;left:300px;',
+		'.UI_pop{width:200px;_border:1px solid #eee;position:absolute;top:400px;left:300px;',
 			'background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}',
-		'.pro_pop_cpt{position:relative;height:40px;line-height:40px;margin-right:41px;overflow:hidden;border-bottom:1px solid #ebebeb;background:#f6f6f6;',
+		'.UI_pop_cpt{position:relative;height:40px;line-height:40px;margin-right:41px;overflow:hidden;border-bottom:1px solid #ebebeb;background:#f6f6f6;',
 			'color:#333;font-size:18px;text-indent:15px;cursor: default;}',
-		'.pro_pop_cnt{position:relative;min-height:100px;overflow:auto;width:100%;}',
-		'.pro_pop_close{display:block;position:absolute;top:0px;right:0px;width:40px;height:40px;text-align:center;line-height:40px;color:#ddd;font-family:"Simsun";font-size:40px;background:#fafafa;border:1px solid #ebebeb;border-width:0px 0px 1px 1px;text-decoration:none;}',
-		'.pro_pop_close:hover{background-color:#eee;border-left-color:#ddd;text-decoration:none;}',
-		'.pro_pop_close:active{background-color:#ddd;border-left-color:#ccc;color:#ccc;}',
-		'.pro_confirm{_border:1px solid #eee;position:absolute;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}',
-		'.pro_confirm_text{padding:30px 10px 20px;line-height:26px;text-align:center;font-size:20px;color:#333;}',
-		'.pro_ask{_border:1px solid #eee;position:absolute;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}',
-		'.pro_ask_text{padding:30px 10px 10px;line-height:26px;text-align:center;font-size:20px;color:#333;}',
-		'.pro_ask input{display:block;margin:0px auto 15px;height:30px;padding:4px 4px;line-height:22px;box-sizing:border-size;width:90%;}',
-		'.pro_miniChatSlideCnt{width:220px;height:0px;overflow:hidden;position:absolute;border-radius:4px;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}',
-		'.pro_miniChat{position:absolute;left:0px;bottom:0px;width:100%;_border:1px solid #eee;background:#fff;overflow:hidden;}',
-		'.pro_miniChat_text{padding:20px 10px 10px;box-sizing:content-box;line-height:24px;text-align:center;font-size:14px;color:#333;}',
-		'.pro_miniChat .pro_pop_confirm a{height:26px;line-height:26px;}',
-		'.pro_pop_confirm{padding:10px 0px 15px 30px;box-sizing:content-box;text-align:center;}',
-		'.pro_pop_confirm a{display:inline-block;height:30px;padding:0px 15px;box-sizing:content-box;border-radius:3px;font-size:14px;line-height:30px;background:#38b;color:#fff;margin-right:30px;}',
-		'.pro_pop_confirm a:hover{text-decoration: none;background:#49c;}',
-		'.pro_pop_confirm a:active{text-decoration: none;background:#27a}',
-		'.pro_plane{width:200px;position:absolute;top:400px;left:300px;}',
-		'.pro_prompt{width:240px;position:absolute;padding:30px 10px;box-sizing:content-box;background:#fff;_border:1px solid #fafafa;border-radius:4px;box-shadow:2px 2px 10px rgba(0,0,0,0.5);}',
-		'.pro_cnt{font-size:18px;color:#222;text-align:center;}',
-		'.pro_cover{position:absolute;top:0px;left:0px;width:100%;height:100px;}',
-		'.pro_coverCnt{position:relative;width:100%;height:100%;background:#fff;}',	'.pro_coverClose{display:block;position:absolute;top:50%;left:0px;width:20px;height:60px;padding-left:5px;text-align:center;line-height:60px;color:#ddd;font-family:"Simsun";font-size:30px;background:#555;}',
-		'.pro_coverClose:hover{background-color:#333;color:#fff;text-decoration:none;}',
+		'.UI_pop_cnt{position:relative;min-height:100px;overflow:auto;width:100%;}',
+		'.UI_pop_close{display:block;position:absolute;top:0px;right:0px;width:40px;height:40px;text-align:center;line-height:40px;color:#ddd;font-family:"Simsun";font-size:40px;background:#fafafa;border:1px solid #ebebeb;border-width:0px 0px 1px 1px;text-decoration:none;}',
+		'.UI_pop_close:hover{background-color:#eee;border-left-color:#ddd;text-decoration:none;}',
+		'.UI_pop_close:active{background-color:#ddd;border-left-color:#ccc;color:#ccc;}',
+		'.UI_confirm{_border:1px solid #eee;position:absolute;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}',
+		'.UI_confirm_text{padding:30px 10px 20px;line-height:26px;text-align:center;font-size:20px;color:#333;}',
+		'.UI_ask{_border:1px solid #eee;position:absolute;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}',
+		'.UI_ask_text{padding:30px 10px 10px;line-height:26px;text-align:center;font-size:20px;color:#333;}',
+		'.UI_ask input{display:block;margin:0px auto 15px;height:30px;padding:4px 4px;line-height:22px;box-sizing:border-size;width:90%;}',
+		'.UI_miniChatSlideCnt{width:220px;height:0px;overflow:hidden;position:absolute;border-radius:4px;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}',
+		'.UI_miniChat{position:absolute;left:0px;bottom:0px;width:100%;_border:1px solid #eee;background:#fff;overflow:hidden;}',
+		'.UI_miniChat_text{padding:20px 10px 10px;box-sizing:content-box;line-height:24px;text-align:center;font-size:14px;color:#333;}',
+		'.UI_miniChat .UI_pop_confirm a{height:26px;line-height:26px;}',
+		'.UI_pop_confirm{padding:10px 0px 15px 30px;box-sizing:content-box;text-align:center;}',
+		'.UI_pop_confirm a{display:inline-block;height:30px;padding:0px 15px;box-sizing:content-box;border-radius:3px;font-size:14px;line-height:30px;background:#38b;color:#fff;margin-right:30px;}',
+		'.UI_pop_confirm a:hover{text-decoration: none;background:#49c;}',
+		'.UI_pop_confirm a:active{text-decoration: none;background:#27a}',
+		'.UI_plane{width:200px;position:absolute;top:400px;left:300px;}',
+		'.UI_prompt{width:240px;position:absolute;padding:30px 10px;box-sizing:content-box;background:#fff;_border:1px solid #fafafa;border-radius:4px;box-shadow:2px 2px 10px rgba(0,0,0,0.5);}',
+		'.UI_cnt{font-size:18px;color:#222;text-align:center;}',
+		'.UI_cover{position:absolute;top:0px;left:0px;width:100%;height:100px;}',
+		'.UI_coverCnt{position:relative;width:100%;height:100%;background:#fff;}',
+		'.UI_coverClose{display:block;position:absolute;top:50%;left:0px;width:20px;height:60px;padding-left:5px;text-align:center;line-height:60px;color:#ddd;font-family:"Simsun";font-size:30px;background:#555;}',
+		'.UI_coverClose:hover{background-color:#333;color:#fff;text-decoration:none;}',
+		'.UI_select{position:absolute;width:100%;bottom:0px;padding-bottom:20px;}',
+		'.UI_select a{display:block;height:35px;line-height:35px;border-radius:4px;text-align:center;color:#444;font-size:16px;background:#fff;margin:0px 20px;}',
+		'.UI_selectCnt a{margin-top:10px;}',
+		'.UI_selectCancel{margin-top:20px;opacity:0.6;}',
 		'@media screen and (max-width: 460px){',
-			'.pro_confirm{width:100%;width:100%;left:0px;bottom:0;border-radius:0px;box-shadow:0px 0px 5px rgba(0,0,0,0.8);}',
-			'.pro_confirm_text{padding:50px 10px;font-size:18px}',
-			'.pro_confirm .pro_pop_confirm{width:100%;padding:10px 0px 30px}',
-			'.pro_confirm a{display:block;height:40px;line-height:40px;border-radius:22px;margin:0px 20px;font-size:16px}',
-			'.pro_confirm  a.pro_pop_confirm_ok{margin-bottom:15px;}',
+			'.UI_confirm{width:100%;width:100%;left:0px;bottom:0;border-radius:0px;box-shadow:0px 0px 5px rgba(0,0,0,0.8);}',
+			'.UI_confirm_text{padding:50px 10px;font-size:18px}',
+			'.UI_confirm .UI_pop_confirm{width:100%;padding:10px 0px 30px}',
+			'.UI_confirm a{display:block;height:40px;line-height:40px;border-radius:22px;margin:0px 20px;font-size:16px}',
+			'.UI_confirm  a.UI_pop_confirm_ok{margin-bottom:15px;}',
 		'}',
 	'</style>'].join('');
 	var isIE67 = false;
@@ -128,11 +139,11 @@
 	 **/ 
 	var private_allCnt = $(allCnt),
 		 private_body = $('html,body'),
-		 private_maskDom = private_allCnt.find('.pop_mask'),
-		 private_mainDom = private_allCnt.find('.pop_main_cnt'),
+		 private_maskDom = private_allCnt.find('.UI_mask'),
+		 private_mainDom = private_allCnt.find('.UI_main_cnt'),
 		 private_isSupportTouch = "ontouchend" in document ? true : false,
-		 private_fixedScreenTopDom = private_allCnt.find('.pop_fixedScreenTop_cnt'),
-		 private_fixedScreenBottomDom = private_allCnt.find('.pop_fixedScreenBottom_cnt'),
+		 private_fixedScreenTopDom = private_allCnt.find('.UI_fixedScreenTop_cnt'),
+		 private_fixedScreenBottomDom = private_allCnt.find('.UI_fixedScreenBottom_cnt'),
 		 private_win = $(window),
 		 private_winW,
 		 private_winH,
@@ -335,7 +346,7 @@
 			}
 		});
 		dom.append(this_html);
-		dom.on('click','.pro_pop_confirm_ok',function(){
+		dom.on('click','.UI_pop_confirm_ok',function(){
 			if(callback){
 				//根据执行结果判断是否要关闭弹框
 				var result = callback();
@@ -345,7 +356,7 @@
 			}else{
 				close();
 			}
-		}).on('click','.pro_pop_confirm_cancel',function(){
+		}).on('click','.UI_pop_confirm_cancel',function(){
 			if(cancel){
 				//根据执行结果判断是否要关闭弹框
 				var result = cancel();
@@ -409,7 +420,7 @@
 		var this_pop = this;
 		
 		this.dom = $(pop_tpl);
-		this.cntDom = this.dom.find('.pro_pop_cnt');
+		this.cntDom = this.dom.find('.UI_pop_cnt');
 		this.closeFn = param['closeFn'] || null;
 		this._mask = param['mask'] || false;
 
@@ -433,12 +444,12 @@
 		}
 		//处理title参数
 		if(param['title'] == false){
-			this.dom.find('.pro_pop_cpt').remove();
+			this.dom.find('.UI_pop_cpt').remove();
 		}else{
 			var title = param['title'] || '\u8BF7\u8F93\u5165\u6807\u9898';
-			this.dom.find('.pro_pop_cpt').html(title);
+			this.dom.find('.UI_pop_cpt').html(title);
 			//can drag is pop
-			UI.drag(this.dom.find('.pro_pop_cpt'),this.dom,{
+			UI.drag(this.dom.find('.UI_pop_cpt'),this.dom,{
 				'move' : function(dx,dy,l_start,t_start,w_start,h_start){
 					var top = dy + t_start;
 					var left = dx + l_start;
@@ -467,7 +478,7 @@
 			'width' : this_width,
 			'left' : left,
 			'top' : top
-		}).on('click','.pro_pop_close',function(){
+		}).on('click','.UI_pop_close',function(){
 			this_pop.close();
 		});
 		if(this._mask){
@@ -554,7 +565,7 @@
 			}
 		});
 		this.dom.append(this_html);
-		this.dom.on('click','.pro_pop_confirm_ok',function(){
+		this.dom.on('click','.UI_pop_confirm_ok',function(){
 			var value = this_pop.dom.find('input').val();
 			if(this_pop.callback){
 				//根据执行结果判断是否要关闭弹框
@@ -565,7 +576,7 @@
 			}else{
 				this_pop.close();
 			}
-		}).on('click','.pro_pop_confirm_cancel',function(){
+		}).on('click','.UI_pop_confirm_cancel',function(){
 			this_pop.close();
 		});
 
@@ -614,7 +625,7 @@
 	prompt.prototype = {
 		'tips' : function(txt){
 			if(txt){
-				this.dom.find('.pro_cnt').html(txt);
+				this.dom.find('.UI_cnt').html(txt);
 			}
 		},
 		'close' : function(time){
@@ -651,7 +662,7 @@
 	 */
 	function checkClick(event) {
 		var target = event.target;
-		while (!hasClass(target.className,'pro_plane')) {
+		while (!hasClass(target.className,'UI_plane')) {
 			target = target.parentNode;
 			if(!target){
 		//		console.log('not target')
@@ -713,7 +724,7 @@
 		var this_tpl = miniChat_tpl.replace('{text}',this.text);
 		this.dom = $(this_tpl);
 		//当有确认参数时
-		add_confirm(this.dom.find('.pro_miniChat'),param,function(){
+		add_confirm(this.dom.find('.UI_miniChat'),param,function(){
 			this_chat.close();
 		});
 
@@ -726,7 +737,7 @@
 			'top' : top
 		});
 		private_mainDom.append(this.dom);
-		var height = this.dom.find('.pro_miniChat').height();
+		var height = this.dom.find('.UI_miniChat').height();
 		this.dom.animate({
 			'height' : height
 		},200);
@@ -743,15 +754,15 @@
 		var param = param || {};
 		var this_cover = this;
 		this.dom = $(cover_tpl);
-		this.cntDom = this.dom.find('.pro_coverCnt');
-		this.closeDom = this.dom.find('.pro_coverClose');
+		this.cntDom = this.dom.find('.UI_coverCnt');
+		this.closeDom = this.dom.find('.UI_coverClose');
 		this.closeFn = param['closeFn'] || null;
 
 		var this_html = param['html'] || '';
 		//insert html
 		this.cntDom.prepend(this_html);
 
-		this.dom.on('click','.pro_coverClose',function(){
+		this.dom.on('click','.UI_coverClose',function(){
 			this_cover.close();
 		});
 
@@ -781,8 +792,27 @@
 		});
 	};
 
-
-
+	/**
+	 * 选择功能
+	 */
+	function SELECT(list){
+		var this_sel = this;
+		var html ='';
+		for(var i=0,total=list.length;i<total;i++){
+			html += '<a href="javascript:void(0)">' + list[i][0] + '</a>';
+		}
+		var this_html = select_tpl.replace(/\{list\}/,html);
+		this.dom = $(this_html);
+		this._mask = true;
+		
+		private_fixedScreenBottomDom.append(this.dom);
+		//显示蒙层
+		showMask();
+		this.dom.on('click','a',function(){
+			this_sel.close();
+		});
+	}
+	SELECT.prototype['close'] = CLOSEMETHOD;
 	/**
 	 *  抛出对外接口
 	 */
@@ -825,6 +855,9 @@
 		},
 		'cover' : function(){
 			return new COVER(arguments[0]);
+		},
+		'select' : function(){
+			return new SELECT(arguments[0]);
 		},
 		'drag' : drag
 	};

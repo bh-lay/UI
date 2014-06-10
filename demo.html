@@ -88,15 +88,21 @@ UI.prompt('我快死了');
 	<script type="text/javascript" src="asset/jquery.js"></script>
 	<script type="text/javascript" src="asset/dialog.js"></script>
 <script type="text/javascript">
+/**
 setTimeout(function(){
-	UI.confirm({
-	  'text' : '请我吃饭吧！',
-	  'btns' : ['好的呀','不愿意'],
-	  'callback' : function(){
-		alert('你是好人！');
-	  }
-	});
+	UI.select([
+		['删除',function(){
+			//;;;;
+		}],
+		['编辑',function(){
+			//;;;;
+		}],
+		['复制',function(){
+			//;;;;
+		}]
+	]);
 },2000);
+**/
 </script>
 </div>
 </body>
