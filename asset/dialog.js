@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2014-6-10 20:46
+ * @modified 2014-6-10 20:52
  * 
  * Function depends on
  *		JQUERY
@@ -115,7 +115,7 @@
 		'.UI_coverClose:hover{background-color:#333;color:#fff;text-decoration:none;}',
 		
 		'.UI_select{position:absolute;width:100%;bottom:0px;padding-bottom:10px;}',
-		'.UI_select a{display:block;height:35px;line-height:35px;text-align:center;color:#09f;font-size:16px;background:#fff;}',
+		'.UI_select a{display:block;height:40px;line-height:40px;text-align:center;color:#09f;font-size:16px;background:#fff;}',
 		'.UI_selectCnt{margin:0px 10px 10px;border-radius:8px;overflow:hidden;}',
 		'.UI_selectCnt a{border-top:1px solid #eee;margin-top:-1px;}',
 		'.UI_selectCancel{margin:0px 10px;border-radius:8px;overflow:hidden;}',
