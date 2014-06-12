@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2014-6-10 20:52
+ * @modified 2014-6-12 15:12
  * 
  * Function depends on
  *		JQUERY
@@ -368,7 +368,6 @@
 				close();
 			}
 		});
-
 	}
 	
 	/**
@@ -377,10 +376,7 @@
 	function showMask(){
 		private_maskCount++
 		if(private_maskCount==1){
-			private_maskDom.fadeIn(100,function(){
-				private_maskDom.show();
-			});
-			
+			private_maskDom.show();
 		}
 	}
 	/**
