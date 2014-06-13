@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2014-6-12 15:12
+ * @modified 2014-6-13 21:58
  * 
  * Function depends on
  *		JQUERY
@@ -724,9 +724,12 @@
 		add_confirm(this.dom.find('.UI_miniChat'),param,function(){
 			this_chat.close();
 		});
+		
 
-		var top = typeof(param['top']) == 'number' ? param['top'] : 300;
-		var left = typeof(param['left']) == 'number' ? param['left'] : 300;
+		var fixSize = adaption(220,110);
+		
+		var top = typeof(param['top']) == 'number' ? param['top'] : fixSize.top;
+		var left = typeof(param['left']) == 'number' ? param['left'] : fixSize.left;
 
 		// create pop
 		this.dom.css({
