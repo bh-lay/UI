@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2014-6-13 21:58
+ * @modified 2014-6-18 14:52
  * 
  * Function depends on
  *		JQUERY
@@ -25,6 +25,7 @@
 	global.UI.cover = factory.cover;
 	global.UI.select = factory.select;
 	global.UI.drag = factory.drag;
+	global.UI.config = factory.config;
 	
 	//提供CommonJS规范的接口
 	global.define && define(function(){
@@ -847,8 +848,8 @@
 				if(num > 0){
 					private_CONFIG.zIndex = num;
 					private_allCnt.css('zIndex',num);
-					private_fixedScreenBottomDom('zIndex',num);
-					private_fixedScreenTopDom('zIndex',num);
+					private_fixedScreenBottomDom.css('zIndex',num);
+					private_fixedScreenTopDom.css('zIndex',num);
 				}
 			}
 		},
