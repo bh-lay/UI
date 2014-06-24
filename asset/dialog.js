@@ -10,12 +10,12 @@
  * 
  **/
 
-(function(global,doc,$,factoryFn,animation){
+(function(global,doc,jQuery,factoryFn,animation){
 	
 	var anima = animation();
 	global.anima = anima;
 	//初始化工具
-	var factory = factoryFn(global,doc,$,anima);
+	var factory = factoryFn(global,doc,jQuery,anima);
 	
 	//提供window.UI的接口
 	global.UI = global.UI || {};
@@ -34,7 +34,7 @@
 	global.define && define(function(){
 		return factory;
 	});
-})(this,document,$,function(window,document,$,animation){
+})(this,document,jQuery,function(window,document,jQuery,animation){
 	/**
 	 * base template
 	 *
@@ -98,12 +98,12 @@
 		//各模块样式
 		'.UI_pop{width:200px;_border:1px solid #eee;position:absolute;top:400px;left:300px;',
 			'background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}',
-		'.UI_pop_cpt{position:relative;height:40px;line-height:40px;margin-right:41px;overflow:hidden;border-bottom:1px solid #ebebeb;background:#f6f6f6;',
-			'color:#333;font-size:18px;text-indent:15px;cursor: default;}',
+		'.UI_pop_cpt{position:relative;height:40px;line-height:40px;overflow:hidden;border-bottom:1px solid #ebebeb;',
+			'color:#333;font-size:16px;text-indent:15px;cursor: default;}',
 		'.UI_pop_cnt{position:relative;min-height:100px;overflow:auto;width:100%;}',
-		'.UI_pop_close{display:block;position:absolute;top:0px;right:0px;width:40px;height:40px;text-align:center;line-height:40px;color:#ddd;font-family:"Simsun";font-size:40px;background:#fafafa;border:1px solid #ebebeb;border-width:0px 0px 1px 1px;text-decoration:none;}',
-		'.UI_pop_close:hover{background-color:#eee;border-left-color:#ddd;text-decoration:none;}',
-		'.UI_pop_close:active{background-color:#ddd;border-left-color:#ccc;color:#ccc;}',
+		'.UI_pop_close{display:block;position:absolute;top:0px;right:0px;width:40px;height:40px;text-align:center;line-height:40px;color:#ddd;font-family:"Simsun";font-size:24px;font-weight:bold;text-decoration:none;transition:0.1s;}',
+		'.UI_pop_close:hover{color:#888;text-decoration:none;}',
+		'.UI_pop_close:active{color:#444}',
 		'.UI_confirm{_border:1px solid #eee;position:absolute;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}',
 		'.UI_confirm_text{padding:30px 10px 20px;line-height:26px;text-align:center;font-size:20px;color:#333;}',
 		'.UI_ask{_border:1px solid #eee;position:absolute;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}',
@@ -113,9 +113,9 @@
 		'.UI_miniChat{position:absolute;left:0px;bottom:0px;width:100%;_border:1px solid #eee;background:#fff;overflow:hidden;}',
 		'.UI_miniChat_text{padding:20px 10px 10px;box-sizing:content-box;line-height:24px;text-align:center;font-size:14px;color:#333;}',
 		'.UI_miniChat .UI_pop_confirm a{height:26px;line-height:26px;}',
-		'.UI_pop_confirm{text-align:center;border-top:1px solid #ccc;}',
-		'.UI_pop_confirm a{display:block;width:50%;height:35px;float:left;font-size:14px;line-height:35px;color:#03f;box-sizing:border-box;}',
-		'.UI_pop_confirm_ok{border-right:1px solid #ccc;}',
+		'.UI_pop_confirm{height:40px;text-align:center;border-top:1px solid #eee;}',
+		'.UI_pop_confirm a{display:block;width:50%;height:40px;float:left;font-size:14px;line-height:40px;color:#03f;box-sizing:border-box;}',
+		'.UI_pop_confirm_ok{border-right:1px solid #eee;}',
 		'.UI_pop_confirm a:hover{text-decoration: none;}',
 		'.UI_plane{width:200px;position:absolute;top:400px;left:300px;}',
 		'.UI_prompt{width:240px;position:absolute;padding:30px 10px;box-sizing:content-box;background:#fff;_border:1px solid #fafafa;border-radius:4px;box-shadow:2px 2px 10px rgba(0,0,0,0.5);}',
@@ -147,24 +147,24 @@
 			isIE67 = true; 
 		}
 	}
-
+	
 	/**
 	 * 定义私有变量
 	 * 
 	 **/ 
-	var private_allCnt = $(allCnt),
-		 private_body = $('html,body'),
-		 private_maskDom = private_allCnt.find('.UI_mask'),
-		 private_mainDom = private_allCnt.find('.UI_main_cnt'),
-		 private_isSupportTouch = "ontouchend" in document ? true : false,
-		 private_fixedScreenTopDom = private_allCnt.find('.UI_fixedScreenTop_cnt'),
-		 private_fixedScreenBottomDom = private_allCnt.find('.UI_fixedScreenBottom_cnt'),
-		 private_win = $(window),
+	var private_allCnt = jQuery(allCnt),
+		 private_body = jQuery('html,body'),
+		 private_maskDom = private_allCnt.find('.UI_mask')[0],
+		 private_mainDom = private_allCnt.find('.UI_main_cnt')[0],
+		 private_fixedScreenTopDom = private_allCnt.find('.UI_fixedScreenTop_cnt')[0],
+		 private_fixedScreenBottomDom = private_allCnt.find('.UI_fixedScreenBottom_cnt')[0],
+		 private_window = window,
 		 private_winW,
 		 private_winH,
-		 private_doc = $(document),
+		 private_doc = document,
 		 private_docH,
 		 private_scrollTop,
+		 private_isSupportTouch = "ontouchend" in document ? true : false,
 		 private_maskCount = 0;
 
 	var private_CONFIG = {
@@ -179,13 +179,13 @@
 
 	//重新计算窗口尺寸
 	function countSize(){
-		private_winW = document.body.clientWidth;
-		private_scrollTop = private_win.scrollTop();
+		private_winW = document.body.scrollWidth;
+		private_scrollTop = jQuery(private_window).scrollTop();
 		private_winH = window.innerHeight;
-		private_docH = private_doc.height();
+		private_docH = jQuery(document).height();
 	}
-	$('head').append(popCSS);
-	$('body').append(private_allCnt);
+	jQuery('head').append(popCSS);
+	jQuery('body').append(private_allCnt);
 	
 	//release useless memory
 	popCSS = null;
@@ -193,7 +193,7 @@
 
 	//更新窗口尺寸
 	countSize();
-	$(function(){
+	jQuery(function(){
 		countSize();
 		setTimeout(countSize,500);
 	});
@@ -201,56 +201,105 @@
 	 *	fix Prompt Mask position & size 
 	 */ 
 	if(isIE67){
-		private_maskDom.css({
-			'height' : private_docH
-		});
-		private_fixedScreenTopDom.css({
-			'top' : private_scrollTop
-		});
-		private_fixedScreenBottomDom.css({
-			'top' : private_scrollTop + private_winH
-		});
-		private_win.on('resize scroll',function(){
+		animation.css(
+			private_maskDom,
+			{
+				'height' : private_docH
+			}
+		);
+		animation.css(
+			private_fixedScreenTopDom,
+			{
+				'top' : private_scrollTop
+			}
+		);
+		
+		animation.css(
+			private_fixedScreenBottomDom,
+			{
+				'top' : private_scrollTop + private_winH
+			}
+		);
+		
+		jQuery(private_window).on('resize scroll',function(){
 			//更新窗口尺寸
 			countSize();
-			private_fixedScreenTopDom.animate({
-				'top' : private_scrollTop
-			},100);
-			private_fixedScreenBottomDom.animate({
-				'top' : private_scrollTop + private_winH
-			},100);
-			private_maskDom.css({
-				'top' : private_scrollTop,
-				'height' : private_winH
-			});
+			
+			animation.define(
+				private_fixedScreenTopDom,
+				{
+					'top' : private_scrollTop
+				},
+				100
+			);
+			
+			animation.define(
+				private_fixedScreenBottomDom,
+				{
+					'top' : private_scrollTop + private_winH
+				},
+				100
+			);
+			
+			animation.css(
+				private_maskDom,
+				{
+					'top' : private_scrollTop,
+					'height' : private_winH
+				}
+			);
 		});
 	}else{
-		private_fixedScreenTopDom.css({
-			'position' : 'fixed',
-			'top' : 0
-		});
-		private_fixedScreenBottomDom.css({
-			'position' : 'fixed',
-			'bottom' : 0
-		});
-		private_maskDom.css({
-			'height' : private_docH
-		});
-		private_win.on('resize scroll',function(){
+		
+		animation.css(
+			private_fixedScreenTopDom,
+			{
+				'position' : 'fixed',
+				'top' : 0
+			}
+		);
+		
+		animation.css(
+			private_fixedScreenBottomDom,
+			{
+				'position' : 'fixed',
+				'bottom' : 0
+			}
+		);
+		
+		animation.css(
+			private_maskDom,
+			{
+				'height' : private_docH
+			}
+		);
+		
+		jQuery(private_window).on('resize scroll',function(){
 			//更新窗口尺寸
 			countSize();
-			private_maskDom.css({
-				'height' : private_docH
-			});
+			animation.css(
+				private_maskDom,
+				{
+					'height' : private_docH
+				}
+			);
 		});
 	}
+	
+	//创建dom
+	function createDom(str){
+		var a = document.createElement('div');
+		a.innerHTML = str;
+		return a.childNodes;
+	}
+	
 	//通用拖动方法
 	function drag(handle_dom,dom,param){
 		var param = param || {};
 		var moving = param['move'] || null;
 		var start = param['start'] || null;
 		var end = param['end'] || null;
-		var dragMask = $('<div style="width:100%;height:100%;position:absolute;top:0px;left:0px;z-index:100000;cursor:default;"></div>');
+		var dragMask = jQuery('<div style="width:100%;height:100%;position:absolute;top:0px;left:0px;z-index:100000;cursor:default;"></div>');
 
 		var dx, dy,l_start,t_start,w_start,h_start;
 		handle_dom.mousedown(function(e){
@@ -269,15 +318,18 @@
 			t_start = parseInt(dom.css('top'));
 			w_start = parseInt(dom.outerWidth());
 			h_start = parseInt(dom.outerHeight());
-			private_doc.mousemove(move).mouseup(up);
-			dragMask.css({
-				'width' : private_winW,
-				'height' : private_winH,
-				'top' : 0,
-				'left' : 0,
-				'cursor' : handle_dom.css('cursor')
-			});
-			private_fixedScreenTopDom.append(dragMask);
+			jQuery(document).mousemove(move).mouseup(up);
+			animation.css(
+				dragMask[0],
+				{
+					'width' : private_winW,
+					'height' : private_winH,
+					'top' : 0,
+					'left' : 0,
+					'cursor' : handle_dom.css('cursor')
+				}
+			);
+			jQuery(private_fixedScreenTopDom).append(dragMask);
 			start&&start();
 		}
 		function move(e){
@@ -289,7 +341,7 @@
 		}
 		function up(e) {
 			dragMask.remove();
-			private_doc.unbind("mousemove", move).unbind("mouseup", up);
+			jQuery(document).unbind("mousemove", move).unbind("mouseup", up);
 			end&&end();
 		}
 	}
@@ -337,6 +389,7 @@
 			'clientLeft' : newPosition.left
 		}
 	}
+	
 	//增加确认方法
 	function add_confirm(dom,param,close){
 		var callback = null;
@@ -364,8 +417,8 @@
 				return btns[1]
 			}
 		});
-		dom.append(this_html);
-		dom.on('click','.UI_pop_confirm_ok',function(){
+		jQuery(dom).append(this_html);
+		jQuery(dom).on('click','.UI_pop_confirm_ok',function(){
 			if(callback){
 				//根据执行结果判断是否要关闭弹框
 				var result = callback();
@@ -394,7 +447,7 @@
 	function showMask(){
 		private_maskCount++
 		if(private_maskCount==1){
-			private_maskDom.show();
+			jQuery(private_maskDom).show();
 		}
 	}
 	/**
@@ -403,7 +456,7 @@
 	 */
 	function CLOSEMETHOD(effect,time){
 		this.closeFn && this.closeFn();
-		var DOM = this.dom[0];
+		var DOM = this.dom;
 		if(!effect){
 			DOM.remove();
 		}else{
@@ -423,7 +476,7 @@
 		if(this._mask){
 			private_maskCount--
 			if(private_maskCount==0){
-				private_maskDom.fadeOut(80);
+				animation.fadeOut(private_maskDom,80);
 			}
 		}
 	}
@@ -435,19 +488,19 @@
 		var param = param || {};
 		var this_pop = this;
 		
-		this.dom = $(pop_tpl);
-		this.cntDom = this.dom.find('.UI_pop_cnt');
+		this.dom = createDom(pop_tpl)[0];
+		this.cntDom = jQuery(this.dom).find('.UI_pop_cnt')[0];
 		this.closeFn = param['closeFn'] || null;
 		this._mask = param['mask'] || false;
 
 		var this_html = param['html'] || '';
-		var this_width = param['width'] || 240;
+		var this_width = param['width'] || Math.min(600,private_winW-20);
 		var this_height = param['height'] ? parseInt(param['height']) : null;
 
 
 		//预定高度时
 		if(this_height){
-			this.cntDom.css({
+			jQuery(this.cntDom).css({
 				'height' : this_height-41
 			});
 		}
@@ -460,18 +513,18 @@
 		}
 		//处理title参数
 		if(param['title'] == false){
-			this.dom.find('.UI_pop_cpt').remove();
+			jQuery(this.dom).find('.UI_pop_cpt').remove();
 		}else{
 			var title = param['title'] || '\u8BF7\u8F93\u5165\u6807\u9898';
-			this.dom.find('.UI_pop_cpt').html(title);
+			jQuery(this.dom).find('.UI_pop_cpt').html(title);
 			//can drag is pop
-			UI.drag(this.dom.find('.UI_pop_cpt'),this.dom,{
+			UI.drag(jQuery(this.dom).find('.UI_pop_cpt'),jQuery(this.dom),{
 				'move' : function(dx,dy,l_start,t_start,w_start,h_start){
 					var top = dy + t_start;
 					var left = dx + l_start;
 					var newSize = fix_position(top,left,w_start,h_start);
 					animation.css(
-						this_pop.dom[0],
+						this_pop.dom,
 						{
 							'left' : newSize.left,
 							'top' : newSize.top
@@ -483,25 +536,25 @@
 
 
 		//insert html
-		this.cntDom.prepend(this_html);
+		jQuery(this.cntDom).prepend(this_html);
 		
-		private_mainDom.append(this.dom);
+		jQuery(private_mainDom).append(this.dom);
 		
 		//fix position get size
-		var fixSize = adaption(this_width,(this_height?this_height:this.dom.height()));
+		var fixSize = adaption(this_width,(this_height?this_height:jQuery(this.dom).height()));
 		var top = typeof(param['top']) == 'number' ? param['top'] : fixSize.top;
 		var left = typeof(param['left']) == 'number' ? param['left'] : fixSize.left;
 		
 		// create pop
 		animation.css(
-			this.dom[0],
+			this.dom,
 			{
 				'width' : this_width,
 				'left' : left,
 				'top' : top
 			}
 		);
-		this.dom.on('click','.UI_pop_close',function(){
+		jQuery(this.dom).on('click','.UI_pop_close',function(){
 			this_pop.close();
 		});
 		if(this._mask){
@@ -512,14 +565,14 @@
 	//使用close方法
 	POP.prototype['close'] = CLOSEMETHOD;
 	POP.prototype['adapt'] = function(){
-		var offset = this.dom.offset();
-		var width = this.dom.width();
-		var height = this.dom.height();
+		var offset = jQuery(this.dom).offset();
+		var width = jQuery(this.dom).width();
+		var height = jQuery(this.dom).height();
 
 		var fixSize = adaption(width,height);
 	//	console.log(offset,fixSize,'-----------');
 		animation.define(
-			this.dom[0],
+			this.dom,
 			{
 				'top' : fixSize.top,
 				'left' : fixSize.left
@@ -538,42 +591,26 @@
 		var callback = param['callback'] || null;
 		var this_html = confirm_tpl.replace(/{text}/,this_text);
 		this._mask = true;
-		this.dom = $(this_html);
+		this.dom = createDom(this_html)[0];
 		this.closeFn = param['closeFn'] || null;
-
+		
 		//显示蒙层
 		showMask();
-		if(private_winW > 460){
-			add_confirm(this.dom,param,function(){
-				this_pop.close();
-			});
-			var newPosition = adaption(300,160);
-			// create pop
-			this.dom.css({
+		add_confirm(this.dom,param,function(){
+			this_pop.close();
+		});
+		var newPosition = adaption(300,160);
+		// create pop
+		animation.css(
+			this.dom,
+			{
 				'width' : 300,
 				'left' : newPosition.clientLeft,
 				'top' : newPosition.clientTop
-			});
-			private_fixedScreenTopDom.append(this.dom);
-		}else{
-			add_confirm(this.dom,param,function(){
-				this_pop.close('slide',100);
-			});
-			this.dom.css({
-				'bottom': -150,
-				'opacity': 0
-			});
-			// create pop
-			private_fixedScreenBottomDom.append(this.dom);
-			
-			animation.define(
-				this.dom[0],
-				{
-					'bottom' : 0,
-					'opacity': 1
-				}, 100
-			);
-		}
+			}
+		);
+		jQuery(private_fixedScreenTopDom).append(this.dom);
+
 	}
 	CONFIRM.prototype['close'] = CLOSEMETHOD
 
@@ -587,7 +624,7 @@
 		var this_text = text || '\u8BF7\u8F93\u5165\u786E\u8BA4\u4FE1\u606F！';
 		var this_html = ask_tpl.replace(/{text}/,this_text);
 
-		this.dom = $(this_html);
+		this.dom = createDom(this_html)[0];
 		this.closeFn =  null;
 		this.callback = callback || null;
 
@@ -598,9 +635,9 @@
 				return '取消';
 			}
 		});
-		this.dom.append(this_html);
-		this.dom.on('click','.UI_pop_confirm_ok',function(){
-			var value = this_pop.dom.find('input').val();
+		jQuery(this.dom).append(this_html);
+		jQuery(this.dom).on('click','.UI_pop_confirm_ok',function(){
+			var value = jQuery(this_pop.dom).find('input').val();
 			if(this_pop.callback){
 				//根据执行结果判断是否要关闭弹框
 				var result = this_pop.callback(value);
@@ -616,18 +653,21 @@
 
 		var newPosition = adaption(300,160);
 		// create pop
-		this.dom.css({
-			'width' : 300,
-			'left' : newPosition.clientLeft,
-			'top' : newPosition.clientTop
-		});
+		animation.css(
+			this.dom,
+			{
+				'width' : 300,
+				'left' : newPosition.clientLeft,
+				'top' : newPosition.clientTop
+			}
+		);
 
-		private_fixedScreenTopDom.append(this.dom);
+		jQuery(private_fixedScreenTopDom).append(this.dom);
 	}
 	ASK.prototype['close'] = CLOSEMETHOD;
 	ASK.prototype['setValue'] = function(text){
 		var text = text ? text.toString() : '';
-		this.dom.find('input').val(text);
+		jQuery(this.dom).find('input').val(text);
 	};
 
 
@@ -638,7 +678,7 @@
 	function prompt(txt,time){
 		var this_prompt = this;
 		var txt = txt || '\u8BF7\u8F93\u5165\u5185\u5BB9';
-		this.dom = $(prompt_tpl);		
+		this.dom = createDom(prompt_tpl)[0];
 
 		this.tips(txt);
 
@@ -646,20 +686,23 @@
 		var newPosition = adaption(260,100);
 		// create pop
 
-		this.dom.css({
-			'left' : newPosition.clientLeft,
-			'top' : newPosition.clientTop
-		});
+		animation.css(
+			this.dom,
+			{
+				'left' : newPosition.clientLeft,
+				'top' : newPosition.clientTop
+			}
+		);
 		//console.log(private_winH,12);
-		private_fixedScreenTopDom.append(this.dom);
+		jQuery(private_fixedScreenTopDom).append(this.dom);
 		if(time != 0){
-			this_prompt.close(time);
+			this.close(time);
 		}
 	}
 	prompt.prototype = {
 		'tips' : function(txt){
 			if(txt){
-				this.dom.find('.UI_cnt').html(txt);
+				jQuery(this.dom).find('.UI_cnt').html(txt);
 			}
 		},
 		'close' : function(time){
@@ -667,8 +710,8 @@
 			var this_prompt = this;
 
 			setTimeout(function(){
-				this_prompt.dom.fadeOut(200,function(){
-					this_prompt.dom.remove();
+				jQuery(this_prompt.dom).fadeOut(200,function(){
+					jQuery(this_prompt.dom).remove();
 				});
 			},delay);
 		}
@@ -710,13 +753,13 @@
 	
 	if(private_isSupportTouch){
 		//移动端使用touch
-		var doc = private_doc[0];
+		var doc = private_doc;
 		doc.addEventListener('touchstart',checkClick);
 		doc.addEventListener('MSPointerDown',checkClick);
 		doc.addEventListener('pointerdown',checkClick);
 	}else{
 		//PC鼠标事件
-		private_doc.on('mousedown',checkClick);
+		jQuery(document).on('mousedown',checkClick);
 	}
 
 
@@ -731,12 +774,12 @@
 		var this_html = param['html'] || '';
 		this.closeFn = param['closeFn'] || null;
 
-		this.dom = $(plane_tpl);
+		this.dom = createDom(plane_tpl)[0];
 
 		//insert html
-		this.dom.html(this_html);
+		jQuery(this.dom).html(this_html);
 		animation.css(
-			this.dom[0],
+			this.dom,
 			{
 				'width' : param['width'] || 240,
 				'height' :param['height'] || null,
@@ -744,7 +787,7 @@
 				'left' : param['left'] || 800
 			}
 		)
-		private_mainDom.append(this.dom);
+		jQuery(private_mainDom).append(this.dom);
 	}
 	PLANE.prototype['close'] = CLOSEMETHOD;
 
@@ -759,9 +802,9 @@
 		this.text = param['text'] || '\u8BF7\u8F93\u5165\u6807\u9898';
 		this.closeFn = param['closeFn'] || null;
 		var this_tpl = miniChat_tpl.replace('{text}',this.text);
-		this.dom = $(this_tpl);
+		this.dom = createDom(this_tpl)[0];
 		//当有确认参数时
-		add_confirm(this.dom.find('.UI_miniChat'),param,function(){
+		add_confirm(jQuery(this.dom).find('.UI_miniChat'),param,function(){
 			this_chat.close();
 		});
 		
@@ -773,18 +816,18 @@
 
 		// create pop
 		animation.css(
-			this.dom[0],
+			this.dom,
 			{
 				'left' : left,
 				'top' : top
 			}
 		);
 		
-		private_mainDom.append(this.dom);
-		var height = this.dom.find('.UI_miniChat').height();
+		jQuery(private_mainDom).append(this.dom);
+		var height = jQuery(this.dom).find('.UI_miniChat').height();
 		
 		animation.define(
-			this.dom[0],
+			this.dom,
 			{
 				'height' : height
 			}, 100
@@ -802,52 +845,52 @@
 	function COVER(param){
 		var param = param || {};
 		var this_cover = this;
-		this.dom = $(cover_tpl);
-		this.cntDom = this.dom.find('.UI_coverCnt');
-		this.closeDom = this.dom.find('.UI_coverClose');
+		this.dom = createDom(cover_tpl)[0];
+		this.cntDom = jQuery(this.dom).find('.UI_coverCnt')[0];
+		this.closeDom = jQuery(this.dom).find('.UI_coverClose')[0];
 		this.closeFn = param['closeFn'] || null;
 
 		var this_html = param['html'] || '';
 		//insert html
-		this.cntDom.prepend(this_html);
+		jQuery(this.cntDom).prepend(this_html);
 
-		this.dom.on('click','.UI_coverClose',function(){
+		jQuery(this.dom).on('click','.UI_coverClose',function(){
 			this_cover.close();
 		});
 
-		this.closeDom.hide();
+		jQuery(this.closeDom).hide();
 		// create pop
 		animation.css(
-			this.dom[0],
+			this.dom,
 			{
 				'height' : private_winH
 			}
 		);
 		animation.css(
-			this.cntDom[0],
+			this.cntDom,
 			{
 				'left' : private_winW
 			}
 		);
 		animation.define(
-			this.cntDom[0],
+			this.cntDom,
 			{
 				'left' : 0
 			}, 200,{
 				'complete' : function(){
-					this_cover.closeDom.fadeIn(100);
+					animation.fadeIn(this_cover.closeDom,100);
 				}
 			}
 		);
 		
-		private_fixedScreenTopDom.append(this.dom);
+		jQuery(private_fixedScreenTopDom).append(this.dom);
 	}
 	//使用close方法
 	COVER.prototype['close'] = function(){
-		var dom_all = this.dom;
-		this.closeDom.fadeOut(100);
+		var dom_all = jQuery(this.dom);
 		
-		animation.define(this.cntDom[0],
+		animation.fadeOut(this.closeDom,100);
+		animation.define(this.cntDom,
 			{
 				'left' : private_winW
 			},
@@ -895,30 +938,30 @@
 			}
 		});
 		
-		this.dom = $(this_html);
+		this.dom = createDom(this_html)[0];
 		this._mask = true;
 		
 		
 		//显示蒙层
 		showMask();
 		animation.css(
-			this.dom[0],
+			this.dom,
 			{
 				'bottom' : -100,
 				'opacity' : 0
 			}
 		);
-		private_fixedScreenBottomDom.append(this.dom);
+		jQuery(private_fixedScreenBottomDom).append(this.dom);
 		
-		animation.define(this.dom[0], {
+		animation.define(this.dom, {
 			'bottom' : 0,
 			'opacity' : 1
-	        }, 500, 'Bounce.easeOut'
+	        }, 400, 'Bounce.easeOut'
         );
 		
-		this.dom.on('click','a',function(){
-			var txt = $(this).html();
-			var index = $(this).attr('data-index');
+		jQuery(this.dom).on('click','a',function(){
+			var txt = jQuery(this).html();
+			var index = jQuery(this).attr('data-index');
 			if(index != '-1'){
 				fns[index] && fns[index]();
 			}
@@ -946,8 +989,14 @@
 				if(num > 0){
 					private_CONFIG.zIndex = num;
 					private_allCnt.css('zIndex',num);
-					private_fixedScreenBottomDom.css('zIndex',num);
-					private_fixedScreenTopDom.css('zIndex',num);
+					animation.css(
+						private_fixedScreenBottomDom,
+						{'zIndex':num}
+					);
+					animation.css(
+						private_fixedScreenTopDom,
+						{'zIndex':num}
+					);
 				}
 			}
 		},
@@ -1185,7 +1234,7 @@
                     if (/^rgb\(/.test(fn.getStyle(elem, prop))) {
                         //cssOri.push([fn.getStyle(elem, prop).replace(/^rgb\(\)/g, "")]);
                         var regexp = /^rgb\(([0-9]{0,3}),\s([0-9]{0,3}),\s([0-9]{0,3})\)/g;
-                        var re = fn.getStyle(elem, prop).replace(regexp, "$1 $2 $3").split(" ");
+                        var re = fn.getStyle(elem, prop).replace(regexp, "jQuery1 jQuery2 jQuery3").split(" ");
                         //cssOri.push(re); // re为字符串数组
                         cssOri.push([parseInt(re[0]), parseInt(re[1]), parseInt(re[2])]);
                     }
@@ -1226,13 +1275,12 @@
 		}
 		prop = prop.toString();
 		if (prop == "opacity") {
-			elem.style[prop] = value / 100;
-		} else if (prop == 'zIndex' || prop == 'z-index'){
-			elem.style[prop] = value;
-		} else {
-			value = value.toString().replace(/px/,'');
-			elem.style[prop] = value + "px";
+			value = value / 100;
+		} else if (value === +value){
+			value = value + "px";
 		}
+		
+		elem.style[prop] = value;
 	}
 	
     function _anim() {
@@ -1400,12 +1448,10 @@
 			
 		},
 		'fadeOut' : function(DOM,time,fn){
-			DOM.style['opacity'] = 0;
 			new _anim(
 				DOM,
 				{
-					'opacity' : 1,
-					'padding' : 0
+					'opacity' : 0
 				}, time,{
 					'complete' : function(){
 						fn && fn.call(DOM);
