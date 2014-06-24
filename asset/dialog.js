@@ -902,7 +902,7 @@
 		//显示蒙层
 		showMask();
 		animation.css(
-			this.dom,
+			this.dom[0],
 			{
 				'bottom' : -100,
 				'opacity' : 0
