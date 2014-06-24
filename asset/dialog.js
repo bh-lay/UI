@@ -10,9 +10,12 @@
  * 
  **/
 
-(function(global,doc,$,factoryFn){
+(function(global,doc,$,factoryFn,animation){
+	
+	var anima = animation();
+	global.anima = anima;
 	//初始化工具
-	var factory = factoryFn(global,doc,$);
+	var factory = factoryFn(global,doc,$,anima);
 	
 	//提供window.UI的接口
 	global.UI = global.UI || {};
@@ -31,7 +34,11 @@
 	global.define && define(function(){
 		return factory;
 	});
-})(this,document,$,function(window,document,$){
+})(this,document,$,function(window,document,$,animation){
+	/**
+	 * base template
+	 *
+	 */
 	var allCnt = ['<div class="UI_lawyer">',
 		'<div class="UI_mask"></div>',
 		'<div class="UI_main_cnt"></div>',
@@ -73,7 +80,10 @@
 	'</div>'].join('');
 	
 	var select_tpl = ['<div class="UI_select">',
-		'<div class="UI_selectCnt">{list}</div>',
+		'<div class="UI_select_body">',
+			'{caption}',
+			'<div class="UI_selectCnt">{list}</div>',
+		'</div>',
 		'<div class="UI_selectCancel"><a href="javascript:void(0)" data-index="-1">取消</a></div>',
 	'</div>'].join('');
 	
@@ -103,10 +113,10 @@
 		'.UI_miniChat{position:absolute;left:0px;bottom:0px;width:100%;_border:1px solid #eee;background:#fff;overflow:hidden;}',
 		'.UI_miniChat_text{padding:20px 10px 10px;box-sizing:content-box;line-height:24px;text-align:center;font-size:14px;color:#333;}',
 		'.UI_miniChat .UI_pop_confirm a{height:26px;line-height:26px;}',
-		'.UI_pop_confirm{padding:10px 0px 15px 30px;box-sizing:content-box;text-align:center;}',
-		'.UI_pop_confirm a{display:inline-block;height:30px;padding:0px 15px;box-sizing:content-box;border-radius:3px;font-size:14px;line-height:30px;background:#38b;color:#fff;margin-right:30px;}',
-		'.UI_pop_confirm a:hover{text-decoration: none;background:#49c;}',
-		'.UI_pop_confirm a:active{text-decoration: none;background:#27a}',
+		'.UI_pop_confirm{text-align:center;border-top:1px solid #ccc;}',
+		'.UI_pop_confirm a{display:block;width:50%;height:35px;float:left;font-size:14px;line-height:35px;color:#03f;box-sizing:border-box;}',
+		'.UI_pop_confirm_ok{border-right:1px solid #ccc;}',
+		'.UI_pop_confirm a:hover{text-decoration: none;}',
 		'.UI_plane{width:200px;position:absolute;top:400px;left:300px;}',
 		'.UI_prompt{width:240px;position:absolute;padding:30px 10px;box-sizing:content-box;background:#fff;_border:1px solid #fafafa;border-radius:4px;box-shadow:2px 2px 10px rgba(0,0,0,0.5);}',
 		'.UI_cnt{font-size:18px;color:#222;text-align:center;}',
@@ -116,10 +126,13 @@
 		'.UI_coverClose:hover{background-color:#333;color:#fff;text-decoration:none;}',
 		
 		'.UI_select{position:absolute;width:100%;bottom:0px;padding-bottom:10px;}',
-		'.UI_select a{display:block;height:40px;line-height:40px;text-align:center;color:#09f;font-size:16px;background:#fff;}',
-		'.UI_selectCnt{margin:0px 10px 10px;border-radius:8px;overflow:hidden;}',
+		'.UI_select a{display:block;height:40px;line-height:40px;text-align:center;color:#03f;font-size:16px;}',
+		'.UI_select_body{margin:0px 10px 10px;border-radius:8px;overflow:hidden;background:#fff;}',
+		'.UI_selectCpt{padding:8px 0px;}',
+		'.UI_selectCpt h3,.UI_selectCpt p{margin:0px;font-size:15px;line-height:18px;text-align:center;color:#aaa;font-weight:normal;}',
+		'.UI_selectCpt p{font-size:12px;}',
 		'.UI_selectCnt a{border-top:1px solid #eee;margin-top:-1px;}',
-		'.UI_selectCancel{margin:0px 10px;border-radius:8px;overflow:hidden;}',
+		'.UI_selectCancel{margin:0px 10px;border-radius:8px;overflow:hidden;background:#fff;}',
 		
 		'.UI_fixedScreenBottom_cnt .UI_confirm{width:100%;width:100%;left:0px;bottom:0;border-radius:0px;box-shadow:0px 0px 5px rgba(0,0,0,0.8);}',
 		'.UI_fixedScreenBottom_cnt .UI_confirm_text{padding:50px 10px;font-size:18px}',
@@ -173,6 +186,10 @@
 	}
 	$('head').append(popCSS);
 	$('body').append(private_allCnt);
+	
+	//release useless memory
+	popCSS = null;
+	allCnt = null;
 
 	//更新窗口尺寸
 	countSize();
@@ -386,20 +403,21 @@
 	 */
 	function CLOSEMETHOD(effect,time){
 		this.closeFn && this.closeFn();
-
+		var DOM = this.dom[0];
 		if(!effect){
-			this.dom.remove();
+			DOM.remove();
 		}else{
 			var method = 'fadeOut';
 			var time = time ? parseInt(time) : 80;
 			if(effect == 'fade'){
-				method = 'fadeOut'
+				animation.fadeOut(DOM,time,function(){
+					DOM.remove();
+				});
 			}else if(effect == 'slide'){
-				method = 'slideUp'
+				animation.slideUp(DOM,time,function(){
+					DOM.remove();
+				});
 			}
-			this.dom[method](time,function(){
-				$(this).remove();
-			});
 		}
 
 		if(this._mask){
@@ -452,10 +470,13 @@
 					var top = dy + t_start;
 					var left = dx + l_start;
 					var newSize = fix_position(top,left,w_start,h_start);
-					this_pop.dom.css({
-						'left' : newSize.left,
-						'top' : newSize.top
-					});
+					animation.css(
+						this_pop.dom[0],
+						{
+							'left' : newSize.left,
+							'top' : newSize.top
+						}
+					);
 				}
 			});
 		}
@@ -472,11 +493,15 @@
 		var left = typeof(param['left']) == 'number' ? param['left'] : fixSize.left;
 		
 		// create pop
-		this.dom.css({
-			'width' : this_width,
-			'left' : left,
-			'top' : top
-		}).on('click','.UI_pop_close',function(){
+		animation.css(
+			this.dom[0],
+			{
+				'width' : this_width,
+				'left' : left,
+				'top' : top
+			}
+		);
+		this.dom.on('click','.UI_pop_close',function(){
 			this_pop.close();
 		});
 		if(this._mask){
@@ -493,10 +518,13 @@
 
 		var fixSize = adaption(width,height);
 	//	console.log(offset,fixSize,'-----------');
-		this.dom.animate({
-			'top' : fixSize.top,
-			'left' : fixSize.left
-		},100);
+		animation.define(
+			this.dom[0],
+			{
+				'top' : fixSize.top,
+				'left' : fixSize.left
+			}, 100
+		);
 	};
 
 	/**
@@ -531,12 +559,20 @@
 			add_confirm(this.dom,param,function(){
 				this_pop.close('slide',100);
 			});
-			this.dom.css('bottom',-500);
+			this.dom.css({
+				'bottom': -150,
+				'opacity': 0
+			});
 			// create pop
 			private_fixedScreenBottomDom.append(this.dom);
-			this.dom.animate({
-				'bottom' : 0
-			},200);
+			
+			animation.define(
+				this.dom[0],
+				{
+					'bottom' : 0,
+					'opacity': 1
+				}, 100
+			);
 		}
 	}
 	CONFIRM.prototype['close'] = CLOSEMETHOD
@@ -699,12 +735,15 @@
 
 		//insert html
 		this.dom.html(this_html);
-		this.dom.css({
-			'width' : param['width'] || 240,
-			'height' :param['height'] || null,
-			'top' : param['top'] || 300,
-			'left' : param['left'] || 800
-		});
+		animation.css(
+			this.dom[0],
+			{
+				'width' : param['width'] || 240,
+				'height' :param['height'] || null,
+				'top' : param['top'] || 300,
+				'left' : param['left'] || 800
+			}
+		)
 		private_mainDom.append(this.dom);
 	}
 	PLANE.prototype['close'] = CLOSEMETHOD;
@@ -733,15 +772,24 @@
 		var left = typeof(param['left']) == 'number' ? param['left'] : fixSize.left;
 
 		// create pop
-		this.dom.css({
-			'left' : left,
-			'top' : top
-		});
+		animation.css(
+			this.dom[0],
+			{
+				'left' : left,
+				'top' : top
+			}
+		);
+		
 		private_mainDom.append(this.dom);
 		var height = this.dom.find('.UI_miniChat').height();
-		this.dom.animate({
-			'height' : height
-		},200);
+		
+		animation.define(
+			this.dom[0],
+			{
+				'height' : height
+			}, 100
+		);
+		
 	}
 	miniChat.prototype['close'] = CLOSEMETHOD;
 
@@ -769,42 +817,83 @@
 
 		this.closeDom.hide();
 		// create pop
-		this.dom.css({
-		 	'height' : private_winH
-		});
-		this.cntDom.css({
-			'top' : 0,
-			'left' : private_winW
-		}).animate({
-			'left' : 0
-		},200,function(){
-			this_cover.closeDom.fadeIn(100);
-		});
+		animation.css(
+			this.dom[0],
+			{
+				'height' : private_winH
+			}
+		);
+		animation.css(
+			this.cntDom[0],
+			{
+				'left' : private_winW
+			}
+		);
+		animation.define(
+			this.cntDom[0],
+			{
+				'left' : 0
+			}, 200,{
+				'complete' : function(){
+					this_cover.closeDom.fadeIn(100);
+				}
+			}
+		);
+		
 		private_fixedScreenTopDom.append(this.dom);
 	}
 	//使用close方法
 	COVER.prototype['close'] = function(){
 		var dom_all = this.dom;
 		this.closeDom.fadeOut(100);
-		this.cntDom.animate({
-			'left' : private_winW
-		},400, function(){
-			dom_all.remove();
-		});
+		
+		animation.define(this.cntDom[0],
+			{
+				'left' : private_winW
+			},
+			400,
+			{
+				'complete' : function(){
+					dom_all.remove();
+				}
+			}
+		);
 	};
 
 	/**
 	 * 选择功能
 	 */
-	function SELECT(list){
+	function SELECT(list,param){
 		var this_sel = this;
-		var html ='';
+		
+		var list = list || [];
+		var param = param || {};
+		
+		var caption_html = '';
+		if(param.title){
+			caption_html += '<div class="UI_selectCpt">';
+			if(param.title){
+				caption_html += '<h3>' + param.title + '</h3>';
+			}
+			if(param.intro){
+				caption_html += '<p>' + param.intro + '</p>';
+			}
+			caption_html += '</div>';
+		}
+		
 		var fns = [];
+		var list_html = '';
 		for(var i=0,total=list.length;i<total;i++){
-			html += '<a href="javascript:void(0)" data-index="' + i + '">' + list[i][0] + '</a>';
+			list_html += '<a href="javascript:void(0)" data-index="' + i + '">' + list[i][0] + '</a>';
 			fns.push(list[i][1]);
 		}
-		var this_html = select_tpl.replace(/\{list\}/,html);
+		var this_html = select_tpl.replace(/\{(\w+)\}/g,function(a,b){
+			if(b == 'list'){
+				return list_html;
+			}else if(b == 'caption'){
+				return caption_html;
+			}
+		});
 		
 		this.dom = $(this_html);
 		this._mask = true;
@@ -812,11 +901,20 @@
 		
 		//显示蒙层
 		showMask();
-		this.dom.css('bottom',-500);
+		animation.css(
+			this.dom,
+			{
+				'bottom' : -100,
+				'opacity' : 0
+			}
+		);
 		private_fixedScreenBottomDom.append(this.dom);
-		this.dom.animate({
-			'bottom' : 0
-		},200);	
+		
+		animation.define(this.dom[0], {
+			'bottom' : 0,
+			'opacity' : 1
+	        }, 500, 'Bounce.easeOut'
+        );
 		
 		this.dom.on('click','a',function(){
 			var txt = $(this).html();
@@ -872,8 +970,451 @@
 			return new COVER(arguments[0]);
 		},
 		'select' : function(){
-			return new SELECT(arguments[0]);
+			return new SELECT(arguments[0],arguments[1]);
 		},
 		'drag' : drag
 	};
+},function () {
+    var Tween = {
+        Linear: function (t, b, c, d) { return c * t / d + b; },
+        Quad: {
+            easeIn: function (t, b, c, d) {
+                return c * (t /= d) * t + b;
+            },
+            easeOut: function (t, b, c, d) {
+                return -c * (t /= d) * (t - 2) + b;
+            },
+            easeInOut: function (t, b, c, d) {
+                if ((t /= d / 2) < 1) return c / 2 * t * t + b;
+                return -c / 2 * ((--t) * (t - 2) - 1) + b;
+            }
+        },
+        Cubic: {
+            easeIn: function (t, b, c, d) {
+                return c * (t /= d) * t * t + b;
+            },
+            easeOut: function (t, b, c, d) {
+                return c * ((t = t / d - 1) * t * t + 1) + b;
+            },
+            easeInOut: function (t, b, c, d) {
+                if ((t /= d / 2) < 1) return c / 2 * t * t * t + b;
+                return c / 2 * ((t -= 2) * t * t + 2) + b;
+            }
+        },
+        Quart: {
+            easeIn: function (t, b, c, d) {
+                return c * (t /= d) * t * t * t + b;
+            },
+            easeOut: function (t, b, c, d) {
+                return -c * ((t = t / d - 1) * t * t * t - 1) + b;
+            },
+            easeInOut: function (t, b, c, d) {
+                if ((t /= d / 2) < 1) return c / 2 * t * t * t * t + b;
+                return -c / 2 * ((t -= 2) * t * t * t - 2) + b;
+            }
+        },
+        Quint: {
+            easeIn: function (t, b, c, d) {
+                return c * (t /= d) * t * t * t * t + b;
+            },
+            easeOut: function (t, b, c, d) {
+                return c * ((t = t / d - 1) * t * t * t * t + 1) + b;
+            },
+            easeInOut: function (t, b, c, d) {
+                if ((t /= d / 2) < 1) return c / 2 * t * t * t * t * t + b;
+                return c / 2 * ((t -= 2) * t * t * t * t + 2) + b;
+            }
+        },
+        Sine: {
+            easeIn: function (t, b, c, d) {
+                return -c * Math.cos(t / d * (Math.PI / 2)) + c + b;
+            },
+            easeOut: function (t, b, c, d) {
+                return c * Math.sin(t / d * (Math.PI / 2)) + b;
+            },
+            easeInOut: function (t, b, c, d) {
+                return -c / 2 * (Math.cos(Math.PI * t / d) - 1) + b;
+            }
+        },
+        Expo: {
+            easeIn: function (t, b, c, d) {
+                return (t == 0) ? b : c * Math.pow(2, 10 * (t / d - 1)) + b;
+            },
+            easeOut: function (t, b, c, d) {
+                return (t == d) ? b + c : c * (-Math.pow(2, -10 * t / d) + 1) + b;
+            },
+            easeInOut: function (t, b, c, d) {
+                if (t == 0) return b;
+                if (t == d) return b + c;
+                if ((t /= d / 2) < 1) return c / 2 * Math.pow(2, 10 * (t - 1)) + b;
+                return c / 2 * (-Math.pow(2, -10 * --t) + 2) + b;
+            }
+        },
+        Circ: {
+            easeIn: function (t, b, c, d) {
+                return -c * (Math.sqrt(1 - (t /= d) * t) - 1) + b;
+            },
+            easeOut: function (t, b, c, d) {
+                return c * Math.sqrt(1 - (t = t / d - 1) * t) + b;
+            },
+            easeInOut: function (t, b, c, d) {
+                if ((t /= d / 2) < 1) return -c / 2 * (Math.sqrt(1 - t * t) - 1) + b;
+                return c / 2 * (Math.sqrt(1 - (t -= 2) * t) + 1) + b;
+            }
+        },
+        Elastic: {
+            easeIn: function (t, b, c, d, a, p) {
+                if (t == 0) return b; if ((t /= d) == 1) return b + c; if (!p) p = d * .3;
+                if (!a || a < Math.abs(c)) { a = c; var s = p / 4; }
+                else var s = p / (2 * Math.PI) * Math.asin(c / a);
+                return -(a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p)) + b;
+            },
+            easeOut: function (t, b, c, d, a, p) {
+                if (t == 0) return b; if ((t /= d) == 1) return b + c; if (!p) p = d * .3;
+                if (!a || a < Math.abs(c)) { a = c; var s = p / 4; }
+                else var s = p / (2 * Math.PI) * Math.asin(c / a);
+                return (a * Math.pow(2, -10 * t) * Math.sin((t * d - s) * (2 * Math.PI) / p) + c + b);
+            },
+            easeInOut: function (t, b, c, d, a, p) {
+                if (t == 0) return b; if ((t /= d / 2) == 2) return b + c; if (!p) p = d * (.3 * 1.5);
+                if (!a || a < Math.abs(c)) { a = c; var s = p / 4; }
+                else var s = p / (2 * Math.PI) * Math.asin(c / a);
+                if (t < 1) return -.5 * (a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p)) + b;
+                return a * Math.pow(2, -10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p) * .5 + c + b;
+            }
+        },
+        Back: {
+            easeIn: function (t, b, c, d, s) {
+                if (s == undefined) s = 1.70158;
+                return c * (t /= d) * t * ((s + 1) * t - s) + b;
+            },
+            easeOut: function (t, b, c, d, s) {
+                if (s == undefined) s = 1.70158;
+                return c * ((t = t / d - 1) * t * ((s + 1) * t + s) + 1) + b;
+            },
+            easeInOut: function (t, b, c, d, s) {
+                if (s == undefined) s = 1.70158;
+                if ((t /= d / 2) < 1) return c / 2 * (t * t * (((s *= (1.525)) + 1) * t - s)) + b;
+                return c / 2 * ((t -= 2) * t * (((s *= (1.525)) + 1) * t + s) + 2) + b;
+            }
+        },
+        Bounce: {
+            easeIn: function (t, b, c, d) {
+                return c - Tween.Bounce.easeOut(d - t, 0, c, d) + b;
+            },
+            easeOut: function (t, b, c, d) {
+                if ((t /= d) < (1 / 2.75)) {
+                    return c * (7.5625 * t * t) + b;
+                } else if (t < (2 / 2.75)) {
+                    return c * (7.5625 * (t -= (1.5 / 2.75)) * t + .75) + b;
+                } else if (t < (2.5 / 2.75)) {
+                    return c * (7.5625 * (t -= (2.25 / 2.75)) * t + .9375) + b;
+                } else {
+                    return c * (7.5625 * (t -= (2.625 / 2.75)) * t + .984375) + b;
+                }
+            },
+            easeInOut: function (t, b, c, d) {
+                if (t < d / 2){
+					return Tween.Bounce.easeIn(t * 2, 0, c, d) * .5 + b;
+				}else{
+					return Tween.Bounce.easeOut(t * 2 - d, 0, c, d) * .5 + c * .5 + b;
+				}
+            }
+        }
+    }
+
+    var color = {
+        sub: function (str, start, len) {
+            if (len) return str.substring(start, start + len);
+            else return str.substring(start);
+        },
+        hex: function (i) {  // 返回16进制颜色表示
+            if (i < 0) return "00";
+            else if (i > 255) return "ff";
+            else { var str = "0" + i.toString(16); return str.substring(str.length - 2); }
+        },
+        //获取颜色数据    
+        GetColors: function (sColor) {
+            sColor = sColor.replace("#", "");
+            var r, g, b;
+            if (sColor.length > 3) {
+                r = color.sub(sColor, 0, 2); g = color.sub(sColor, 2, 2); b = color.sub(sColor, 4, 2);
+            } else {
+                r = color.sub(sColor, 0, 1); g = color.sub(sColor, 1, 1); b = color.sub(sColor, 2, 1);
+                r += r; g += g; b += b;
+            }
+            return [parseInt(r, 16), parseInt(g, 16), parseInt(b, 16)];
+        }
+    }
+
+    var fn = {
+        objType: function (obj) {
+            switch (Object.prototype.toString.call(obj)) {
+                case "[object Object]":
+                    return "Object";
+                case "[object Number]":
+                    return "Number";
+                case "[object Array]":
+                    return "Array";
+            }
+        },
+        getStyle: function (elem, name) { //
+            var w3style;
+            if (document.defaultView) {
+                var style = document.defaultView.getComputedStyle(elem, null);
+                name == "borderWidth" ? name = "borderLeftWidth" : name; // 解决标准浏览器解析问题
+                w3style = name in style ? style[name] : style.getPropertyValue(name);
+                w3style == "auto" ? w3style = "0px" : w3style;
+            }
+            return elem.style[name] ||
+            (elem.currentStyle && (elem.currentStyle[name] == "auto" ? "0px" : elem.currentStyle[name])) || w3style;
+        },
+        getOriCss: function (elem, cssObj) { // 此处只能获取属性值为数值类型的style属性
+            var cssOri = [];
+            for (var prop in cssObj) {
+                if (!cssObj.hasOwnProperty(prop)) continue;
+                //if (prop != "opacity") cssOri.push(parseInt(fn.getStyle(elem, prop)));
+                //else cssOri.push(100 * fn.getStyle(elem, prop));
+                if (fn.getStyle(elem, prop) == "transparent" || /^#|rgb\(/.test(fn.getStyle(elem, prop))) {
+                    if (fn.getStyle(elem, prop) == "transparent") {
+                        cssOri.push([255, 255, 255]);
+                    }
+                    if (/^#/.test(fn.getStyle(elem, prop))) {
+                        cssOri.push(color.GetColors(fn.getStyle(elem, prop)));
+                    }
+                    if (/^rgb\(/.test(fn.getStyle(elem, prop))) {
+                        //cssOri.push([fn.getStyle(elem, prop).replace(/^rgb\(\)/g, "")]);
+                        var regexp = /^rgb\(([0-9]{0,3}),\s([0-9]{0,3}),\s([0-9]{0,3})\)/g;
+                        var re = fn.getStyle(elem, prop).replace(regexp, "$1 $2 $3").split(" ");
+                        //cssOri.push(re); // re为字符串数组
+                        cssOri.push([parseInt(re[0]), parseInt(re[1]), parseInt(re[2])]);
+                    }
+                } else if (prop == "opacity") {
+                    cssOri.push(100 * fn.getStyle(elem, prop));
+                } else {
+                    cssOri.push(parseInt(fn.getStyle(elem, prop)));
+                }
+            }
+            return cssOri;
+        },
+        parseCssObj: function (cssobj) {
+            var cssEnd = [];
+            for (var prop in cssobj) {
+                if (!cssobj.hasOwnProperty(prop)) continue;
+                //if (prop != "opacity") cssEnd.push(parseInt(cssobj[prop]));
+                //else cssEnd.push(100 * cssobj[prop]);
+                if (prop == "opacity") {
+                    cssEnd.push(100 * cssobj[prop]);
+                } else if (/^#/.test(cssobj[prop])) {
+                    cssEnd.push(color.GetColors(cssobj[prop]));
+                } else {
+                    cssEnd.push(parseInt(cssobj[prop]));
+                }
+            }
+            return cssEnd;
+        }
+    }
+
+	/**
+	 * 原始的设置css方法
+	 *
+	 *
+	 */
+	function setCss(elem,prop,value){
+		if(value == null){
+			return
+		}
+		prop = prop.toString();
+		if (prop == "opacity") {
+			elem.style[prop] = value / 100;
+		} else if (prop == 'zIndex' || prop == 'z-index'){
+			elem.style[prop] = value;
+		} else {
+			value = value.toString().replace(/px/,'');
+			elem.style[prop] = value + "px";
+		}
+	}
+	
+    function _anim() {
+		var args = arguments;
+        this.elem = args[0];
+		this.cssObj = args[1];
+		this.cssOri = fn.getOriCss(this.elem, args[1]);
+		this.cssEnd = fn.parseCssObj(args[1]);
+		this.durtime = args[2];
+		this.animType = "Linear";
+		this.funObj = null;
+		this.start = false;
+		this.complete = false;
+		this.onPause = false;
+		
+		if (args.length < 3) {
+			throw new Error("至少要传入3个参数");
+		} else if (args.length == 4) {
+			if (fn.objType(args[3]) == "Object") {
+				this.funObj = args[3];
+				for (var p in this.funObj) {
+					if (p.toString() == "start") this.start = true;
+					if (p.toString() == "complete") this.complete = true;
+				}
+			}
+			if (typeof (args[3]) == "string") {
+				this.animType = args[3];
+			}
+		} else if (args.length == 5) {
+			this.animType = args[3];
+			if (fn.objType(args[4]) == "Object") {
+				this.funObj = args[4];
+				for (var p in this.funObj) {
+					if (p.toString() == "start") this.start = true;
+					if (p.toString() == "complete") this.complete = true;
+				}
+			}
+		}
+		this.animType = 'Tween.' + this.animType;
+		this.startAnim();
+    }
+    _anim.prototype = {
+        startAnim: function () {
+            if (this.start)this.funObj["start"].call(this, this.elem);
+            var that = this;
+            var t = 0;
+            var props = [];
+            for (var pro in this.cssObj) {
+                if (!this.cssObj.hasOwnProperty(pro)){
+					continue;
+				}
+                props.push(pro);
+            }
+            var tt = new Date().getTime();
+            clearInterval(this.timer);
+            this.timer = setInterval(function () {
+                if (that.onPause) {
+                    clearInterval(that.timer);
+                    return;
+                }
+                if (t < that.durtime / 10) {
+                    t++;
+                    for (var i = 0; i < props.length; i++) {
+                        var b, c,value;
+                        fn.objType(that.cssOri[i]) != "Array" && (b = that.cssOri[i]); //开始值
+                        fn.objType(that.cssEnd[i]) != "Array" && (c = that.cssEnd[i] - that.cssOri[i]); // 变化量
+                        var d = that.durtime / 10; // 持续时间
+                        if (fn.objType(that.cssOri[i]) == "Array" && fn.objType(that.cssEnd[i]) == "Array") {
+                            var b1 = that.cssOri[i][0], b2 = that.cssOri[i][1], b3 = that.cssOri[i][2];
+                            var c1 = that.cssEnd[i][0] - that.cssOri[i][0],
+                                c2 = that.cssEnd[i][1] - that.cssOri[i][1],
+                                c3 = that.cssEnd[i][2] - that.cssOri[i][2];
+                            var r = color.hex(Math.ceil((eval(that.animType))(t, b1, c1, d))),
+                                g = color.hex(Math.ceil((eval(that.animType))(t, b2, c2, d))),
+                                b = color.hex(Math.ceil((eval(that.animType))(t, b3, c3, d)));
+								value = [r,g,b];
+                        } else {
+							value = Math.ceil((eval(that.animType))(t, b, c, d));
+                        }
+						
+						setCss(that.elem,props[i],value);
+                    }
+                } else {
+                    for (var i = 0; i < props.length; i++) {
+                        if (fn.objType(that.cssOri[i]) == "Array" && fn.objType(that.cssEnd[i]) == "Array") {
+                            var c1 = that.cssEnd[i][0],
+                                c2 = that.cssEnd[i][1],
+                                c3 = that.cssEnd[i][2];
+                            var r = color.hex(Math.ceil((eval(that.animType))(t, b1, c1, d))),
+                                g = color.hex(Math.ceil((eval(that.animType))(t, b2, c2, d))),
+                                b = color.hex(Math.ceil((eval(that.animType))(t, b3, c3, d)));
+								
+							setCss(that.elem,props[i],[r,g,b]);
+                        } else {
+							setCss(that.elem,props[i],that.cssEnd[i]);
+                        }
+                    }
+                    clearInterval(that.timer);
+                    if (that.complete){
+						that.funObj["complete"].call(that, that.elem);
+					}
+                }
+            }, 10); // 一般要给10毫秒异步调用时间，不能是1
+        },
+        pause: function () {
+            this.onPause = true;
+        }
+    }
+	
+    return{
+		'css' : function(dom,cssObj){
+			var cssVal = fn.parseCssObj(cssObj);
+			
+            for (var pro in cssObj) {
+                if (!cssObj.hasOwnProperty(pro)){
+					continue;
+				}
+				setCss(dom,pro,cssObj[pro]);
+            }
+			
+		},
+		'slideDown' : function(DOM,time,fn){
+			DOM.style['overflow'] = 'hidden';
+			DOM.style['opacity'] = 0;
+			new _anim(
+				DOM,
+				{
+					'height' : 0,
+					'padding' : 0
+				}, time,{
+					'complete' : function(){
+					fn && fn.call(DOM);
+					}
+				}
+			);
+		},
+		'slideUp' : function(DOM,time,fn){
+			DOM.style['overflow'] = 'hidden';
+			new _anim(
+				DOM,
+				{
+					'height' : 0,
+					'padding' : 0
+				}, time,{
+					'complete' : function(){
+						fn && fn.call(DOM);
+					}
+				}
+			);
+		},
+		'fadeIn' : function(DOM,time,fn){
+			DOM.style['opacity'] = 0;
+			DOM.style['display'] = 'block';
+			new _anim(
+				DOM,
+				{
+					'opacity' : 1,
+					'padding' : 0
+				}, time,{
+					'complete' : function(){
+						fn && fn.call(DOM);
+					}
+				}
+			);
+			
+		},
+		'fadeOut' : function(DOM,time,fn){
+			DOM.style['opacity'] = 0;
+			new _anim(
+				DOM,
+				{
+					'opacity' : 1,
+					'padding' : 0
+				}, time,{
+					'complete' : function(){
+						fn && fn.call(DOM);
+					}
+				}
+			);
+		},
+		'define' : function(a,b,c,d) {
+			return new _anim(a,b,c,d);
+		}
+    }
 });
