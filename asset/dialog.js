@@ -10,12 +10,11 @@
  * 
  **/
 
-(function(global,doc,jQuery,factoryFn,animation){
+(function(global,doc,jQuery,UI_factory,utils_factory){
 	
-	var anima = animation();
-	global.anima = anima;
+	var utils = utils_factory();
 	//初始化工具
-	var factory = factoryFn(global,doc,jQuery,anima);
+	var factory = UI_factory(global,doc,jQuery,utils);
 	
 	//提供window.UI的接口
 	global.UI = global.UI || {};
@@ -34,7 +33,7 @@
 	global.define && define(function(){
 		return factory;
 	});
-})(this,document,jQuery,function(window,document,jQuery,animation){
+})(this,document,jQuery,function(window,document,jQuery,utils){
 	/**
 	 * base template
 	 *
@@ -152,12 +151,11 @@
 	 * 定义私有变量
 	 * 
 	 **/ 
-	var private_allCnt = jQuery(allCnt),
-		 private_body = jQuery('html,body'),
-		 private_maskDom = private_allCnt.find('.UI_mask')[0],
-		 private_mainDom = private_allCnt.find('.UI_main_cnt')[0],
-		 private_fixedScreenTopDom = private_allCnt.find('.UI_fixedScreenTop_cnt')[0],
-		 private_fixedScreenBottomDom = private_allCnt.find('.UI_fixedScreenBottom_cnt')[0],
+	var private_allCnt = utils.createDom(allCnt)[0],
+		 private_maskDom = $(private_allCnt).find('.UI_mask')[0],
+		 private_mainDom = $(private_allCnt).find('.UI_main_cnt')[0],
+		 private_fixedScreenTopDom = $(private_allCnt).find('.UI_fixedScreenTop_cnt')[0],
+		 private_fixedScreenBottomDom = $(private_allCnt).find('.UI_fixedScreenBottom_cnt')[0],
 		 private_window = window,
 		 private_winW,
 		 private_winH,
@@ -201,20 +199,20 @@
 	 *	fix Prompt Mask position & size 
 	 */ 
 	if(isIE67){
-		animation.css(
+		utils.css(
 			private_maskDom,
 			{
 				'height' : private_docH
 			}
 		);
-		animation.css(
+		utils.css(
 			private_fixedScreenTopDom,
 			{
 				'top' : private_scrollTop
 			}
 		);
 		
-		animation.css(
+		utils.css(
 			private_fixedScreenBottomDom,
 			{
 				'top' : private_scrollTop + private_winH
@@ -225,7 +223,7 @@
 			//更新窗口尺寸
 			countSize();
 			
-			animation.define(
+			utils.animation(
 				private_fixedScreenTopDom,
 				{
 					'top' : private_scrollTop
@@ -233,7 +231,7 @@
 				100
 			);
 			
-			animation.define(
+			utils.animation(
 				private_fixedScreenBottomDom,
 				{
 					'top' : private_scrollTop + private_winH
@@ -241,7 +239,7 @@
 				100
 			);
 			
-			animation.css(
+			utils.css(
 				private_maskDom,
 				{
 					'top' : private_scrollTop,
@@ -251,7 +249,7 @@
 		});
 	}else{
 		
-		animation.css(
+		utils.css(
 			private_fixedScreenTopDom,
 			{
 				'position' : 'fixed',
@@ -259,7 +257,7 @@
 			}
 		);
 		
-		animation.css(
+		utils.css(
 			private_fixedScreenBottomDom,
 			{
 				'position' : 'fixed',
@@ -267,7 +265,7 @@
 			}
 		);
 		
-		animation.css(
+		utils.css(
 			private_maskDom,
 			{
 				'height' : private_docH
@@ -277,20 +275,13 @@
 		jQuery(private_window).on('resize scroll',function(){
 			//更新窗口尺寸
 			countSize();
-			animation.css(
+			utils.css(
 				private_maskDom,
 				{
 					'height' : private_docH
 				}
 			);
 		});
-	}
-	
-	//创建dom
-	function createDom(str){
-		var a = document.createElement('div');
-		a.innerHTML = str;
-		return a.childNodes;
 	}
 	
 	//通用拖动方法
@@ -319,7 +310,7 @@
 			w_start = parseInt(dom.outerWidth());
 			h_start = parseInt(dom.outerHeight());
 			jQuery(document).mousemove(move).mouseup(up);
-			animation.css(
+			utils.css(
 				dragMask[0],
 				{
 					'width' : private_winW,
@@ -463,11 +454,11 @@
 			var method = 'fadeOut';
 			var time = time ? parseInt(time) : 80;
 			if(effect == 'fade'){
-				animation.fadeOut(DOM,time,function(){
+				utils.fadeOut(DOM,time,function(){
 					DOM.remove();
 				});
 			}else if(effect == 'slide'){
-				animation.slideUp(DOM,time,function(){
+				utils.slideUp(DOM,time,function(){
 					DOM.remove();
 				});
 			}
@@ -476,7 +467,7 @@
 		if(this._mask){
 			private_maskCount--
 			if(private_maskCount==0){
-				animation.fadeOut(private_maskDom,80);
+				utils.fadeOut(private_maskDom,80);
 			}
 		}
 	}
@@ -488,7 +479,7 @@
 		var param = param || {};
 		var this_pop = this;
 		
-		this.dom = createDom(pop_tpl)[0];
+		this.dom = utils.createDom(pop_tpl)[0];
 		this.cntDom = jQuery(this.dom).find('.UI_pop_cnt')[0];
 		this.closeFn = param['closeFn'] || null;
 		this._mask = param['mask'] || false;
@@ -523,7 +514,7 @@
 					var top = dy + t_start;
 					var left = dx + l_start;
 					var newSize = fix_position(top,left,w_start,h_start);
-					animation.css(
+					utils.css(
 						this_pop.dom,
 						{
 							'left' : newSize.left,
@@ -546,7 +537,7 @@
 		var left = typeof(param['left']) == 'number' ? param['left'] : fixSize.left;
 		
 		// create pop
-		animation.css(
+		utils.css(
 			this.dom,
 			{
 				'width' : this_width,
@@ -571,7 +562,7 @@
 
 		var fixSize = adaption(width,height);
 	//	console.log(offset,fixSize,'-----------');
-		animation.define(
+		utils.animation(
 			this.dom,
 			{
 				'top' : fixSize.top,
@@ -591,7 +582,7 @@
 		var callback = param['callback'] || null;
 		var this_html = confirm_tpl.replace(/{text}/,this_text);
 		this._mask = true;
-		this.dom = createDom(this_html)[0];
+		this.dom = utils.createDom(this_html)[0];
 		this.closeFn = param['closeFn'] || null;
 		
 		//显示蒙层
@@ -601,7 +592,7 @@
 		});
 		var newPosition = adaption(300,160);
 		// create pop
-		animation.css(
+		utils.css(
 			this.dom,
 			{
 				'width' : 300,
@@ -624,7 +615,7 @@
 		var this_text = text || '\u8BF7\u8F93\u5165\u786E\u8BA4\u4FE1\u606F！';
 		var this_html = ask_tpl.replace(/{text}/,this_text);
 
-		this.dom = createDom(this_html)[0];
+		this.dom = utils.createDom(this_html)[0];
 		this.closeFn =  null;
 		this.callback = callback || null;
 
@@ -653,7 +644,7 @@
 
 		var newPosition = adaption(300,160);
 		// create pop
-		animation.css(
+		utils.css(
 			this.dom,
 			{
 				'width' : 300,
@@ -678,7 +669,7 @@
 	function prompt(txt,time){
 		var this_prompt = this;
 		var txt = txt || '\u8BF7\u8F93\u5165\u5185\u5BB9';
-		this.dom = createDom(prompt_tpl)[0];
+		this.dom = utils.createDom(prompt_tpl)[0];
 
 		this.tips(txt);
 
@@ -686,7 +677,7 @@
 		var newPosition = adaption(260,100);
 		// create pop
 
-		animation.css(
+		utils.css(
 			this.dom,
 			{
 				'left' : newPosition.clientLeft,
@@ -774,11 +765,11 @@
 		var this_html = param['html'] || '';
 		this.closeFn = param['closeFn'] || null;
 
-		this.dom = createDom(plane_tpl)[0];
+		this.dom = utils.createDom(plane_tpl)[0];
 
 		//insert html
 		jQuery(this.dom).html(this_html);
-		animation.css(
+		utils.css(
 			this.dom,
 			{
 				'width' : param['width'] || 240,
@@ -802,7 +793,7 @@
 		this.text = param['text'] || '\u8BF7\u8F93\u5165\u6807\u9898';
 		this.closeFn = param['closeFn'] || null;
 		var this_tpl = miniChat_tpl.replace('{text}',this.text);
-		this.dom = createDom(this_tpl)[0];
+		this.dom = utils.createDom(this_tpl)[0];
 		//当有确认参数时
 		add_confirm(jQuery(this.dom).find('.UI_miniChat'),param,function(){
 			this_chat.close();
@@ -815,7 +806,7 @@
 		var left = typeof(param['left']) == 'number' ? param['left'] : fixSize.left;
 
 		// create pop
-		animation.css(
+		utils.css(
 			this.dom,
 			{
 				'left' : left,
@@ -826,7 +817,7 @@
 		jQuery(private_mainDom).append(this.dom);
 		var height = jQuery(this.dom).find('.UI_miniChat').height();
 		
-		animation.define(
+		utils.animation(
 			this.dom,
 			{
 				'height' : height
@@ -845,7 +836,7 @@
 	function COVER(param){
 		var param = param || {};
 		var this_cover = this;
-		this.dom = createDom(cover_tpl)[0];
+		this.dom = utils.createDom(cover_tpl)[0];
 		this.cntDom = jQuery(this.dom).find('.UI_coverCnt')[0];
 		this.closeDom = jQuery(this.dom).find('.UI_coverClose')[0];
 		this.closeFn = param['closeFn'] || null;
@@ -860,25 +851,25 @@
 
 		jQuery(this.closeDom).hide();
 		// create pop
-		animation.css(
+		utils.css(
 			this.dom,
 			{
 				'height' : private_winH
 			}
 		);
-		animation.css(
+		utils.css(
 			this.cntDom,
 			{
 				'left' : private_winW
 			}
 		);
-		animation.define(
+		utils.animation(
 			this.cntDom,
 			{
 				'left' : 0
 			}, 200,{
 				'complete' : function(){
-					animation.fadeIn(this_cover.closeDom,100);
+					utils.fadeIn(this_cover.closeDom,100);
 				}
 			}
 		);
@@ -889,8 +880,8 @@
 	COVER.prototype['close'] = function(){
 		var dom_all = jQuery(this.dom);
 		
-		animation.fadeOut(this.closeDom,100);
-		animation.define(this.cntDom,
+		utils.fadeOut(this.closeDom,100);
+		utils.animation(this.cntDom,
 			{
 				'left' : private_winW
 			},
@@ -938,13 +929,13 @@
 			}
 		});
 		
-		this.dom = createDom(this_html)[0];
+		this.dom = utils.createDom(this_html)[0];
 		this._mask = true;
 		
 		
 		//显示蒙层
 		showMask();
-		animation.css(
+		utils.css(
 			this.dom,
 			{
 				'bottom' : -100,
@@ -953,7 +944,7 @@
 		);
 		jQuery(private_fixedScreenBottomDom).append(this.dom);
 		
-		animation.define(this.dom, {
+		utils.animation(this.dom, {
 			'bottom' : 0,
 			'opacity' : 1
 	        }, 400, 'Bounce.easeOut'
@@ -988,12 +979,15 @@
 				var num = parseInt(num);
 				if(num > 0){
 					private_CONFIG.zIndex = num;
-					private_allCnt.css('zIndex',num);
-					animation.css(
+					utils.css(
+						private_allCnt,
+						{'zIndex':num}
+					);
+					utils.css(
 						private_fixedScreenBottomDom,
 						{'zIndex':num}
 					);
-					animation.css(
+					utils.css(
 						private_fixedScreenTopDom,
 						{'zIndex':num}
 					);
@@ -1195,74 +1189,74 @@
             return [parseInt(r, 16), parseInt(g, 16), parseInt(b, 16)];
         }
     }
-
-    var fn = {
-        objType: function (obj) {
-            switch (Object.prototype.toString.call(obj)) {
-                case "[object Object]":
-                    return "Object";
-                case "[object Number]":
-                    return "Number";
-                case "[object Array]":
-                    return "Array";
-            }
-        },
-        getStyle: function (elem, name) { //
-            var w3style;
-            if (document.defaultView) {
-                var style = document.defaultView.getComputedStyle(elem, null);
-                name == "borderWidth" ? name = "borderLeftWidth" : name; // 解决标准浏览器解析问题
-                w3style = name in style ? style[name] : style.getPropertyValue(name);
-                w3style == "auto" ? w3style = "0px" : w3style;
-            }
-            return elem.style[name] ||
-            (elem.currentStyle && (elem.currentStyle[name] == "auto" ? "0px" : elem.currentStyle[name])) || w3style;
-        },
-        getOriCss: function (elem, cssObj) { // 此处只能获取属性值为数值类型的style属性
-            var cssOri = [];
-            for (var prop in cssObj) {
-                if (!cssObj.hasOwnProperty(prop)) continue;
-                //if (prop != "opacity") cssOri.push(parseInt(fn.getStyle(elem, prop)));
-                //else cssOri.push(100 * fn.getStyle(elem, prop));
-                if (fn.getStyle(elem, prop) == "transparent" || /^#|rgb\(/.test(fn.getStyle(elem, prop))) {
-                    if (fn.getStyle(elem, prop) == "transparent") {
-                        cssOri.push([255, 255, 255]);
-                    }
-                    if (/^#/.test(fn.getStyle(elem, prop))) {
-                        cssOri.push(color.GetColors(fn.getStyle(elem, prop)));
-                    }
-                    if (/^rgb\(/.test(fn.getStyle(elem, prop))) {
-                        //cssOri.push([fn.getStyle(elem, prop).replace(/^rgb\(\)/g, "")]);
-                        var regexp = /^rgb\(([0-9]{0,3}),\s([0-9]{0,3}),\s([0-9]{0,3})\)/g;
-                        var re = fn.getStyle(elem, prop).replace(regexp, "jQuery1 jQuery2 jQuery3").split(" ");
-                        //cssOri.push(re); // re为字符串数组
-                        cssOri.push([parseInt(re[0]), parseInt(re[1]), parseInt(re[2])]);
-                    }
-                } else if (prop == "opacity") {
-                    cssOri.push(100 * fn.getStyle(elem, prop));
-                } else {
-                    cssOri.push(parseInt(fn.getStyle(elem, prop)));
-                }
-            }
-            return cssOri;
-        },
-        parseCssObj: function (cssobj) {
-            var cssEnd = [];
-            for (var prop in cssobj) {
-                if (!cssobj.hasOwnProperty(prop)) continue;
-                //if (prop != "opacity") cssEnd.push(parseInt(cssobj[prop]));
-                //else cssEnd.push(100 * cssobj[prop]);
-                if (prop == "opacity") {
-                    cssEnd.push(100 * cssobj[prop]);
-                } else if (/^#/.test(cssobj[prop])) {
-                    cssEnd.push(color.GetColors(cssobj[prop]));
-                } else {
-                    cssEnd.push(parseInt(cssobj[prop]));
-                }
-            }
-            return cssEnd;
-        }
-    }
+	
+	function objType(obj) {
+		switch (Object.prototype.toString.call(obj)) {
+			case "[object Object]":
+				return "Object";
+			case "[object Number]":
+				return "Number";
+			case "[object Array]":
+				return "Array";
+		}
+	}
+	function getStyle(elem, name) { //
+		var w3style;
+		if (document.defaultView) {
+			var style = document.defaultView.getComputedStyle(elem, null);
+			name == "borderWidth" ? name = "borderLeftWidth" : name; // 解决标准浏览器解析问题
+			w3style = name in style ? style[name] : style.getPropertyValue(name);
+			w3style == "auto" ? w3style = "0px" : w3style;
+		}
+		return elem.style[name] ||
+		(elem.currentStyle && (elem.currentStyle[name] == "auto" ? "0px" : elem.currentStyle[name])) || w3style;
+	}
+	
+	// 此处只能获取属性值为数值类型的style属性
+	function getOriCss (elem, cssObj) {
+		var cssOri = [];
+		for (var prop in cssObj) {
+			if (!cssObj.hasOwnProperty(prop)) continue;
+			//if (prop != "opacity") cssOri.push(parseInt(getStyle(elem, prop)));
+			//else cssOri.push(100 * getStyle(elem, prop));
+			if (getStyle(elem, prop) == "transparent" || /^#|rgb\(/.test(getStyle(elem, prop))) {
+				if (getStyle(elem, prop) == "transparent") {
+					cssOri.push([255, 255, 255]);
+				}
+				if (/^#/.test(getStyle(elem, prop))) {
+					cssOri.push(color.GetColors(getStyle(elem, prop)));
+				}
+				if (/^rgb\(/.test(getStyle(elem, prop))) {
+					//cssOri.push([getStyle(elem, prop).replace(/^rgb\(\)/g, "")]);
+					var regexp = /^rgb\(([0-9]{0,3}),\s([0-9]{0,3}),\s([0-9]{0,3})\)/g;
+					var re = getStyle(elem, prop).replace(regexp, "jQuery1 jQuery2 jQuery3").split(" ");
+					//cssOri.push(re); // re为字符串数组
+					cssOri.push([parseInt(re[0]), parseInt(re[1]), parseInt(re[2])]);
+				}
+			} else if (prop == "opacity") {
+				cssOri.push(100 * getStyle(elem, prop));
+			} else {
+				cssOri.push(parseInt(getStyle(elem, prop)));
+			}
+		}
+		return cssOri;
+	}
+    function parseCssObj (cssobj) {
+		var cssEnd = [];
+		for (var prop in cssobj) {
+			if (!cssobj.hasOwnProperty(prop)) continue;
+			//if (prop != "opacity") cssEnd.push(parseInt(cssobj[prop]));
+			//else cssEnd.push(100 * cssobj[prop]);
+			if (prop == "opacity") {
+				cssEnd.push(100 * cssobj[prop]);
+			} else if (/^#/.test(cssobj[prop])) {
+				cssEnd.push(color.GetColors(cssobj[prop]));
+			} else {
+				cssEnd.push(parseInt(cssobj[prop]));
+			}
+		}
+		return cssEnd;
+	}
 
 	/**
 	 * 原始的设置css方法
@@ -1287,8 +1281,8 @@
 		var args = arguments;
         this.elem = args[0];
 		this.cssObj = args[1];
-		this.cssOri = fn.getOriCss(this.elem, args[1]);
-		this.cssEnd = fn.parseCssObj(args[1]);
+		this.cssOri = getOriCss(this.elem, args[1]);
+		this.cssEnd = parseCssObj(args[1]);
 		this.durtime = args[2];
 		this.animType = "Linear";
 		this.funObj = null;
@@ -1299,7 +1293,7 @@
 		if (args.length < 3) {
 			throw new Error("至少要传入3个参数");
 		} else if (args.length == 4) {
-			if (fn.objType(args[3]) == "Object") {
+			if (objType(args[3]) == "Object") {
 				this.funObj = args[3];
 				for (var p in this.funObj) {
 					if (p.toString() == "start") this.start = true;
@@ -1311,7 +1305,7 @@
 			}
 		} else if (args.length == 5) {
 			this.animType = args[3];
-			if (fn.objType(args[4]) == "Object") {
+			if (objType(args[4]) == "Object") {
 				this.funObj = args[4];
 				for (var p in this.funObj) {
 					if (p.toString() == "start") this.start = true;
@@ -1345,10 +1339,10 @@
                     t++;
                     for (var i = 0; i < props.length; i++) {
                         var b, c,value;
-                        fn.objType(that.cssOri[i]) != "Array" && (b = that.cssOri[i]); //开始值
-                        fn.objType(that.cssEnd[i]) != "Array" && (c = that.cssEnd[i] - that.cssOri[i]); // 变化量
+                        objType(that.cssOri[i]) != "Array" && (b = that.cssOri[i]); //开始值
+                        objType(that.cssEnd[i]) != "Array" && (c = that.cssEnd[i] - that.cssOri[i]); // 变化量
                         var d = that.durtime / 10; // 持续时间
-                        if (fn.objType(that.cssOri[i]) == "Array" && fn.objType(that.cssEnd[i]) == "Array") {
+                        if (objType(that.cssOri[i]) == "Array" && objType(that.cssEnd[i]) == "Array") {
                             var b1 = that.cssOri[i][0], b2 = that.cssOri[i][1], b3 = that.cssOri[i][2];
                             var c1 = that.cssEnd[i][0] - that.cssOri[i][0],
                                 c2 = that.cssEnd[i][1] - that.cssOri[i][1],
@@ -1365,7 +1359,7 @@
                     }
                 } else {
                     for (var i = 0; i < props.length; i++) {
-                        if (fn.objType(that.cssOri[i]) == "Array" && fn.objType(that.cssEnd[i]) == "Array") {
+                        if (objType(that.cssOri[i]) == "Array" && objType(that.cssEnd[i]) == "Array") {
                             var c1 = that.cssEnd[i][0],
                                 c2 = that.cssEnd[i][1],
                                 c3 = that.cssEnd[i][2];
@@ -1390,9 +1384,16 @@
         }
     }
 	
+	
+	//创建dom
+	function createDom(str){
+		var a = document.createElement('div');
+		a.innerHTML = str;
+		return a.childNodes;
+	}
     return{
 		'css' : function(dom,cssObj){
-			var cssVal = fn.parseCssObj(cssObj);
+			var cssVal = parseCssObj(cssObj);
 			
             for (var pro in cssObj) {
                 if (!cssObj.hasOwnProperty(pro)){
@@ -1405,6 +1406,7 @@
 		'slideDown' : function(DOM,time,fn){
 			DOM.style['overflow'] = 'hidden';
 			DOM.style['opacity'] = 0;
+			DOM.style['display'] = 'block';
 			new _anim(
 				DOM,
 				{
@@ -1412,7 +1414,7 @@
 					'padding' : 0
 				}, time,{
 					'complete' : function(){
-					fn && fn.call(DOM);
+						fn && fn.call(DOM);
 					}
 				}
 			);
@@ -1426,6 +1428,7 @@
 					'padding' : 0
 				}, time,{
 					'complete' : function(){
+						DOM.style['display'] = 'none';
 						fn && fn.call(DOM);
 					}
 				}
@@ -1448,19 +1451,24 @@
 			
 		},
 		'fadeOut' : function(DOM,time,fn){
+			var op = getStyle(DOM,'opacity');
 			new _anim(
 				DOM,
 				{
 					'opacity' : 0
 				}, time,{
 					'complete' : function(){
+						DOM.style['opacity'] = op;
+						DOM.style['display'] = 'none';
 						fn && fn.call(DOM);
 					}
 				}
 			);
 		},
-		'define' : function(a,b,c,d) {
+		'animation' : function(a,b,c,d) {
 			return new _anim(a,b,c,d);
-		}
+		},
+		'createDom' : createDom
+		
     }
 });
