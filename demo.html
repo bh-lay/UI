@@ -49,16 +49,19 @@
 		}
 		function showSelect(){
 			UI.select([
-				['删除',function(){
-					alert('删除');
+				['劈脸呼你',function(){
+					UI.prompt('脸好疼');
 				}],
-				['编辑',function(){
-					alert('编辑');
+				['一刀捅死你',function(){
+					UI.prompt('啊，我死了');
 				}],
-				['复制',function(){
-					alert('复制');
+				['滚一边去',function(){
+					UI.prompt('滚远了');
 				}]
-			]);
+			],{
+				'title' : '侬想组啥？',
+				'intro' : '来一帮人，想打架么'
+			});
 		}
 	</script>
 <div class="cnt">

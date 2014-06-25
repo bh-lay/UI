@@ -10,12 +10,13 @@
  * 
  **/
 
-(function(global,doc,UI_factory,utils_factory){
+(function(global,doc,UI_factory,utils_factory,events_factory){
 	
 	var utils = utils_factory();
+	var events = events_factory();
 	global.utils = utils;
 	//初始化工具
-	var factory = UI_factory(global,doc,utils);
+	var factory = UI_factory(global,doc,utils,events);
 	
 	//提供window.UI的接口
 	global.UI = global.UI || {};
@@ -34,7 +35,7 @@
 	global.define && define(function(){
 		return factory;
 	});
-})(window,document,function(window,document,utils){
+})(window,document,function(window,document,utils,events){
 	/**
 	 * base template
 	 *
@@ -64,7 +65,7 @@
 
 	var ask_tpl = ['<div class="UI_ask">',
 		'<div class="UI_ask_text">{text}</div>',
-		'<input type="text" name="UI_ask_key"/>',
+		'<input class="UI_ask_key" type="text" name="UI_ask_key"/>',
 	'</div>'].join('');
 
 	var confirmBar_tpl = ['<div class="UI_pop_confirm">',
@@ -87,10 +88,10 @@
 			'{caption}',
 			'<div class="UI_selectCnt">{list}</div>',
 		'</div>',
-		'<div class="UI_selectCancel"><a href="javascript:void(0)" data-index="-1">取消</a></div>',
+		'<div class="UI_selectCancel"><a class="UI_select_btn" href="javascript:void(0)" data-index="-1">取消</a></div>',
 	'</div>'].join('');
 	
-	var popCSS = ['<style type="text/css" data-module="UI-pop-prompt-plane">',
+	var popCSS = ['<style type="text/css" data-module="UI">',
 		//基础框架
 		'.UI_lawyer{position:absolute;top:0px;left:0px;z-index:4999;width:100%;height:0px;overflow:visible;font-family:"Microsoft Yahei"}',
 		'.UI_lawyer a,.UI_lawyer a:hover{text-decoration:none;-webkit-tap-highlight-color: rgba(0,0,0,0);-webkit-tap-highlight-color: transparent;}',
@@ -178,7 +179,8 @@
 		},
 		'zIndex' : 499
 	};
-
+	
+	
 	//重新计算窗口尺寸
 	function countSize(){
 		private_winW = document.body.scrollWidth;
@@ -187,19 +189,22 @@
 		private_docH = document.body.scrollHeight;
 	}
 	
-	document.head.appendChild(utils.createDom(popCSS)[0]);
-	document.body.appendChild(private_allCnt)
-	
-	//release useless memory
-	popCSS = null;
-	allCnt = null;
-
-	//更新窗口尺寸
-	countSize();
-	jQuery(function(){
+	function build_UI_DOM(){
+		document.head.appendChild(utils.createDom(popCSS)[0]);
+		document.body.appendChild(private_allCnt);
+		//释放掉无用的内存
+		popCSS = null;
+		allCnt = null;
+		
+		//更新窗口尺寸
 		countSize();
 		setTimeout(countSize,500);
+	}
+	
+	events.ready(function(){
+		build_UI_DOM();
 	});
+	
 	/**
 	 *	fix Prompt Mask position & size 
 	 */ 
@@ -298,7 +303,7 @@
 		var dragMask = utils.createDom(dragMask_tpl)[0];
 
 		var dx, dy,l_start,t_start,w_start,h_start;
-		jQuery(handle_dom).mousedown(function(e){
+		events.bind(handle_dom,'mousedown',function(e){
 			if(e.button == 0){
 				down(e);
 			}
@@ -314,7 +319,9 @@
 			t_start = parseInt(jQuery(dom).css('top'));
 			w_start = parseInt(jQuery(dom).outerWidth());
 			h_start = parseInt(jQuery(dom).outerHeight());
-			jQuery(document).mousemove(move).mouseup(up);
+			
+			events.bind(document,'mousemove',move);
+			events.bind(document,'mouseup',up);
 			utils.css(
 				dragMask,
 				{
@@ -323,7 +330,7 @@
 					'cursor' : jQuery(handle_dom).css('cursor')
 				}
 			);
-			jQuery(private_fixedScreenTopDom).append(dragMask);
+			private_fixedScreenTopDom.appendChild(dragMask);
 			start&&start();
 		}
 		function move(e){
@@ -334,7 +341,8 @@
 		}
 		function up(e) {
 			dragMask.remove();
-			jQuery(document).unbind("mousemove", move).unbind("mouseup", up);
+			events.unbind(document,'mousemove',move);
+			events.unbind(document,'mouseup',up);
 			end&&end();
 		}
 	}
@@ -412,7 +420,9 @@
 		});
 		dom.appendChild(utils.createDom(this_html)[0]);
 		
-		jQuery(dom).on('click','.UI_pop_confirm_ok',function(){
+		//点击确认按钮
+		var ok_dom = utils.findByClassName(dom,'UI_pop_confirm_ok')[0];
+		events.bind(ok_dom,'click',function(){
 			if(callback){
 				//根据执行结果判断是否要关闭弹框
 				var result = callback();
@@ -422,7 +432,10 @@
 			}else{
 				close();
 			}
-		}).on('click','.UI_pop_confirm_cancel',function(){
+		});
+		//点击取消按钮
+		var cancel_dom = utils.findByClassName(dom,'UI_pop_confirm_cancel')[0];
+		events.bind(cancel_dom,'click',function(){
 			if(cancel){
 				//根据执行结果判断是否要关闭弹框
 				var result = cancel();
@@ -557,11 +570,14 @@
 			{
 				'top' : top,
 				'opacity' : 1
-			},100,'Sine.easeOut'
+			},200,'Sine.easeOut'
 		);
-		jQuery(this.dom).on('click','.UI_pop_close',function(){
+		
+		var close_dom = utils.findByClassName(this.dom,'UI_pop_close')[0];
+		events.bind(close_dom,'click',function(){
 			this_pop.close();
-		});
+		})
+		
 		if(this._mask){
 			showMask();
 		}
@@ -637,6 +653,7 @@
 		var this_html = ask_tpl.replace(/{text}/,this_text);
 
 		this.dom = utils.createDom(this_html)[0];
+		this.inputDom = utils.findByClassName(this_pop.dom,'UI_ask_key')[0];
 		this.closeFn =  null;
 		this.callback = callback || null;
 
@@ -649,8 +666,10 @@
 		});
 		this.dom.appendChild(utils.createDom(this_html)[0]);
 		
-		jQuery(this.dom).on('click','.UI_pop_confirm_ok',function(){
-			var value = jQuery(this_pop.dom).find('input').val();
+		//确定
+		var ok_dom = utils.findByClassName(this.dom,'UI_pop_confirm_ok')[0];
+		events.bind(ok_dom,'click',function(){
+			var value = this_pop.inputDom.value;
 			if(this_pop.callback){
 				//根据执行结果判断是否要关闭弹框
 				var result = this_pop.callback(value);
@@ -660,7 +679,11 @@
 			}else{
 				this_pop.close();
 			}
-		}).on('click','.UI_pop_confirm_cancel',function(){
+		});
+		
+		//取消
+		var cancel_dom = utils.findByClassName(this.dom,'UI_pop_confirm_cancel')[0];
+		events.bind(cancel_dom,'click',function(){
 			this_pop.close();
 		});
 
@@ -688,7 +711,7 @@
 	ASK.prototype['close'] = CLOSEMETHOD;
 	ASK.prototype['setValue'] = function(text){
 		var text = text ? text.toString() : '';
-		jQuery(this.dom).find('input').val(text);
+		this.inputDom.value = text;
 	};
 
 
@@ -778,7 +801,7 @@
 		doc.addEventListener('pointerdown',checkClick);
 	}else{
 		//PC鼠标事件
-		jQuery(document).on('mousedown',checkClick);
+		events.bind(document,'mousedown',checkClick);
 	}
 	
 	
@@ -877,8 +900,8 @@
 		var this_html = param['html'] || '';
 		//insert html
 		this.cntDom.innerHTML = this_html;
-
-		jQuery(this.dom).on('click','.UI_coverClose',function(){
+		
+		events.bind(this.closeDom,'click',function(){
 			this_cover.close();
 		});
 
@@ -900,7 +923,7 @@
 			this.cntDom,
 			{
 				'left' : 0
-			}, 200,'Bounce.easeOut',function(){
+			}, 200,function(){
 				utils.fadeIn(this_cover.closeDom,100);
 			}
 		);
@@ -945,7 +968,7 @@
 		var fns = [];
 		var list_html = '';
 		for(var i=0,total=list.length;i<total;i++){
-			list_html += '<a href="javascript:void(0)" data-index="' + i + '">' + list[i][0] + '</a>';
+			list_html += '<a class="UI_select_btn" href="javascript:void(0)">' + list[i][0] + '</a>';
 			fns.push(list[i][1]);
 		}
 		var this_html = select_tpl.replace(/\{(\w+)\}/g,function(a,b){
@@ -976,17 +999,17 @@
 		utils.animation(this.dom, {
 			'bottom' : 0,
 			'opacity' : 1
-	        }, 400, 'Bounce.easeOut'
+	        }, 300, 'Bounce.easeOut'
         );
-		
-		jQuery(this.dom).on('click','a',function(){
-			var txt = jQuery(this).html();
-			var index = jQuery(this).attr('data-index');
-			if(index != '-1'){
-				fns[index] && fns[index]();
-			}
-			this_sel.close('slide',200);
-		});
+		var btns = utils.findByClassName(this.dom,'UI_select_btn');
+		for(var i=0,total=btns.length;i<total;i++){
+			(function(index){
+				events.bind(btns[index],'click',function(){
+					fns[index] && fns[index]();
+					this_sel.close('slide',200);
+				});
+			})(i);
+		}
 	}
 	SELECT.prototype['close'] = CLOSEMETHOD;
 	/**
@@ -1531,4 +1554,74 @@
 		},
 		'hasClass' : hasClass
     }
+},function(){
+	/**
+	 * 页面加载
+	 */
+	var readyFns = [];
+	function completed() {
+		document.removeEventListener( "DOMContentLoaded", completed, false );
+		window.removeEventListener( "load", completed, false );
+		for(var i =0,total=readyFns.length;i<total;i++){
+			readyFns[i]();
+		}
+		readyFns = null;
+	}
+	function ready(callback){
+		if ( document.readyState === "complete" ) {
+			callback && callback();
+		} else {
+			callback && readyFns.push(callback);
+			document.addEventListener( "DOMContentLoaded", completed, false );
+			window.addEventListener( "load", completed, false );
+		}
+	}
+	
+	/**
+	 * 事件绑定
+	 * elem:节点
+	 * type:事件类型
+	 * handler:回调
+	 */
+    var bindHandler = (function() {
+		// 标准浏览器
+		if (window.addEventListener) {
+			return function(elem, type, handler) {
+				// 最后一个参数为true:在捕获阶段调用事件处理程序
+				//为false:在冒泡阶段调用事件处理程序
+				elem.addEventListener(type, handler, false);
+			}
+		} else if (window.attachEvent) {
+			// IE浏览器
+			return function(elem, type, handler) {
+				elem.attachEvent("on" + type, handler);
+			}
+		}
+	})();
+
+	/**
+	 * 事件解除
+	 * elem:节点
+	 * type:事件类型
+	 * handler:回调
+	 */
+	var removeHandler = (function() {
+		// 标准浏览器
+		if (window.removeEventListener) {
+			return function(elem, type, handler) {
+				elem.removeEventListener(type, handler, false);
+			}
+		} else if (window.detachEvent) {
+			// IE浏览器
+			return function(elem, type, handler) {
+				elem.detachEvent("on" + type, handler);
+			}
+		}
+	})();
+	
+	return {
+		'ready' : ready,
+		'bind' : bindHandler,
+		'unbind' : removeHandler
+	};
 });
