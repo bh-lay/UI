@@ -208,9 +208,7 @@
 				refreshSize();
 				utils.animation(private_fixedScreenTopDom,{'top' : private_scrollTop},100);
 				utils.animation(private_fixedScreenBottomDom,{'top' : private_scrollTop + private_winH},100);
-				utils.css(private_maskDom,{
-					'top' : private_scrollTop
-				});
+				utils.css(private_maskDom,{'top' : private_scrollTop});
 			};
 		}else{
 			utils.css(private_fixedScreenTopDom,{
@@ -266,14 +264,11 @@
 			utils.bind(document,'mousemove',move);
 			utils.bind(document,'mouseup',up);
 			
-			utils.css(
-				dragMask,
-				{
-					'width' : private_winW,
-					'height' : private_winH,
-					'cursor' : utils.getStyle(handle_dom,'cursor')
-				}
-			);
+			utils.css(dragMask,{
+				'width' : private_winW,
+				'height' : private_winH,
+				'cursor' : utils.getStyle(handle_dom,'cursor')
+			});
 			private_fixedScreenTopDom.appendChild(dragMask);
 			start&&start();
 		}
@@ -450,12 +445,9 @@
 
 		//预定高度时
 		if(this_height){
-			utils.css(
-				this.cntDom,
-				{
-					'height' : this_height - 41
-				}
-			);
+			utils.css(this.cntDom,{
+				'height' : this_height - 41
+			});
 		}
 
 		//当有确认参数时
@@ -478,13 +470,10 @@
 					var top = dy + t_start;
 					var left = dx + l_start;
 					var newSize = fix_position(top,left,w_start,h_start);
-					utils.css(
-						this_pop.dom,
-						{
-							'left' : newSize.left,
-							'top' : newSize.top
-						}
-					);
+					utils.css(this_pop.dom,{
+						'left' : newSize.left,
+						'top' : newSize.top
+					});
 				}
 			});
 		}
@@ -500,22 +489,16 @@
 		var left = (param['left'] == +param['left']) ? param['left'] : fixSize.left;
 		
 		// create pop
-		utils.css(
-			this.dom,
-			{
-				'width' : this_width,
-				'left' : left,
-				'top' : top - 100,
-				'opacity' : 0
-			}
-		);
-		utils.animation(
-			this.dom,
-			{
-				'top' : top,
-				'opacity' : 1
-			},100,'Sine.easeOut'
-		);
+		utils.css(this.dom,{
+			'width' : this_width,
+			'left' : left,
+			'top' : top - 100,
+			'opacity' : 0
+		});
+		utils.animation(this.dom,{
+			'top' : top,
+			'opacity' : 1
+		},100,'Sine.easeOut');
 		
 		var close_dom = utils.findByClassName(this.dom,'UI_pop_close')[0];
 		utils.bind(close_dom,'click',function(){
@@ -564,21 +547,15 @@
 		});
 		var newPosition = adaption(300,160);
 		// create pop
-		utils.css(
-			this.dom,
-			{
-				'width' : 300,
-				'left' : newPosition.clientLeft,
-				'top' : newPosition.clientTop - 100
-			}
-		);
-		utils.animation(
-			this.dom,
-			{
-				'opacity' : 1,
-				'top' : newPosition.clientTop
-			},100,'Back.easeOut'
-		);
+		utils.css(this.dom,{
+			'width' : 300,
+			'left' : newPosition.clientLeft,
+			'top' : newPosition.clientTop - 100
+		});
+		utils.animation(this.dom,{
+			'opacity' : 1,
+			'top' : newPosition.clientTop
+		},100,'Back.easeOut');
 		private_fixedScreenTopDom.appendChild(this.dom);
 
 	}
@@ -666,22 +643,14 @@
 		var newPosition = adaption(260,100);
 		// create pop
 		
-		utils.css(
-			this.dom,
-			{
-				'top' : 0,
-				'opacity' : 0
-			}
-		);
-		utils.animation(
-			this.dom,
-			{
-				'top' : newPosition.clientTop,
-				'opacity' : 1
-			},
-			140,
-			'Back.easeOut'
-		);
+		utils.css(this.dom,{
+			'top' : 0,
+			'opacity' : 0
+		});
+		utils.animation(this.dom,{
+			'top' : newPosition.clientTop,
+			'opacity' : 1
+		},140,'Back.easeOut');
 		
 		//console.log(private_winH,12);
 		private_fixedScreenTopDom.appendChild(this.dom);
@@ -757,15 +726,12 @@
 		//insert html
 		this.dom.innerHTML = this_html;
 		
-		utils.css(
-			this.dom,
-			{
-				'width' : param['width'] || 240,
-				'height' :param['height'] || null,
-				'top' : param['top'] || 300,
-				'left' : param['left'] || 800
-			}
-		)
+		utils.css(this.dom,{
+			'width' : param['width'] || 240,
+			'height' :param['height'] || null,
+			'top' : param['top'] || 300,
+			'left' : param['left'] || 800
+		});
 		private_mainDom.appendChild(this.dom);
 	}
 	PLANE.prototype['close'] = CLOSEMETHOD;
