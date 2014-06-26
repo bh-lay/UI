@@ -168,21 +168,22 @@
 	};
 	
 	
-	//重新计算窗口尺寸
-	function countSize(){
+	
+	function refreshSize(){
+		//重新计算窗口尺寸
 		private_winW = document.body.scrollWidth;
 		private_scrollTop = document.body.scrollTop;
 		private_winH = window.innerHeight;
 		private_docH = document.body.scrollHeight;
-		build_base_css();
-	}
-	function build_base_css(){
-		var css = [
+		
+		//向css环境写入样式信息
+		private_cssDom.innerHTML = [
 			'.UI_cover{height:' + private_winH + 'px;}',
 			'.UI_ask{top:' + (private_winH/2) + 'px;}',
+			'.UI_mask{height:' + private_winH + 'px;}'
 		].join('');
-		private_cssDom.innerHTML = css;
 	}
+	
 	function build_UI_DOM(){
 		document.head.appendChild(utils.createDom(popCSS)[0]);
 		document.head.appendChild(private_cssDom);
@@ -192,8 +193,8 @@
 		allCnt = null;
 		
 		//更新窗口尺寸
-		countSize();
-		setTimeout(countSize,500);
+		refreshSize();
+		setTimeout(refreshSize,500);
 		var rebuild_fn = null;
 		/**
 		 *	fix Prompt Mask position & size 
@@ -204,12 +205,11 @@
 			utils.css(private_fixedScreenBottomDom,{'top' : private_scrollTop + private_winH});
 			
 			rebuild_fn = function(){
-				countSize();
+				refreshSize();
 				utils.animation(private_fixedScreenTopDom,{'top' : private_scrollTop},100);
 				utils.animation(private_fixedScreenBottomDom,{'top' : private_scrollTop + private_winH},100);
 				utils.css(private_maskDom,{
-					'top' : private_scrollTop,
-					'height' : private_winH
+					'top' : private_scrollTop
 				});
 			};
 		}else{
@@ -223,8 +223,7 @@
 			});
 			utils.css(private_maskDom,{'height' : private_docH});
 			rebuild_fn = function(){
-				countSize();
-				utils.css(private_maskDom,{'height' : private_docH});
+				refreshSize();
 			};
 		}
 		//监听浏览器缩放、滚屏事件
@@ -254,7 +253,7 @@
 		});
 		function down(e){
 			//更新窗口尺寸
-			countSize();
+			refreshSize();
 //			e.preventDefault();
 //			e.stopPropagation();
 			dx = e.pageX;
