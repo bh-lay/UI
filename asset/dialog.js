@@ -8,7 +8,7 @@
 
 (function(global,doc,UI_factory,utils_factory){
 	
-	//构建工具类
+	//初始化工具类
 	var utils = utils_factory();
 	
 	//初始化UI模块
@@ -19,7 +19,7 @@
 	
 	//提供CommonJS规范的接口
 	global.define && define(function(){
-		return factory;
+		return UI;
 	});
 })(window,document,function(window,document,utils){
 	/**
@@ -1210,17 +1210,20 @@
 		//dom有class 检测，无class，直接返回false
 		return (dom.className && dom.className.length) ? dom.className.match(new RegExp('(\\s|^)' + classSingle +'(\\s|$)')) : false;
 	}
-	
-	function getStyle(elem, name) { //
+	//获取样式
+	function getStyle(elem, attr) {
 		var w3style;
-		if (document.defaultView) {
+		attr == "borderWidth" ? attr = "borderLeftWidth" : attr;
+		if (elem.style[attr]){
+			w3style = elem.style[attr];
+		} else if(document.defaultView) {
 			var style = document.defaultView.getComputedStyle(elem, null);
-			name == "borderWidth" ? name = "borderLeftWidth" : name;
-			w3style = name in style ? style[name] : style.getPropertyValue(name);
-			//w3style == "auto" ? w3style = "0px" : w3style;
+			w3style = attr in style ? style[attr] : style.getPropertyValue(attr);
+		} else if (elem.currentStyle) {
+			w3style = elem.currentStyle[attr]
 		}
-		return elem.style[name] ||
-		(elem.currentStyle && (elem.currentStyle[name] == "auto" ? "0px" : elem.currentStyle[name])) || w3style;
+		//w3style == "auto" ? w3style = "0px" : w3style;
+		return w3style;
 	}
 	
 	// 此处只能获取属性值为数值类型的style属性
@@ -1268,24 +1271,33 @@
 	}
 
 	/**
-	 * 原始的设置css方法
-	 *
-	 *
+	 * dom设置样式
 	 */
-	function setCss(elem,prop,value){
+	function setStyle(elem,prop,value){
 		if(value == null){
 			return
 		}
 		prop = prop.toString();
 		if (prop == "opacity") {
 			value = value / 100;
-		} else if (value === +value){
+		} else if (value == +value){
 			value = value + "px";
 		}
 		
 		elem.style[prop] = value;
 	}
-	
+	//设置css
+	function setCss(dom,cssObj){
+		var cssVal = parseCssObj(cssObj);
+		
+		for (var pro in cssObj) {
+			if (!cssObj.hasOwnProperty(pro)){
+				continue;
+			}
+			setStyle(dom,pro,cssObj[pro]);
+		}
+		
+	}
 	var requestAnimationFrame = (function () {
         return  window.requestAnimationFrame ||
 				window.webkitRequestAnimationFrame ||
@@ -1299,7 +1311,7 @@
 	 * 动画类
 	 *
 	 */
-    function _anim() {
+    function anim() {
 		var args = arguments;
         this.elem = args[0];
 		this.cssObj = args[1];
@@ -1325,7 +1337,7 @@
 		this.animType = 'Tween.' + this.animType;
 		this.startAnim();
     }
-    _anim.prototype = {
+    anim.prototype = {
         startAnim: function () {
             var that = this;
             //当前帧
@@ -1349,7 +1361,7 @@
 				
 				for (var i = 0; i < props.length; i++) {
 					var value = countNewCSS(that.cssOri[i],that.cssEnd[i],cur_frame,all_frame,aniFunction);
-					setCss(that.elem,props[i],value);
+					setStyle(that.elem,props[i],value);
 				}
 				
 				if (cur_frame < all_frame) {
@@ -1439,28 +1451,40 @@
 			return (parseInt(getStyle(elem,'height')) + parseInt(getStyle(elem,'borderTopWidth')) + parseInt(getStyle(elem,'borderBottomWidth')));
 		}
 	}
-	function findByClassName(dom,classStr){
-		var returns = [];
-
-		//使用url规则中的tagName,若无，则尝试获取所有元素
-		var caches = dom.getElementsByTagName("*");
-		//遍历结果
-		each(caches,function(i,thisDom){
-			//检查class是否合法
-			if(hasClass(thisDom,classStr)){
-				returns.push(thisDom);
-			}
-		});
-		return returns;
-	}
 	
+	//根据class查找元素
+	var findByClassName = (function(){
+		if(document.getElementsByClassName !== 'undefined'){
+			//支持gEbCN
+			return function (dom,classStr){
+				return dom.getElementsByClassName(classStr);
+			};
+		}else{
+			//无奈采用遍历法
+			return function (dom,classStr){
+				var returns = [];
+				//尝试获取所有元素
+				var caches = dom.getElementsByTagName("*");
+				//遍历结果
+				each(caches,function(i,thisDom){
+					//检查class是否合法
+					if(hasClass(thisDom,classStr)){
+						returns.push(thisDom);
+					}
+				});
+				return returns;
+			};
+		}
+	})();
+	
+	//隐藏dom
 	function hide(elem){
 		elem.style['display'] = 'none';
 	}
 	//淡出
 	function fadeOut(DOM,time,fn){
 		var op = getStyle(DOM,'opacity');
-		new _anim(DOM,{
+		new anim(DOM,{
 			'opacity' : 0
 		}, time,function(){
 			DOM.style['opacity'] = op;
@@ -1473,7 +1497,7 @@
 		var op = getStyle(DOM,'opacity');
 		DOM.style['opacity'] = 0;
 		DOM.style['display'] = 'block';
-		new _anim(DOM,{
+		new anim(DOM,{
 			'opacity' : op,
 			'padding' : 0
 		}, time, function(){
@@ -1485,7 +1509,7 @@
 		DOM.style['overflow'] = 'hidden';
 		DOM.style['opacity'] = 0;
 		DOM.style['display'] = 'block';
-		new _anim(DOM,{
+		new anim(DOM,{
 			'height' : 0,
 			'padding' : 0
 		}, time, function(){
@@ -1495,7 +1519,7 @@
 	//滑出
 	function slideUp(DOM,time,fn){
 		DOM.style['overflow'] = 'hidden';
-		new _anim(DOM,{
+		new anim(DOM,{
 			'height' : 0,
 			'padding' : 0
 		}, time,function(){
@@ -1571,23 +1595,13 @@
 	})();
 	
     return{
-		'css' : function(dom,cssObj){
-			var cssVal = parseCssObj(cssObj);
-			
-            for (var pro in cssObj) {
-                if (!cssObj.hasOwnProperty(pro)){
-					continue;
-				}
-				setCss(dom,pro,cssObj[pro]);
-            }
-			
-		},
+		'css' : setCss,
 		'slideDown' : slideDown,
 		'slideUp' : slideUp,
 		'fadeIn' : fadeIn,
 		'fadeOut' : fadeOut,
 		'animation' : function(a,b,c,d,e) {
-			return new _anim(a,b,c,d,e);
+			return new anim(a,b,c,d,e);
 		},
 		'createDom' : createDom,
 		'findByClassName' : findByClassName,

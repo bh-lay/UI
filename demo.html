@@ -5,6 +5,7 @@
 	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
 	<title>UI_demo</title>
 	<style type="text/css">
+	body{background:#aaa;}
 	.cnt{max-width:400px;margin:auto;font-family:"Microsoft Yahei";}
 	input{width:100%;height:40px;display:block;margin:0px 0px 20px;padding:0px;font-family:inherit;}
 	</style>
@@ -24,12 +25,9 @@
 			  'confirm' : {
 			    'btns' : ['好的','不干'],
 			    'callback' : function(){
-			      alert('你是个好人！');
+			      UI.prompt('你是好人！');
 			    }
 			  }
-			//  'confirm' : function(){
-			//    alert(2);
-			//  }
 			});
 		}
 		function showConfirm(){
@@ -37,7 +35,7 @@
 			  'text' : '请我吃饭吧！',
 			  'btns' : ['好的呀','不愿意'],
 			  'callback' : function(){
-			    alert('你是好人！');
+			    UI.prompt('你是好人！');
 			  }
 			});
 		}
@@ -60,13 +58,34 @@
 				'intro' : '来一帮人，想打架么'
 			});
 		}
+		function showCover(){
+			UI.cover();
+		}
+		function showAsk(){
+			UI.ask('你今年多大了？',function(year){
+				if(year == +year){
+					if(year > 30){
+						UI.prompt('都' + year + '岁了啊，这么老啊！');
+					}else if(year > 17){
+						UI.prompt('干柴烈火的年纪哦！');
+					}else{
+						UI.prompt('回家玩儿去！');
+					}
+				}else{
+					UI.prompt('写个数字会死啊!');
+					return false
+				}
+			});
+		}
 	</script>
 <div class="cnt">
-	<input type="button" onclick="showPop()" value="显示弹框"/>
-	<input type="button" onclick="showConfirmPop()" value="显示带对话的弹框"/>
-	<input type="button" onclick="showConfirm()" value="显示确认框"/>
+	<input type="button" onclick="showPop()" value="弹框"/>
+	<input type="button" onclick="showConfirmPop()" value="带对话的弹框"/>
+	<input type="button" onclick="showConfirm()" value="确认框"/>
+	<input type="button" onclick="showAsk()" value="问我点啥吧"/>
 	<input type="button" onclick="showMessage()" value="提示信息"/>
-	<input type="button" onclick="showSelect()" value="显示选择列表"/>
+	<input type="button" onclick="showSelect()" value="选择列表"/>
+	<input type="button" onclick="showCover()" value="全屏浮层"/>
 	
 	<script type="text/javascript" src="asset/dialog.js"></script>
 </div>
