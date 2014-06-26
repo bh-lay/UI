@@ -206,8 +206,8 @@
 			
 			rebuild_fn = function(){
 				refreshSize();
-				utils.animation(private_fixedScreenTopDom,{'top' : private_scrollTop},100);
-				utils.animation(private_fixedScreenBottomDom,{'top' : private_scrollTop + private_winH},100);
+				utils.css(private_fixedScreenTopDom,{'top' : private_scrollTop});
+				utils.css(private_fixedScreenBottomDom,{'top' : private_scrollTop + private_winH});
 				utils.css(private_maskDom,{'top' : private_scrollTop});
 			};
 		}else{
@@ -517,13 +517,10 @@
 		var height = utils.outerHeight(this.dom);
 		
 		var fixSize = adaption(width,height);
-		utils.animation(
-			this.dom,
-			{
-				'top' : fixSize.top,
-				'left' : fixSize.left
-			}, 100
-		);
+		utils.animation(this.dom,{
+			'top' : fixSize.top,
+			'left' : fixSize.left
+		}, 100);
 	};
 
 	/**
@@ -881,8 +878,7 @@
 		utils.animation(this.dom, {
 			'bottom' : 0,
 			'opacity' : 1
-	        }, 300, 'Bounce.easeOut'
-        );
+		}, 300, 'Bounce.easeOut');
 		var btns = utils.findByClassName(this.dom,'UI_select_btn');
 		for(var i=0,total=btns.length;i<total;i++){
 			(function(index){
@@ -913,18 +909,15 @@
 				var num = parseInt(num);
 				if(num > 0){
 					private_CONFIG.zIndex = num;
-					utils.css(
-						private_allCnt,
-						{'zIndex':num}
-					);
-					utils.css(
-						private_fixedScreenBottomDom,
-						{'zIndex':num}
-					);
-					utils.css(
-						private_fixedScreenTopDom,
-						{'zIndex':num}
-					);
+					utils.css(private_allCnt,{
+						'zIndex':num
+					});
+					utils.css(private_fixedScreenBottomDom,{
+						'zIndex':num
+					});
+					utils.css(private_fixedScreenTopDom,{
+						'zIndex':num
+					});
 				}
 			}
 		},
@@ -1382,21 +1375,17 @@
 		return box;
 	}
 	function outerWidth (elem){
-		// Support: BlackBerry 5, iOS 3 (original iPhone)
-		// If we don't have gBCR, just use 0,0 rather than error
-		if ( false && typeof elem.getBoundingClientRect !== 'undefined' ) {
+		if ( typeof elem.getBoundingClientRect !== 'undefined' ) {
 			return elem.getBoundingClientRect()['width'];
 		}else{
-			return (parseInt(getStyle(elem,'width')) + parseInt(getStyle(elem,'borderLeftWidth')) + parseInt(getStyle(elem,'borderRightWidth')));
+			return (parseInt(getStyle(elem,'borderLeftWidth')) + parseInt(getStyle(elem,'paddingLeft')) + parseInt(getStyle(elem,'width')) + parseInt(getStyle(elem,'paddingRight')) + parseInt(getStyle(elem,'borderRightWidth')));
 		}
 	}
 	function outerHeight (elem){
-		// Support: BlackBerry 5, iOS 3 (original iPhone)
-		// If we don't have gBCR, just use 0,0 rather than error
-		if ( false && typeof elem.getBoundingClientRect !== 'undefined' ) {
+		if ( typeof elem.getBoundingClientRect !== 'undefined' ) {
 			return elem.getBoundingClientRect()['height'];
 		}else{
-			return (parseInt(getStyle(elem,'height')) + parseInt(getStyle(elem,'borderTopWidth')) + parseInt(getStyle(elem,'borderBottomWidth')));
+			return (parseInt(getStyle(elem,'borderTopWidth')) + parseInt(getStyle(elem,'paddingTop')) + parseInt(getStyle(elem,'height')) + parseInt(getStyle(elem,'paddingBottom')) + parseInt(getStyle(elem,'borderBottomWidth')));
 		}
 	}
 	
