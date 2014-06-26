@@ -16,7 +16,7 @@
 	
 	//提供window.UI的接口
 	global.UI = global.UI || UI;
-	
+	global.UI._utils = utils;
 	//提供CommonJS规范的接口
 	global.define && define(function(){
 		return UI;
@@ -1161,7 +1161,7 @@
 			var style = document.defaultView.getComputedStyle(elem, null);
 			w3style = attr in style ? style[attr] : style.getPropertyValue(attr);
 		} else if (elem.currentStyle) {
-			w3style = elem.currentStyle[attr]
+			w3style = elem.currentStyle[attr];
 		}
 		//w3style == "auto" ? w3style = "0px" : w3style;
 		return w3style;
