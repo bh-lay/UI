@@ -49,7 +49,7 @@
 		'<div class="UI_confirm_text">{text}</div>',
 	'</div>'].join('');
 
-	var ask_tpl = ['<div class="UI_ask">',
+	var ask_tpl = ['<div class="UI_ask UI_top_winH_half">',
 		'<div class="UI_ask_text">{text}</div>',
 		'<input class="UI_ask_key" type="text" name="UI_ask_key"/>',
 	'</div>'].join('');
@@ -64,7 +64,7 @@
 		'<div class="UI_cnt"></div>',
 	'</div>'].join('');
 
-	var cover_tpl = ['<div class="UI_cover">',
+	var cover_tpl = ['<div class="UI_cover UI_height_winH">',
 		'<div class="UI_coverCnt"></div>',
 		'<a href="javascript:void(0)" class="UI_coverClose">〉</a>',
 	'</div>'].join('');
@@ -147,6 +147,7 @@
 		private_mainDom = utils.findByClassName(private_allCnt,'UI_main_cnt')[0],
 		private_fixedScreenTopDom = utils.findByClassName(private_allCnt,'UI_fixedScreenTop_cnt')[0],
 		private_fixedScreenBottomDom = utils.findByClassName(private_allCnt,'UI_fixedScreenBottom_cnt')[0],
+		private_cssDom = utils.createDom('<style type="text/css"></style>')[0],
 		private_window = window,
 		private_winW,
 		private_winH,
@@ -173,10 +174,18 @@
 		private_scrollTop = document.body.scrollTop;
 		private_winH = window.innerHeight;
 		private_docH = document.body.scrollHeight;
+		build_base_css();
 	}
-	
+	function build_base_css(){
+		var css = [
+			'.UI_height_winH{height:' + private_winH + 'px;}',
+			'.UI_top_winH_half{top:' + (private_winH/2) + 'px;}',
+		].join('');
+		private_cssDom.innerHTML = css;
+	}
 	function build_UI_DOM(){
 		document.head.appendChild(utils.createDom(popCSS)[0]);
+		document.head.appendChild(private_cssDom);
 		document.body.appendChild(private_allCnt);
 		//释放掉无用的内存
 		popCSS = null;
@@ -623,22 +632,16 @@
 
 		var newPosition = adaption(300,160);
 		// create pop
-		utils.css(
-			this.dom,
-			{
-				'width' : 300,
-				'opacity' : 0,
-				'left' : newPosition.clientLeft,
-				'top' : newPosition.clientTop - 100
-			}
-		);
-		utils.animation(
-			this.dom,
-			{
-				'opacity' : 1,
-				'top' : newPosition.clientTop
-			},100,'Back.easeOut'
-		);
+		utils.css(this.dom,{
+			'width' : 300,
+			'opacity' : 0,
+			'left' : newPosition.clientLeft,
+			'marginTop' : -200
+		});
+		utils.animation(this.dom,{
+			'opacity' : 1,
+			'marginTop' : -100
+		},100,'Back.easeOut');
 
 		private_fixedScreenTopDom.appendChild(this.dom);
 	}
@@ -841,12 +844,6 @@
 
 		utils.hide(this.closeDom);
 		// create pop
-		utils.css(
-			this.dom,
-			{
-				'height' : private_winH
-			}
-		);
 		utils.css(
 			this.cntDom,
 			{
