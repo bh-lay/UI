@@ -6,8 +6,7 @@
 	<title>UI_demo</title>
 	<style type="text/css">
 	.cnt{max-width:400px;margin:auto;font-family:"Microsoft Yahei";}
-	input{width:100%;height:40px;display:block;margin:0px;padding:0px;font-family:inherit;}
-	textarea{width:100%;display:block;margin:0px 0px 40px;padding:20px 0px;font-size:14px;color:#333;border:none;background:#eee;resize:none;font-family:inherit;}
+	input{width:100%;height:40px;display:block;margin:0px 0px 20px;padding:0px;font-family:inherit;}
 	</style>
 </head>
 <body>
@@ -15,8 +14,6 @@
 		function showPop(){
 			var pop = UI.pop({
 			  'title' : '我的弹框',
-			  'top' : 200,
-			  'left' : '600',
 			  'html' : 'this is html'
 			});
 		}
@@ -66,56 +63,11 @@
 	</script>
 <div class="cnt">
 	<input type="button" onclick="showPop()" value="显示弹框"/>
-<textarea rows="7">
-	var pop = UI.pop({
-	  'title' : '我的弹框',
-	  'top' : 200,
-	  'left' : '600',
-	  'html' : 'this is html'
-	});
-</textarea>
 	<input type="button" onclick="showConfirmPop()" value="显示带对话的弹框"/>
-<textarea rows="11">
-	UI.pop({
-	  'title' : '我是自定义按钮的弹框',
-	  'html' : '请我吃饭吧！',
-	  'confirm' : {
-		'btns' : ['好的','不干'],
-		'callback' : function(){
-		  alert('你是个好人！');
-		}
-	  }
-	});
-</textarea>
 	<input type="button" onclick="showConfirm()" value="显示确认框"/>
-<textarea rows="8">
-	UI.confirm({
-	  'text' : '请我吃饭吧！',
-	  'btns' : ['好的呀','不愿意'],
-	  'callback' : function(){
-		alert('你是好人！');
-	  }
-	});
-</textarea>
 	<input type="button" onclick="showMessage()" value="提示信息"/>
-<textarea rows="2">
-	UI.prompt('我快死了');
-</textarea>
 	<input type="button" onclick="showSelect()" value="显示选择列表"/>
-<textarea rows="12">
-	UI.select([
-		['删除',function(){
-			alert('删除');
-		}],
-		['编辑',function(){
-			alert('编辑');
-		}],
-		['复制',function(){
-			alert('复制');
-		}]
-	]);
-</textarea>
-	<script type="text/javascript" src="asset/jquery.js"></script>
+	
 	<script type="text/javascript" src="asset/dialog.js"></script>
 </div>
 </body>

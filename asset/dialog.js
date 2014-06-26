@@ -2,40 +2,26 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2014-6-18 14:52
- * 
- * Function depends on
- *		JQUERY
- * 
+ * @modified 2014-6-26 16:04
  * 
  **/
 
-(function(global,doc,UI_factory,utils_factory,events_factory){
+(function(global,doc,UI_factory,utils_factory){
 	
+	//构建工具类
 	var utils = utils_factory();
-	var events = events_factory();
-	global.utils = utils;
-	//初始化工具
-	var factory = UI_factory(global,doc,utils,events);
+	
+	//初始化UI模块
+	var UI = UI_factory(global,doc,utils);
 	
 	//提供window.UI的接口
-	global.UI = global.UI || {};
-	global.UI.ask = factory.ask;
-	global.UI.pop = factory.pop;
-	global.UI.miniChat = factory.miniChat;
-	global.UI.confirm = factory.confirm;
-	global.UI.prompt = factory.prompt;
-	global.UI.plane = factory.plane;
-	global.UI.cover = factory.cover;
-	global.UI.select = factory.select;
-	global.UI.drag = factory.drag;
-	global.UI.config = factory.config;
+	global.UI = global.UI || UI;
 	
 	//提供CommonJS规范的接口
 	global.define && define(function(){
 		return factory;
 	});
-})(window,document,function(window,document,utils,events){
+})(window,document,function(window,document,utils){
 	/**
 	 * base template
 	 *
@@ -199,100 +185,49 @@
 		//更新窗口尺寸
 		countSize();
 		setTimeout(countSize,500);
+		var rebuild_fn = null;
+		/**
+		 *	fix Prompt Mask position & size 
+		 */ 
+		if(isIE67){
+			utils.css(private_maskDom,{'height' : private_docH});
+			utils.css(private_fixedScreenTopDom,{'top' : private_scrollTop});
+			utils.css(private_fixedScreenBottomDom,{'top' : private_scrollTop + private_winH});
+			
+			rebuild_fn = function(){
+				countSize();
+				utils.animation(private_fixedScreenTopDom,{'top' : private_scrollTop},100);
+				utils.animation(private_fixedScreenBottomDom,{'top' : private_scrollTop + private_winH},100);
+				utils.css(private_maskDom,{
+					'top' : private_scrollTop,
+					'height' : private_winH
+				});
+			};
+		}else{
+			utils.css(private_fixedScreenTopDom,{
+				'position' : 'fixed',
+				'top' : 0
+			});
+			utils.css(private_fixedScreenBottomDom,{
+				'position' : 'fixed',
+				'bottom' : 0
+			});
+			utils.css(private_maskDom,{'height' : private_docH});
+			rebuild_fn = function(){
+				countSize();
+				utils.css(private_maskDom,{'height' : private_docH});
+			};
+		}
+		//监听浏览器缩放、滚屏事件
+		utils.bind(private_window,'resize',rebuild_fn);
+		utils.bind(private_window,'scroll',rebuild_fn);
 	}
 	
-	events.ready(function(){
+	utils.ready(function(){
 		build_UI_DOM();
 	});
 	
-	/**
-	 *	fix Prompt Mask position & size 
-	 */ 
-	if(isIE67){
-		utils.css(
-			private_maskDom,
-			{
-				'height' : private_docH
-			}
-		);
-		utils.css(
-			private_fixedScreenTopDom,
-			{
-				'top' : private_scrollTop
-			}
-		);
-		
-		utils.css(
-			private_fixedScreenBottomDom,
-			{
-				'top' : private_scrollTop + private_winH
-			}
-		);
-		
-		jQuery(private_window).on('resize scroll',function(){
-			//更新窗口尺寸
-			countSize();
-			
-			utils.animation(
-				private_fixedScreenTopDom,
-				{
-					'top' : private_scrollTop
-				},
-				100
-			);
-			
-			utils.animation(
-				private_fixedScreenBottomDom,
-				{
-					'top' : private_scrollTop + private_winH
-				},
-				100
-			);
-			
-			utils.css(
-				private_maskDom,
-				{
-					'top' : private_scrollTop,
-					'height' : private_winH
-				}
-			);
-		});
-	}else{
-		
-		utils.css(
-			private_fixedScreenTopDom,
-			{
-				'position' : 'fixed',
-				'top' : 0
-			}
-		);
-		
-		utils.css(
-			private_fixedScreenBottomDom,
-			{
-				'position' : 'fixed',
-				'bottom' : 0
-			}
-		);
-		
-		utils.css(
-			private_maskDom,
-			{
-				'height' : private_docH
-			}
-		);
-		
-		jQuery(private_window).on('resize scroll',function(){
-			//更新窗口尺寸
-			countSize();
-			utils.css(
-				private_maskDom,
-				{
-					'height' : private_docH
-				}
-			);
-		});
-	}
+	
 	
 	//通用拖动方法
 	function drag(handle_dom,dom,param){
@@ -303,7 +238,7 @@
 		var dragMask = utils.createDom(dragMask_tpl)[0];
 
 		var dx, dy,l_start,t_start,w_start,h_start;
-		events.bind(handle_dom,'mousedown',function(e){
+		utils.bind(handle_dom,'mousedown',function(e){
 			if(e.button == 0){
 				down(e);
 			}
@@ -315,19 +250,20 @@
 //			e.stopPropagation();
 			dx = e.pageX;
 			dy = e.pageY;
-			l_start = parseInt(jQuery(dom).css('left'));
-			t_start = parseInt(jQuery(dom).css('top'));
-			w_start = parseInt(jQuery(dom).outerWidth());
-			h_start = parseInt(jQuery(dom).outerHeight());
+			l_start = parseInt(utils.getStyle(dom,'left'));
+			t_start = parseInt(utils.getStyle(dom,'top'));
+			w_start = parseInt(utils.outerWidth(dom));
+			h_start = parseInt(utils.outerHeight(dom));
 			
-			events.bind(document,'mousemove',move);
-			events.bind(document,'mouseup',up);
+			utils.bind(document,'mousemove',move);
+			utils.bind(document,'mouseup',up);
+			
 			utils.css(
 				dragMask,
 				{
 					'width' : private_winW,
 					'height' : private_winH,
-					'cursor' : jQuery(handle_dom).css('cursor')
+					'cursor' : utils.getStyle(handle_dom,'cursor')
 				}
 			);
 			private_fixedScreenTopDom.appendChild(dragMask);
@@ -341,8 +277,8 @@
 		}
 		function up(e) {
 			dragMask.remove();
-			events.unbind(document,'mousemove',move);
-			events.unbind(document,'mouseup',up);
+			utils.unbind(document,'mousemove',move);
+			utils.unbind(document,'mouseup',up);
 			end&&end();
 		}
 	}
@@ -422,7 +358,7 @@
 		
 		//点击确认按钮
 		var ok_dom = utils.findByClassName(dom,'UI_pop_confirm_ok')[0];
-		events.bind(ok_dom,'click',function(){
+		utils.bind(ok_dom,'click',function(){
 			if(callback){
 				//根据执行结果判断是否要关闭弹框
 				var result = callback();
@@ -435,7 +371,7 @@
 		});
 		//点击取消按钮
 		var cancel_dom = utils.findByClassName(dom,'UI_pop_confirm_cancel')[0];
-		events.bind(cancel_dom,'click',function(){
+		utils.bind(cancel_dom,'click',function(){
 			if(cancel){
 				//根据执行结果判断是否要关闭弹框
 				var result = cancel();
@@ -551,9 +487,9 @@
 		private_mainDom.appendChild(this.dom);
 		
 		//fix position get size
-		var fixSize = adaption(this_width,(this_height?this_height:jQuery(this.dom).height()));
-		var top = typeof(param['top']) == 'number' ? param['top'] : fixSize.top;
-		var left = typeof(param['left']) == 'number' ? param['left'] : fixSize.left;
+		var fixSize = adaption(this_width,(this_height?this_height:utils.outerHeight(this.dom)));
+		var top = (param['top'] == +param['top']) ? param['top'] : fixSize.top;
+		var left = (param['left'] == +param['left']) ? param['left'] : fixSize.left;
 		
 		// create pop
 		utils.css(
@@ -570,11 +506,11 @@
 			{
 				'top' : top,
 				'opacity' : 1
-			},200,'Sine.easeOut'
+			},100,'Sine.easeOut'
 		);
 		
 		var close_dom = utils.findByClassName(this.dom,'UI_pop_close')[0];
-		events.bind(close_dom,'click',function(){
+		utils.bind(close_dom,'click',function(){
 			this_pop.close();
 		})
 		
@@ -586,12 +522,10 @@
 	//使用close方法
 	POP.prototype['close'] = CLOSEMETHOD;
 	POP.prototype['adapt'] = function(){
-		var offset = jQuery(this.dom).offset();
-		var width = jQuery(this.dom).width();
-		var height = jQuery(this.dom).height();
-
+		var width = utils.outerWidth(this.dom);
+		var height = utils.outerHeight(this.dom);
+		
 		var fixSize = adaption(width,height);
-	//	console.log(offset,fixSize,'-----------');
 		utils.animation(
 			this.dom,
 			{
@@ -668,7 +602,7 @@
 		
 		//确定
 		var ok_dom = utils.findByClassName(this.dom,'UI_pop_confirm_ok')[0];
-		events.bind(ok_dom,'click',function(){
+		utils.bind(ok_dom,'click',function(){
 			var value = this_pop.inputDom.value;
 			if(this_pop.callback){
 				//根据执行结果判断是否要关闭弹框
@@ -683,7 +617,7 @@
 		
 		//取消
 		var cancel_dom = utils.findByClassName(this.dom,'UI_pop_confirm_cancel')[0];
-		events.bind(cancel_dom,'click',function(){
+		utils.bind(cancel_dom,'click',function(){
 			this_pop.close();
 		});
 
@@ -801,7 +735,7 @@
 		doc.addEventListener('pointerdown',checkClick);
 	}else{
 		//PC鼠标事件
-		events.bind(document,'mousedown',checkClick);
+		utils.bind(document,'mousedown',checkClick);
 	}
 	
 	
@@ -871,7 +805,7 @@
 		);
 		
 		private_mainDom.appendChild(this.dom);
-		var height = jQuery(visual_box).height();
+		var height = utils.outerHeight(visual_box);
 		
 		utils.animation(
 			this.dom,
@@ -901,11 +835,11 @@
 		//insert html
 		this.cntDom.innerHTML = this_html;
 		
-		events.bind(this.closeDom,'click',function(){
+		utils.bind(this.closeDom,'click',function(){
 			this_cover.close();
 		});
 
-		jQuery(this.closeDom).hide();
+		utils.hide(this.closeDom);
 		// create pop
 		utils.css(
 			this.dom,
@@ -1004,7 +938,7 @@
 		var btns = utils.findByClassName(this.dom,'UI_select_btn');
 		for(var i=0,total=btns.length;i<total;i++){
 			(function(index){
-				events.bind(btns[index],'click',function(){
+				utils.bind(btns[index],'click',function(){
 					fns[index] && fns[index]();
 					this_sel.close('slide',200);
 				});
@@ -1281,9 +1215,9 @@
 		var w3style;
 		if (document.defaultView) {
 			var style = document.defaultView.getComputedStyle(elem, null);
-			name == "borderWidth" ? name = "borderLeftWidth" : name; // 解决标准浏览器解析问题
+			name == "borderWidth" ? name = "borderLeftWidth" : name;
 			w3style = name in style ? style[name] : style.getPropertyValue(name);
-			w3style == "auto" ? w3style = "0px" : w3style;
+			//w3style == "auto" ? w3style = "0px" : w3style;
 		}
 		return elem.style[name] ||
 		(elem.currentStyle && (elem.currentStyle[name] == "auto" ? "0px" : elem.currentStyle[name])) || w3style;
@@ -1467,94 +1401,111 @@
 		a.innerHTML = str;
 		return a.childNodes;
 	}
-    return{
-		'css' : function(dom,cssObj){
-			var cssVal = parseCssObj(cssObj);
-			
-            for (var pro in cssObj) {
-                if (!cssObj.hasOwnProperty(pro)){
-					continue;
-				}
-				setCss(dom,pro,cssObj[pro]);
-            }
-			
-		},
-		'slideDown' : function(DOM,time,fn){
-			DOM.style['overflow'] = 'hidden';
-			DOM.style['opacity'] = 0;
-			DOM.style['display'] = 'block';
-			new _anim(
-				DOM,
-				{
-					'height' : 0,
-					'padding' : 0
-				}, time, function(){
-					fn && fn.call(DOM);
-				}
-			);
-		},
-		'slideUp' : function(DOM,time,fn){
-			DOM.style['overflow'] = 'hidden';
-			new _anim(
-				DOM,
-				{
-					'height' : 0,
-					'padding' : 0
-				}, time,function(){
-					DOM.style['display'] = 'none';
-					fn && fn.call(DOM);
-				}
-			);
-		},
-		'fadeIn' : function(DOM,time,fn){
-			var op = getStyle(DOM,'opacity');
-			DOM.style['opacity'] = 0;
-			DOM.style['display'] = 'block';
-			new _anim(
-				DOM,
-				{
-					'opacity' : op,
-					'padding' : 0
-				}, time, function(){
-					fn && fn.call(DOM);
-				}
-			);
-			
-		},
-		'fadeOut' : function(DOM,time,fn){
-			var op = getStyle(DOM,'opacity');
-			new _anim(
-				DOM,
-				{
-					'opacity' : 0
-				}, time,function(){
-					DOM.style['opacity'] = op;
-					DOM.style['display'] = 'none';
-					fn && fn.call(DOM);
-				}
-			);
-		},
-		'animation' : function(a,b,c,d,e) {
-			return new _anim(a,b,c,d,e);
-		},
-		'createDom' : createDom,
-		'findByClassName' : function(dom,classStr){
-			var returns = [];
+	
+	//读取dom在页面中的位置
+	function offset(elem){
+		var box = {
+			'top' : 0,
+			'left' : 0,
+			'screen_top' : 0,
+			'screen_left' : 0
+		}
+		var size;
+		// Support: BlackBerry 5, iOS 3 (original iPhone)
+		// If we don't have gBCR, just use 0,0 rather than error
+		if ( typeof elem.getBoundingClientRect !== 'undefined' ) {
+			size = elem.getBoundingClientRect();
+		}
+		box.top = size.top + document.body.scrollTop;
+		box.left = size.left + document.body.scrollLeft;
+		
+		return box;
+	}
+	function outerWidth (elem){
+		// Support: BlackBerry 5, iOS 3 (original iPhone)
+		// If we don't have gBCR, just use 0,0 rather than error
+		if ( false && typeof elem.getBoundingClientRect !== 'undefined' ) {
+			return elem.getBoundingClientRect()['width'];
+		}else{
+			return (parseInt(getStyle(elem,'width')) + parseInt(getStyle(elem,'borderLeftWidth')) + parseInt(getStyle(elem,'borderRightWidth')));
+		}
+	}
+	function outerHeight (elem){
+		// Support: BlackBerry 5, iOS 3 (original iPhone)
+		// If we don't have gBCR, just use 0,0 rather than error
+		if ( false && typeof elem.getBoundingClientRect !== 'undefined' ) {
+			return elem.getBoundingClientRect()['height'];
+		}else{
+			return (parseInt(getStyle(elem,'height')) + parseInt(getStyle(elem,'borderTopWidth')) + parseInt(getStyle(elem,'borderBottomWidth')));
+		}
+	}
+	function findByClassName(dom,classStr){
+		var returns = [];
 
-			//使用url规则中的tagName,若无，则尝试获取所有元素
-			var caches = dom.getElementsByTagName("*");
-			//遍历结果
-			each(caches,function(i,thisDom){
-				//检查class是否合法
-				if(hasClass(thisDom,classStr)){
-					returns.push(thisDom);
-				}
-			});
-			return returns;
-		},
-		'hasClass' : hasClass
-    }
-},function(){
+		//使用url规则中的tagName,若无，则尝试获取所有元素
+		var caches = dom.getElementsByTagName("*");
+		//遍历结果
+		each(caches,function(i,thisDom){
+			//检查class是否合法
+			if(hasClass(thisDom,classStr)){
+				returns.push(thisDom);
+			}
+		});
+		return returns;
+	}
+	
+	function hide(elem){
+		elem.style['display'] = 'none';
+	}
+	//淡出
+	function fadeOut(DOM,time,fn){
+		var op = getStyle(DOM,'opacity');
+		new _anim(DOM,{
+			'opacity' : 0
+		}, time,function(){
+			DOM.style['opacity'] = op;
+			DOM.style['display'] = 'none';
+			fn && fn.call(DOM);
+		});
+	}
+	//淡入
+	function fadeIn(DOM,time,fn){
+		var op = getStyle(DOM,'opacity');
+		DOM.style['opacity'] = 0;
+		DOM.style['display'] = 'block';
+		new _anim(DOM,{
+			'opacity' : op,
+			'padding' : 0
+		}, time, function(){
+			fn && fn.call(DOM);
+		});
+	}
+	//滑入
+	function slideDown(DOM,time,fn){
+		DOM.style['overflow'] = 'hidden';
+		DOM.style['opacity'] = 0;
+		DOM.style['display'] = 'block';
+		new _anim(DOM,{
+			'height' : 0,
+			'padding' : 0
+		}, time, function(){
+			fn && fn.call(DOM);
+		});
+	}
+	//滑出
+	function slideUp(DOM,time,fn){
+		DOM.style['overflow'] = 'hidden';
+		new _anim(DOM,{
+			'height' : 0,
+			'padding' : 0
+		}, time,function(){
+			DOM.style['display'] = 'none';
+			fn && fn.call(DOM);
+		});
+	}
+	
+	
+	
 	/**
 	 * 页面加载
 	 */
@@ -1619,9 +1570,35 @@
 		}
 	})();
 	
-	return {
+    return{
+		'css' : function(dom,cssObj){
+			var cssVal = parseCssObj(cssObj);
+			
+            for (var pro in cssObj) {
+                if (!cssObj.hasOwnProperty(pro)){
+					continue;
+				}
+				setCss(dom,pro,cssObj[pro]);
+            }
+			
+		},
+		'slideDown' : slideDown,
+		'slideUp' : slideUp,
+		'fadeIn' : fadeIn,
+		'fadeOut' : fadeOut,
+		'animation' : function(a,b,c,d,e) {
+			return new _anim(a,b,c,d,e);
+		},
+		'createDom' : createDom,
+		'findByClassName' : findByClassName,
+		'hasClass' : hasClass,
+		'offset' : offset,
+		'getStyle' : getStyle,
+		'outerWidth' : outerWidth,
+		'outerHeight' : outerHeight,
 		'ready' : ready,
 		'bind' : bindHandler,
-		'unbind' : removeHandler
-	};
+		'unbind' : removeHandler,
+		'hide' : hide
+    }
 });
