@@ -49,7 +49,7 @@
 		'<div class="UI_confirm_text">{text}</div>',
 	'</div>'].join('');
 
-	var ask_tpl = ['<div class="UI_ask UI_top_winH_half">',
+	var ask_tpl = ['<div class="UI_ask">',
 		'<div class="UI_ask_text">{text}</div>',
 		'<input class="UI_ask_key" type="text" name="UI_ask_key"/>',
 	'</div>'].join('');
@@ -64,7 +64,7 @@
 		'<div class="UI_cnt"></div>',
 	'</div>'].join('');
 
-	var cover_tpl = ['<div class="UI_cover UI_height_winH">',
+	var cover_tpl = ['<div class="UI_cover">',
 		'<div class="UI_coverCnt"></div>',
 		'<a href="javascript:void(0)" class="UI_coverClose">〉</a>',
 	'</div>'].join('');
@@ -147,7 +147,7 @@
 		private_mainDom = utils.findByClassName(private_allCnt,'UI_main_cnt')[0],
 		private_fixedScreenTopDom = utils.findByClassName(private_allCnt,'UI_fixedScreenTop_cnt')[0],
 		private_fixedScreenBottomDom = utils.findByClassName(private_allCnt,'UI_fixedScreenBottom_cnt')[0],
-		private_cssDom = utils.createDom('<style type="text/css"></style>')[0],
+		private_cssDom = utils.createDom('<style type="text/css" data-module="UI_plug" ></style>')[0],
 		private_window = window,
 		private_winW,
 		private_winH,
@@ -178,8 +178,8 @@
 	}
 	function build_base_css(){
 		var css = [
-			'.UI_height_winH{height:' + private_winH + 'px;}',
-			'.UI_top_winH_half{top:' + (private_winH/2) + 'px;}',
+			'.UI_cover{height:' + private_winH + 'px;}',
+			'.UI_ask{top:' + (private_winH/2) + 'px;}',
 		].join('');
 		private_cssDom.innerHTML = css;
 	}
@@ -799,23 +799,17 @@
 		var left = typeof(param['left']) == 'number' ? param['left'] : fixSize.left;
 
 		// create pop
-		utils.css(
-			this.dom,
-			{
-				'left' : left,
-				'top' : top
-			}
-		);
+		utils.css(this.dom,{
+			'left' : left,
+			'top' : top
+		});
 		
 		private_mainDom.appendChild(this.dom);
 		var height = utils.outerHeight(visual_box);
 		
-		utils.animation(
-			this.dom,
-			{
-				'height' : height
-			}, 100
-		);
+		utils.animation(this.dom,{
+			'height' : height
+		}, 100);
 		
 	}
 	miniChat.prototype['close'] = CLOSEMETHOD;
@@ -844,20 +838,16 @@
 
 		utils.hide(this.closeDom);
 		// create pop
-		utils.css(
-			this.cntDom,
-			{
-				'left' : private_winW
-			}
-		);
-		utils.animation(
-			this.cntDom,
-			{
-				'left' : 0
-			}, 200,function(){
-				utils.fadeIn(this_cover.closeDom,100);
-			}
-		);
+		utils.css(this.cntDom,{
+			'left' : private_winW*2/3,
+			'opacity' : 0
+		});
+		utils.animation(this.cntDom,{
+			'left' : 0,
+			'opacity' : 1
+		}, 80,function(){
+			utils.fadeIn(this_cover.closeDom,100);
+		});
 		
 		private_fixedScreenTopDom.appendChild(this.dom);
 	}
@@ -866,13 +856,12 @@
 		var dom_all = this.dom;
 		
 		utils.fadeOut(this.closeDom,80);
-		utils.animation(this.cntDom,
-			{
-				'left' : private_winW
-			},200, function(){
-				dom_all.remove();
-			}
-		);
+		utils.animation(this.cntDom,{
+			'left' : private_winW/2,
+			'opacity' : 0
+		},120, function(){
+			dom_all.remove();
+		});
 	};
 
 	/**
@@ -917,13 +906,10 @@
 		//显示蒙层
 		showMask();
 		
-		utils.css(
-			this.dom,
-			{
-				'bottom' : -100,
-				'opacity' : 0
-			}
-		);
+		utils.css(this.dom,{
+			'bottom' : -100,
+			'opacity' : 0
+		});
 		
 		private_fixedScreenBottomDom.appendChild(this.dom);
 		
