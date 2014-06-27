@@ -17,6 +17,7 @@
 	//提供window.UI的接口
 	global.UI = global.UI || UI;
 	global.UI._utils = utils;
+	
 	//提供CommonJS规范的接口
 	global.define && define(function(){
 		return UI;
@@ -25,108 +26,20 @@
 	/**
 	 * base template
 	 */
-	var allCnt_tpl = ['<div class="UI_lawyer">',
-		'<div class="UI_mask"></div>',
-		'<div class="UI_main_cnt"></div>',
-		'<div class="UI_fixedScreenTop_cnt"></div>',
-		'<div class="UI_fixedScreenBottom_cnt"></div>',
-	'</div>'].join('');
-	
+	var allCnt_tpl = '<div class="UI_lawyer"><div class="UI_mask"></div><div class="UI_main_cnt"></div><div class="UI_fixedScreenTop_cnt"></div><div class="UI_fixedScreenBottom_cnt"></div></div>';
 	var dragMask_tpl = '<div style="position:absolute;top:0px;left:0px;z-index:100000;cursor:default;"></div>';
-	
-	var pop_tpl = ['<div class="UI_pop">',
-		'<div class="UI_pop_cpt"></div>',
-		'<div class="UI_pop_cnt"></div>',
-		'<a href="javascript:void(0)" class="UI_pop_close" title="\u5173\u95ED">×</a>',
-	'</div>'].join('');
-
-	var miniChat_tpl = ['<div class="UI_miniChatSlideCnt"><div class="UI_miniChat">',
-		'<div class="UI_miniChat_text">{text}</div>',
-	'</div></div>'].join('');
-
-	var confirm_tpl = ['<div class="UI_confirm">',
-		'<div class="UI_confirm_text">{text}</div>',
-	'</div>'].join('');
-
-	var ask_tpl = ['<div class="UI_ask">',
-		'<div class="UI_ask_text">{text}</div>',
-		'<input class="UI_ask_key" type="text" name="UI_ask_key"/>',
-	'</div>'].join('');
-
-	var confirmBar_tpl = ['<div class="UI_pop_confirm">',
-		'<a href="javascript:void(0)" class="UI_pop_confirm_ok">{confirm}</a>',
-		'<a href="javascript:void(0)" class="UI_pop_confirm_cancel">{cancel}</a>',
-	'</div>'].join('');
-
+	var pop_tpl = '<div class="UI_pop"><div class="UI_pop_cpt"></div><div class="UI_pop_cnt"></div><a href="javascript:void(0)" class="UI_pop_close" title="\u5173\u95ED">×</a></div>';
+	var miniChat_tpl = '<div class="UI_miniChatSlideCnt"><div class="UI_miniChat"><div class="UI_miniChat_text">{text}</div></div></div>';
+	var confirm_tpl = '<div class="UI_confirm"><div class="UI_confirm_text">{text}</div></div>';
+	var ask_tpl = '<div class="UI_ask"><div class="UI_ask_text">{text}</div><input class="UI_ask_key" type="text" name="UI_ask_key"/></div>';
+	var confirmBar_tpl = '<div class="UI_pop_confirm"><a href="javascript:void(0)" class="UI_pop_confirm_ok">{confirm}</a><a href="javascript:void(0)" class="UI_pop_confirm_cancel">{cancel}</a></div>';
 	var plane_tpl = '<div class="UI_plane"></div>';
 	var prompt_tpl = '<div class="UI_prompt"><div class="UI_cnt"></div></div>';
-
-	var cover_tpl = ['<div class="UI_cover">',
-		'<div class="UI_coverCnt"></div>',
-		'<a href="javascript:void(0)" class="UI_coverClose">〉</a>',
-	'</div>'].join('');
+	var cover_tpl = '<div class="UI_cover"><div class="UI_coverCnt"></div><a href="javascript:void(0)" class="UI_coverClose">〉</a></div>';
+	var select_tpl = '<div class="UI_select"><div class="UI_select_body"> {caption} <div class="UI_selectCnt">{list}</div></div><div class="UI_selectCancel"><a class="UI_select_btn" href="javascript:void(0)" data-index="-1">取消</a></div></div>';
 	
-	var select_tpl = ['<div class="UI_select">',
-		'<div class="UI_select_body">',
-			'{caption}',
-			'<div class="UI_selectCnt">{list}</div>',
-		'</div>',
-		'<div class="UI_selectCancel"><a class="UI_select_btn" href="javascript:void(0)" data-index="-1">取消</a></div>',
-	'</div>'].join('');
+	var popCSS = '<style type="text/css" data-module="UI">.UI_lawyer{position:absolute;top:0px;left:0px;z-index:4999;width:100%;height:0px;overflow:visible;font-family:"Microsoft Yahei"}.UI_lawyer a,.UI_lawyer a:hover{text-decoration:none;-webkit-tap-highlight-color:rgba(0,0,0,0);-webkit-tap-highlight-color:transparent;}.UI_mask{position:absolute;top:0px;left:0px;width:100%;background-color:#000;display:none;opacity:0.2}.UI_main_cnt{width:0px;height:0px;overflow:visible;}.UI_fixedScreenTop_cnt{position:absolute;z-index:4999;top:0px;left:0px;width:100%;height:0px;overflow:visible;}.UI_fixedScreenBottom_cnt{position:absolute;z-index:4999;left:0px;width:100%;height:0px;overflow:visible;}.UI_pop{width:200px;_border:1px solid #eee;position:absolute;top:400px;left:300px;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}.UI_pop_cpt{position:relative;height:36px;line-height:36px;overflow:hidden;border-bottom:1px solid #ebebeb;color:#333;font-size:16px;text-indent:15px;cursor:default;}.UI_pop_cnt{position:relative;min-height:100px;overflow:auto;width:100%;}.UI_pop_close{display:block;position:absolute;top:0px;right:0px;width:40px;height:36px;text-align:center;line-height:36px;color:#ddd;font-family:"Simsun";font-size:24px;font-weight:bold;text-decoration:none;transition:0.1s;}.UI_pop_close:hover{color:#888;text-decoration:none;}.UI_pop_close:active{color:#444}.UI_confirm{_border:1px solid #eee;position:absolute;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}.UI_confirm_text{padding:30px 10px 20px;line-height:26px;text-align:center;font-size:20px;color:#333;}.UI_ask{_border:1px solid #eee;position:absolute;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}.UI_ask_text{padding:30px 10px 10px;line-height:26px;text-align:center;font-size:20px;color:#333;}.UI_ask input{display:block;margin:0px auto 15px;height:30px;padding:4px 4px;line-height:22px;box-sizing:border-size;width:90%;}.UI_miniChatSlideCnt{width:220px;height:0px;overflow:hidden;position:absolute;border-radius:4px;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}.UI_miniChat{position:absolute;left:0px;bottom:0px;width:100%;_border:1px solid #eee;background:#fff;overflow:hidden;}.UI_miniChat_text{padding:20px 10px 10px;box-sizing:content-box;line-height:24px;text-align:center;font-size:14px;color:#333;}.UI_miniChat .UI_pop_confirm a{height:28px;line-height:28px;}.UI_pop_confirm{overflow:hidden;text-align:center;border-top:1px solid #eee;}.UI_pop_confirm a{display:block;width:50%;height:36px;float:left;font-size:14px;line-height:36px;color:#03f;box-sizing:border-box;}.UI_pop_confirm_ok{border-right:1px solid #eee;}.UI_pop_confirm a:hover{text-decoration:none;}.UI_plane{width:200px;position:absolute;top:400px;left:300px;}.UI_prompt{width:240px;position:absolute;left:50%;margin-left:-130px;padding:30px 10px;box-sizing:content-box;background:#fff;_border:1px solid #fafafa;border-radius:4px;box-shadow:2px 2px 10px rgba(0,0,0,0.5);}.UI_cnt{font-size:18px;color:#222;text-align:center;}.UI_cover{position:absolute;top:0px;left:0px;width:100%;height:100px;}.UI_coverCnt{position:relative;width:100%;height:100%;background:#fff;}.UI_coverClose{display:block;position:absolute;top:50%;left:0px;width:20px;height:60px;padding-left:5px;text-align:center;line-height:60px;color:#ddd;font-family:"Simsun";font-size:30px;background:#555;}.UI_coverClose:hover{background-color:#333;color:#fff;text-decoration:none;}.UI_select{position:absolute;width:100%;bottom:0px;padding-bottom:10px;}.UI_select a{display:block;height:40px;line-height:40px;text-align:center;color:#03f;font-size:16px;}.UI_select_body{margin:0px 10px 10px;border-radius:8px;overflow:hidden;background:#fff;}.UI_selectCpt{padding:8px 0px;}.UI_selectCpt h3,.UI_selectCpt p{margin:0px;font-size:15px;line-height:18px;text-align:center;color:#aaa;font-weight:normal;}.UI_selectCpt p{font-size:12px;}.UI_selectCnt a{border-top:1px solid #eee;margin-top:-1px;}.UI_selectCancel{margin:0px 10px;border-radius:8px;overflow:hidden;background:#fff;}.UI_fixedScreenBottom_cnt .UI_confirm{width:100%;width:100%;left:0px;bottom:0;border-radius:0px;box-shadow:0px 0px 5px rgba(0,0,0,0.8);}.UI_fixedScreenBottom_cnt .UI_confirm_text{padding:50px 10px;font-size:18px}.UI_fixedScreenBottom_cnt .UI_confirm .UI_pop_confirm{width:100%;padding:10px 0px 30px}.UI_fixedScreenBottom_cnt .UI_confirm a{display:block;height:40px;line-height:40px;border-radius:22px;margin:0px 20px;font-size:16px}.UI_fixedScreenBottom_cnt .UI_confirm a.UI_pop_confirm_ok{margin-bottom:15px;}</style>';
 	
-	var popCSS = ['<style type="text/css" data-module="UI">',
-		//基础框架
-		'.UI_lawyer{position:absolute;top:0px;left:0px;z-index:4999;width:100%;height:0px;overflow:visible;font-family:"Microsoft Yahei"}',
-		'.UI_lawyer a,.UI_lawyer a:hover{text-decoration:none;-webkit-tap-highlight-color: rgba(0,0,0,0);-webkit-tap-highlight-color: transparent;}',
-		'.UI_mask{position:absolute;top:0px;left:0px;width:100%;background-color:#000;display:none;opacity:0.2}',
-		'.UI_main_cnt{width:0px;height:0px;overflow:visible;}',
-		'.UI_fixedScreenTop_cnt{position:absolute;z-index:4999;top:0px;left:0px;width:100%;height:0px;overflow:visible;}',
-		'.UI_fixedScreenBottom_cnt{position:absolute;z-index:4999;left:0px;width:100%;height:0px;overflow:visible;}',
-		//弹框
-		'.UI_pop{width:200px;_border:1px solid #eee;position:absolute;top:400px;left:300px;',
-			'background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}',
-		'.UI_pop_cpt{position:relative;height:36px;line-height:36px;overflow:hidden;border-bottom:1px solid #ebebeb;',
-			'color:#333;font-size:16px;text-indent:15px;cursor: default;}',
-		'.UI_pop_cnt{position:relative;min-height:100px;overflow:auto;width:100%;}',	'.UI_pop_close{display:block;position:absolute;top:0px;right:0px;width:40px;height:36px;text-align:center;line-height:36px;color:#ddd;font-family:"Simsun";font-size:24px;font-weight:bold;text-decoration:none;transition:0.1s;}',
-		'.UI_pop_close:hover{color:#888;text-decoration:none;}',
-		'.UI_pop_close:active{color:#444}',
-		//确认框
-		'.UI_confirm{_border:1px solid #eee;position:absolute;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}',
-		'.UI_confirm_text{padding:30px 10px 20px;line-height:26px;text-align:center;font-size:20px;color:#333;}',
-		'.UI_ask{_border:1px solid #eee;position:absolute;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}',
-		'.UI_ask_text{padding:30px 10px 10px;line-height:26px;text-align:center;font-size:20px;color:#333;}',
-		'.UI_ask input{display:block;margin:0px auto 15px;height:30px;padding:4px 4px;line-height:22px;box-sizing:border-size;width:90%;}',
-		'.UI_miniChatSlideCnt{width:220px;height:0px;overflow:hidden;position:absolute;border-radius:4px;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}',
-		'.UI_miniChat{position:absolute;left:0px;bottom:0px;width:100%;_border:1px solid #eee;background:#fff;overflow:hidden;}',
-		'.UI_miniChat_text{padding:20px 10px 10px;box-sizing:content-box;line-height:24px;text-align:center;font-size:14px;color:#333;}',
-		'.UI_miniChat .UI_pop_confirm a{height:28px;line-height:28px;}',
-		'.UI_pop_confirm{overflow:hidden;text-align:center;border-top:1px solid #eee;}',
-		'.UI_pop_confirm a{display:block;width:50%;height:36px;float:left;font-size:14px;line-height:36px;color:#03f;box-sizing:border-box;}',
-		'.UI_pop_confirm_ok{border-right:1px solid #eee;}',
-		'.UI_pop_confirm a:hover{text-decoration: none;}',
-		'.UI_plane{width:200px;position:absolute;top:400px;left:300px;}',
-		'.UI_prompt{width:240px;position:absolute;left:50%;margin-left:-130px;padding:30px 10px;box-sizing:content-box;background:#fff;_border:1px solid #fafafa;border-radius:4px;box-shadow:2px 2px 10px rgba(0,0,0,0.5);}',
-		'.UI_cnt{font-size:18px;color:#222;text-align:center;}',
-		'.UI_cover{position:absolute;top:0px;left:0px;width:100%;height:100px;}',
-		'.UI_coverCnt{position:relative;width:100%;height:100%;background:#fff;}',
-		'.UI_coverClose{display:block;position:absolute;top:50%;left:0px;width:20px;height:60px;padding-left:5px;text-align:center;line-height:60px;color:#ddd;font-family:"Simsun";font-size:30px;background:#555;}',
-		'.UI_coverClose:hover{background-color:#333;color:#fff;text-decoration:none;}',
-		
-		'.UI_select{position:absolute;width:100%;bottom:0px;padding-bottom:10px;}',
-		'.UI_select a{display:block;height:40px;line-height:40px;text-align:center;color:#03f;font-size:16px;}',
-		'.UI_select_body{margin:0px 10px 10px;border-radius:8px;overflow:hidden;background:#fff;}',
-		'.UI_selectCpt{padding:8px 0px;}',
-		'.UI_selectCpt h3,.UI_selectCpt p{margin:0px;font-size:15px;line-height:18px;text-align:center;color:#aaa;font-weight:normal;}',
-		'.UI_selectCpt p{font-size:12px;}',
-		'.UI_selectCnt a{border-top:1px solid #eee;margin-top:-1px;}',
-		'.UI_selectCancel{margin:0px 10px;border-radius:8px;overflow:hidden;background:#fff;}',
-		
-		'.UI_fixedScreenBottom_cnt .UI_confirm{width:100%;width:100%;left:0px;bottom:0;border-radius:0px;box-shadow:0px 0px 5px rgba(0,0,0,0.8);}',
-		'.UI_fixedScreenBottom_cnt .UI_confirm_text{padding:50px 10px;font-size:18px}',
-		'.UI_fixedScreenBottom_cnt .UI_confirm .UI_pop_confirm{width:100%;padding:10px 0px 30px}',
-		'.UI_fixedScreenBottom_cnt .UI_confirm a{display:block;height:40px;line-height:40px;border-radius:22px;margin:0px 20px;font-size:16px}',
-		'.UI_fixedScreenBottom_cnt .UI_confirm  a.UI_pop_confirm_ok{margin-bottom:15px;}',
-	'</style>'].join('');
 	var isIE67 = false;
 	if(navigator.appName == "Microsoft Internet Explorer"){
 		var version = navigator.appVersion.split(";")[1].replace(/[ ]/g,"");
@@ -951,7 +864,7 @@
 		},
 		'drag' : drag
 	};
-},function () {
+},﻿function () {
     var Tween = {
         Linear: function (t, b, c, d) { return c * t / d + b; },
         Quad: {

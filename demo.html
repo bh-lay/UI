@@ -11,6 +11,16 @@
 	</style>
 </head>
 <body>
+	<div class="cnt">
+		<input type="button" onclick="showPop()" value="弹框"/>
+		<input type="button" onclick="showConfirmPop()" value="带对话的弹框"/>
+		<input type="button" onclick="showConfirm()" value="确认框"/>
+		<input type="button" onclick="showAsk()" value="问我点啥吧"/>
+		<input type="button" onclick="showMessage()" value="提示信息"/>
+		<input type="button" onclick="showSelect()" value="选择列表"/>
+		<input type="button" onclick="showCover()" value="全屏浮层"/>
+	</div>
+	<script type="text/javascript" src="src/dialog.js"></script>
 	<script type="text/javascript">
 		function showPop(){
 			var pop = UI.pop({
@@ -78,16 +88,5 @@
 			});
 		}
 	</script>
-<div class="cnt">
-	<input type="button" onclick="showPop()" value="弹框"/>
-	<input type="button" onclick="showConfirmPop()" value="带对话的弹框"/>
-	<input type="button" onclick="showConfirm()" value="确认框"/>
-	<input type="button" onclick="showAsk()" value="问我点啥吧"/>
-	<input type="button" onclick="showMessage()" value="提示信息"/>
-	<input type="button" onclick="showSelect()" value="选择列表"/>
-	<input type="button" onclick="showCover()" value="全屏浮层"/>
-	
-	<script type="text/javascript" src="asset/dialog.js"></script>
-</div>
 </body>
 </html>
