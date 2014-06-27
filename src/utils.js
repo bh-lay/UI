@@ -1,4 +1,8 @@
-﻿function () {
+﻿/**
+ * 定义工具类
+ * 包含dom查找，css样式，动画等
+ */
+define(function () {
     var Tween = {
         Linear: function (t, b, c, d) { return c * t / d + b; },
         Quad: {
@@ -607,4 +611,4 @@
 		'unbind' : removeHandler,
 		'hide' : hide
     }
-}
+});

@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2014-6-26 16:04
+ * @modified require('Date')
  * 
  **/
 
@@ -26,17 +26,17 @@
 	/**
 	 * base template
 	 */
-	var allCnt_tpl = require('base.html');
-	var dragMask_tpl = require('dragMask.html');
-	var pop_tpl = require('pop.html');
-	var miniChat_tpl = require('miniChat.html');
-	var confirm_tpl = require('confirm.html');
-	var ask_tpl = require('ask.html');
-	var confirmBar_tpl = require('confirmBar.html');
-	var plane_tpl = '<div class="UI_plane"></div>';
-	var prompt_tpl = require('prompt.html');
-	var cover_tpl = require('cover.html');
-	var select_tpl = require('select.html');
+	var allCnt_tpl = require('template/base.html');
+	var dragMask_tpl = require('template/dragMask.html');
+	var pop_tpl = require('template/pop.html');
+	var miniChat_tpl = require('template/miniChat.html');
+	var confirm_tpl = require('template/confirm.html');
+	var ask_tpl = require('template/ask.html');
+	var confirmBar_tpl = require('template/confirmBar.html');
+	var plane_tpl = require('template/plane.html');
+	var prompt_tpl = require('template/prompt.html');
+	var cover_tpl = require('template/cover.html');
+	var select_tpl = require('template/select.html');
 	
 	var popCSS = require('style.css','UI');
 	
@@ -547,7 +547,7 @@
 
 		private_fixedScreenTopDom.appendChild(this.dom);
 	}
-	ASK.prototype['close'] = CLOSEMETHOD('slide');
+	ASK.prototype['close'] = CLOSEMETHOD('fade');
 	ASK.prototype['setValue'] = function(text){
 		var text = text ? text.toString() : '';
 		this.inputDom.value = text;

@@ -122,10 +122,10 @@
 	box-shadow:2px 3px 10px rgba(0,0,0,0.6);
 }
 .UI_ask_text {
-	padding:30px 10px 10px;
+	padding:25px 10px 15px;
 	line-height:26px;
 	text-align:center;
-	font-size:20px;
+	font-size:18px;
 	color:#333;
 }
 .UI_ask input {
@@ -134,7 +134,7 @@
 	height:30px;
 	padding:4px 4px;
 	line-height:22px;
-	box-sizing:border-size;
+	box-sizing:border-box;
 	width:90%;
 }
 .UI_miniChatSlideCnt {
@@ -169,7 +169,7 @@
 .UI_pop_confirm {
 	overflow:hidden;
 	text-align:center;
-	border-top:1px solid #eee;
+	border-top:1px solid #ddd;
 }
 .UI_pop_confirm a {
 	display:block;
@@ -182,7 +182,7 @@
 	box-sizing:border-box;
 }
 .UI_pop_confirm_ok {
-	border-right:1px solid #eee;
+	border-right:1px solid #ddd;
 }
 .UI_pop_confirm a:hover {
 	text-decoration:none;

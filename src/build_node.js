@@ -19,8 +19,10 @@ function getStyleSheet(src,moduleName){
 }
 
 function getJS(src){
-	var JsStr = fs.readFileSync(src,'UTF-8')
-	return JsStr;
+	var JsStr = fs.readFileSync(src,'UTF-8');
+	JsStr_match = JsStr.match(/define\(((?:.|\n|\r)+)\)/);
+	
+	return JsStr_match[1];
 }
 
 function getTemplate(src){
@@ -39,7 +41,7 @@ function getTemplate(src){
 
 function checkMainFiles(src){
 	var str = fs.readFileSync(src,'UTF-8');
-	str = str.replace(/require\(((?:\,|\s|\w|\.|\'|\")+)\)/g,function(a,b){
+	str = str.replace(/require\(((?:\,|\s|\w|\.|\/|\'|\")+)\)/g,function(a,b){
 		//过滤无意义的空格
 		b = b.replace(/\s*\,\s*/g,',');
 		//过滤引号
@@ -52,18 +54,21 @@ function checkMainFiles(src){
 		
 		//判断资源类型
 		if(args[0].match(/\.css$/)){
-			console.log('loading and min css');
+			console.log('loading and min css\n');
 			return "'" + getStyleSheet(args[0],args[1] || '') + "'";
 		}else if(args[0].match(/\.js$/)){
-			console.log('loading js');
+			console.log('loading js\n');
 			return getJS(args[0]);
 		}else if(args[0].match(/\.html$/)){
-			console.log('loading template');
+			console.log('loading template\n');
 			return getTemplate(args[0]);
+		}else if(args[0] == 'Date'){
+			var date = new Date();
+			return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes();
 		}
 	});
 	
-	console.log('build content over');
+	console.log('build content over\n');
 	return str;
 }
 
@@ -77,4 +82,4 @@ function write(src,str){
 
 var newContent = checkMainFiles('index.js');
 write('dialog.js',newContent);
-console.log('successful');
+console.log('successful!\n');
