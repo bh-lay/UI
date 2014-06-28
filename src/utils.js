@@ -216,78 +216,36 @@ define(function () {
 		}
 	}
 	//获取样式
-	function getStyle(elem, attr) {
+	function getStyle(elem, prop) {
 		var w3style;
-		attr == "borderWidth" ? attr = "borderLeftWidth" : attr;
-		if (elem.style[attr]){
-			w3style = elem.style[attr];
+		prop == "borderWidth" ? prop = "borderLeftWidth" : prop;
+		if (elem.style[prop]){
+			w3style = elem.style[prop];
 		} else if(document.defaultView) {
 			var style = document.defaultView.getComputedStyle(elem, null);
-			w3style = attr in style ? style[attr] : style.getPropertyValue(attr);
+			w3style = prop in style ? style[prop] : style.getPropertyValue(prop);
 		} else if (elem.currentStyle) {
-			w3style = elem.currentStyle[attr];
+			w3style = elem.currentStyle[prop];
 		}
 		//w3style == "auto" ? w3style = "0px" : w3style;
-		console.log(w3style);
+		console.log(prop,w3style)
 		return w3style;
 	}
 	
-	// 此处只能获取属性值为数值类型的style属性
-	function getOriCss (elem, cssObj) {
-		var cssOri = [];
-		for (var prop in cssObj) {
-			if (!cssObj.hasOwnProperty(prop)){
-				continue;
-			}
-			
-			var value = getStyle(elem, prop);
-			
-			if (value == "transparent") {
-				value = [255, 255, 255,0];
-			}else if (/^#/.test(value)) {
-				value = color.GetColors(value);
-			} else if (/^rgb/.test(value)) {
-				//获得css值为rgba或rgb对应值（数组）
-				value = value.match(/([0-9]+)/g);
-			} else if (prop == "opacity") {
-				value = 100 * value;
-			} else {
-				value = parseInt(value);
-			}
-			
-			cssOri.push(value);
-		}
-		return cssOri;
-	}
-    function parseCssObj (cssobj) {
-		var cssEnd = [];
-		for (var prop in cssobj) {
-			if (!cssobj.hasOwnProperty(prop)) continue;
-			//if (prop != "opacity") cssEnd.push(parseInt(cssobj[prop]));
-			//else cssEnd.push(100 * cssobj[prop]);
-			if (prop == "opacity") {
-				cssEnd.push(100 * cssobj[prop]);
-			} else if (/^#/.test(cssobj[prop])) {
-				cssEnd.push(color.GetColors(cssobj[prop]));
-			} else {
-				cssEnd.push(parseInt(cssobj[prop]));
-			}
-		}
-		return cssEnd;
-	}
 
 	/**
 	 * dom设置样式
 	 */
 	function setStyle(elem,prop,value){
+	
 		if(!value && (value != +value)){
 			console.log(prop,value,'error');
 			return
 		}
 		prop = prop.toString();
 		if (prop == "opacity") {
-			elem.style['filter'] = 'alpha(opacity=' + value + ')';
-			value = value / 100;
+			elem.style['filter'] = 'alpha(opacity=' + (value * 100)+ ')';
+			value = value;
 		} else if (value == +value){
 			value = value + "px";
 		}
@@ -295,99 +253,65 @@ define(function () {
 	}
 	//设置css
 	function setCss(dom,cssObj){
-		var cssVal = parseCssObj(cssObj);
-		
 		for (var pro in cssObj) {
 			if (!cssObj.hasOwnProperty(pro)){
 				continue;
 			}
 			setStyle(dom,pro,cssObj[pro]);
 		}
-		
 	}
-	var requestAnimationFrame = (function () {
-        return  window.requestAnimationFrame ||
-				window.webkitRequestAnimationFrame ||
-				window.mozRequestAnimationFrame ||
-				window.oRequestAnimationFrame ||
-				function (callback) {
-					return window.setTimeout(callback, 10);
-				};
-    })();
+	
+	//格式化css属性值
+	function parseCSS_value(input){
+		var output;
+		if (input == "transparent") {
+			output = [255, 255, 255,0];
+		}else if (/^#/.test(input)) {
+			output = color.GetColors(input);
+		} else if (/^rgb/.test(input)) {
+			//获得css值为rgba或rgb对应值（数组）
+			output = input.match(/([0-9]+)/g);
+		} else if (input == "opacity") {
+			output = 100 * input;
+		} else if (/\px$/.test(input)){
+			output = parseInt(input);
+		} else {
+			output = input;
+		}
+		return output;
+	}
 	
 	/**
-	 * 动画类
-	 *
+	 * 获取动画所需的参数
+	 * 属性名
+	 * 初始值
+	 * 目标值
 	 */
-    function anim() {
-		var args = arguments;
-        this.elem = args[0];
-		this.cssObj = args[1];
-		this.cssOri = getOriCss(this.elem, args[1]);
-		this.cssEnd = parseCssObj(args[1]);
-		this.durtime = args[2];
-		this.animType = "Linear";
-		this.onPause = null;
-		this.onEnd = null;
-		if (args.length < 3) {
-			throw new Error("missing arguments [dom,cssObj,durtime]");
-		} else {
-			if (TypeOf(args[3]) == "Function") {
-				this.onEnd = args[3];
-			}else if (typeof (args[3]) == "string") {
-				this.animType = args[3];
+	function parseCSS_forAnim (elem, cssObj) {
+		var props = [];
+		var cssOri = [];
+		var cssEnd = [];
+		for (var prop in cssObj) {
+			if (!cssObj.hasOwnProperty(prop)){
+				continue;
 			}
 			
-			if (TypeOf(args[4]) == "Function") {
-				this.onEnd = args[4];
+			var value = getStyle(elem, prop);
+			value = parseCSS_value(value);
+			
+			if(value || (value == +value)){
+				value = parseInt(value);
+				props.push(prop);
+				cssOri.push(value);
+				cssEnd.push(cssObj[prop]);
 			}
+			
 		}
-		this.animType = 'Tween.' + this.animType;
-		this.startAnim();
-    }
-    anim.prototype = {
-        startAnim: function () {
-            var me = this;
-			//全部时间 | 开始时间
-			var time_all = this.durtime;
-			var time_start = new Date();
-			
-			//运动曲线方程
-			var aniFunction = (eval(me.animType));
-			
-            //获得需要操作的属性名
-			var props = [];
-            for (var pro in this.cssObj) {
-                if (!this.cssObj.hasOwnProperty(pro)){
-					continue;
-				}
-                props.push(pro);
-            }
-			
-			//显示当前帧（递归）
-			function showFrame(){
-				var time_use = new Date() - time_start;
-				
-				if (time_use < time_all) {
-					requestAnimationFrame(showFrame);
-				}else{
-					time_use = time_all;
-					me.onEnd && me.onEnd.call(me, me.elem);
-				}
-				
-				for (var i = 0; i < props.length; i++) {
-					var value = countNewCSS(me.cssOri[i],me.cssEnd[i],time_use,time_all,aniFunction);
-					setStyle(me.elem,props[i],value);
-				}
-			}
-			requestAnimationFrame(showFrame);
-        },
-        pause: function () {
-            this.onPause = true;
-        }
-    }
-	//给定计算方式，得出新的CSS值
-	function countNewCSS(start,end,use_time,all_time,fn){	
+		return [props,cssOri,cssEnd];
+	}
+	
+	//给定计算方式，当前帧的CSS值
+	function countNewCSS(start,end,use_time,all_time,fn){
 		var output
 		if (TypeOf(start) == "Array" && TypeOf(end) == "Array") {
 			//rgb初始值
@@ -416,6 +340,95 @@ define(function () {
 		}
 		return output
 	}
+	var requestAnimationFrame = (function () {
+        return  window.requestAnimationFrame ||
+				window.webkitRequestAnimationFrame ||
+				window.mozRequestAnimationFrame ||
+				window.oRequestAnimationFrame ||
+				function (callback) {
+					return window.setTimeout(callback, 10);
+				};
+    })();
+	
+	/**
+	 * 动画类
+	 *
+	 */
+    function anim(elem,cssObj,durtime) {
+		var args = arguments;
+        this.elem = elem;
+		
+		var cssParse = parseCSS_forAnim(this.elem, cssObj);
+		
+		//需要修改的属性Array
+		this.props = cssParse[0];
+		//属性初始值Array
+		this.cssOri = cssParse[1];
+		//属性目标值Array
+		this.cssEnd = cssParse[2];
+		
+		this.durtime = durtime;
+		this.animType = "Linear";
+		
+		this.onEnd = null;
+		if (args.length < 3) {
+			throw new Error("missing arguments [dom,cssObj,durtime]");
+		} else {
+			if (TypeOf(args[3]) == "Function") {
+				this.onEnd = args[3];
+			}else if (typeof (args[3]) == "string") {
+				this.animType = args[3];
+			}
+			
+			if (TypeOf(args[4]) == "Function") {
+				this.onEnd = args[4];
+			}
+		}
+		this.animType = 'Tween.' + this.animType;
+		this.startAnim();
+    }
+    anim.prototype['startAnim'] = function () {
+		var me = this;
+		//全部时间 | 开始时间
+		var time_all = this.durtime;
+		var time_start = new Date();
+		
+		//运动曲线方程
+		var aniFunction = (eval(me.animType));
+		
+		//是否已结束动画
+		var is_end = false;
+		
+		//需要修改的css条数
+		var css_length = this.props.length;
+		
+		//显示当前帧（递归）
+		function showFrame(){
+			var time_use = new Date() - time_start;
+			
+			if (time_use < time_all) {
+				requestAnimationFrame(showFrame);
+			}else{
+				time_use = time_all;
+				is_end = true;
+			}
+			
+			for (var i = 0; i < css_length; i++) {
+				//计算当前帧需要的属性值
+				var value = countNewCSS(me.cssOri[i],me.cssEnd[i],time_use,time_all,aniFunction);
+				
+				setStyle(me.elem,me.props[i],value);
+			}
+			
+			if(is_end){
+				me.onEnd && me.onEnd.call(me, me.elem);
+			}
+		}
+		//开始动画
+		requestAnimationFrame(showFrame);
+	};
+	
+	
 	
 	//创建dom
 	function createDom(html){
@@ -453,8 +466,7 @@ define(function () {
 			'screen_left' : 0
 		}
 		var size;
-		// Support: BlackBerry 5, iOS 3 (original iPhone)
-		// If we don't have gBCR, just use 0,0 rather than error
+		
 		if ( typeof elem.getBoundingClientRect !== 'undefined' ) {
 			size = elem.getBoundingClientRect();
 		}
@@ -563,14 +575,15 @@ define(function () {
 	//缩小，淡出
 	function zoomOut(DOM,time,fn){
 		var op = getStyle(DOM,'opacity');
+		
+		DOM.style['overflow'] = 'hidden';
 		var width = parseInt(getStyle(DOM,'width'));
-		var height = parseInt(getStyle(DOM,'height'));
-		var marginLeft = parseInt(getStyle(DOM,'marginLeft'));
-		var marginTop = parseInt(getStyle(DOM,'marginTop'));
+		var height = outerHeight(DOM);
+		var marginLeft = parseInt(getStyle(DOM,'marginLeft')) || 0;
+		var marginTop = parseInt(getStyle(DOM,'marginTop')) || 0;
 		new anim(DOM,{
 			'width' : width/2,
 			'height' : height/2,
-			'overflow' : 'hidden',
 			'marginLeft' : (marginLeft + width/4),
 			'marginTop' : (marginTop + height/4),
 			'opacity' : 0

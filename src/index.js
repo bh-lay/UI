@@ -108,7 +108,7 @@
 	function build_UI_DOM(){
 		var styleSheet = utils.createStyleSheet(popCSS,{'data-module' : "UI"});
 		private_head.appendChild(styleSheet);
-		console.log(styleSheet,111111);
+		
 		document.body.appendChild(private_allCnt);
 		//释放掉无用的内存
 		popCSS = null;
@@ -162,11 +162,7 @@
 		var dragMask = utils.createDom(dragMask_tpl)[0];
 
 		var dx, dy,l_start,t_start,w_start,h_start;
-		utils.bind(handle_dom,'mousedown',function(e){
-			if(e.button == 0){
-				down(e);
-			}
-		});
+		utils.bind(handle_dom,'mousedown',down);
 		function down(e){
 			//更新窗口尺寸
 			refreshSize();
@@ -191,10 +187,11 @@
 			start&&start();
 		}
 		function move(e){
-			e.preventDefault();
-			e.stopPropagation();
+			//e.preventDefault();
+			//e.stopPropagation();
 		//	window.getSelection?window.getSelection().removeAllRanges():document.selection.empty();
 			moving&&moving(e.pageX-dx,e.pageY-dy,l_start,t_start,w_start,h_start);
+		//	console.log(e.pageX,1111)
 		}
 		function up(e) {
 			utils.removeNode(dragMask);
@@ -232,7 +229,6 @@
 	}
 	//计算自适应页面位置的方法
 	function adaption(width,height){
-		console.log(private_winH,height,private_scrollTop);
 		var top = (private_winH - height)/2 + private_scrollTop;
 		var left = (private_winW - width)/2;
 		var newPosition = fix_position(top,left,width,height);
@@ -574,7 +570,7 @@
 			'top' : newPosition.clientTop,
 			'opacity' : 1
 		},140,'Back.easeOut');
-		//console.log(private_winH,12);
+		
 		private_fixedScreenTopDom.appendChild(this.dom);
 	}
 	prompt.prototype['close'] = CLOSEMETHOD('zoomOut',150);
@@ -604,13 +600,11 @@
 		while (!utils.hasClass(target,'UI_plane')) {
 			target = target.parentNode;
 			if(!target){
-		//		console.log('not target')
 				//close the active plane
 				private_activePlane&&private_activePlane.close();
 				break
 			}
 		}
-	//	console.log('target',target)
 	}
 	
 	if(private_isSupportTouch){
