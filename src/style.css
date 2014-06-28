@@ -63,7 +63,7 @@
 	line-height:36px;
 	overflow:hidden;
 	border-bottom:1px solid #ebebeb;
-	color:#333;
+	color:#777;
 	font-size:16px;
 	text-indent:15px;
 	cursor:default;
@@ -85,7 +85,7 @@
 	line-height:36px;
 	color:#ddd;
 	font-family:"Simsun";
-	font-size:24px;
+	font-size:22px;
 	font-weight:bold;
 	text-decoration:none;
 	transition:0.1s;
@@ -95,7 +95,7 @@
 	text-decoration:none;
 }
 .UI_pop_close:active {
-	color:#444
+	color:#222
 }
 /**х╥хо©Р**/
 .UI_confirm {
@@ -180,12 +180,16 @@
 	line-height:36px;
 	color:#03f;
 	box-sizing:border-box;
+	transition: 0.15s;
 }
 .UI_pop_confirm_ok {
 	border-right:1px solid #ddd;
 }
-.UI_pop_confirm a:hover {
-	text-decoration:none;
+
+@media(min-width:460px){
+	.UI_pop_confirm a:hover {
+		background : #eee
+	}
 }
 .UI_plane {
 	width:200px;

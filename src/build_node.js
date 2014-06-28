@@ -1,6 +1,6 @@
 var fs = require('fs');
 
-function getStyleSheet(src,moduleName){
+function getStyleSheet(src){
 	var cssStr = fs.readFileSync(src,'UTF-8')
 	
 	//过滤注释
@@ -14,7 +14,6 @@ function getStyleSheet(src,moduleName){
 	txt = txt.replace(/\s*}\s*/g,'}');
 	txt = txt.replace(/\s*;\s*/g,';');
 	
-	txt = '<style type="text/css" data-module="' + moduleName + '">' + txt + '</style>';
 	return txt;
 }
 
@@ -55,7 +54,7 @@ function checkMainFiles(src){
 		//判断资源类型
 		if(args[0].match(/\.css$/)){
 			console.log('loading and min css\n');
-			return "'" + getStyleSheet(args[0],args[1] || '') + "'";
+			return "'" + getStyleSheet(args[0]) + "'";
 		}else if(args[0].match(/\.js$/)){
 			console.log('loading js\n');
 			return getJS(args[0]);

@@ -3,7 +3,6 @@
  * 包含dom查找，css样式，动画等
  */
 define(function () {
-	var private_frame_time = 1000 / 60;
 	
     var Tween = {
         Linear: function (t, b, c, d) { return c * t / d + b; },
@@ -208,8 +207,13 @@ define(function () {
 	 * 判断dom是否拥有某个class
 	 */
 	function hasClass(dom,classSingle){
+		var classStr = dom.className;
 		//dom有class 检测，无class，直接返回false
-		return (dom.className && dom.className.length) ? dom.className.match(new RegExp('(\\s|^)' + classSingle +'(\\s|$)')) : false;
+		if(classStr && classStr.length){
+			return dom.className.match(new RegExp('(\\s|^)' + classSingle +'(\\s|$)'));
+		}else{
+			return false;
+		}
 	}
 	//获取样式
 	function getStyle(elem, attr) {
@@ -224,6 +228,7 @@ define(function () {
 			w3style = elem.currentStyle[attr];
 		}
 		//w3style == "auto" ? w3style = "0px" : w3style;
+		console.log(w3style);
 		return w3style;
 	}
 	
@@ -275,16 +280,17 @@ define(function () {
 	 * dom设置样式
 	 */
 	function setStyle(elem,prop,value){
-		if(value == null){
+		if(!value && (value != +value)){
+			console.log(prop,value,'error');
 			return
 		}
 		prop = prop.toString();
 		if (prop == "opacity") {
+			elem.style['filter'] = 'alpha(opacity=' + value + ')';
 			value = value / 100;
 		} else if (value == +value){
 			value = value + "px";
 		}
-		
 		elem.style[prop] = value;
 	}
 	//设置css
@@ -305,7 +311,7 @@ define(function () {
 				window.mozRequestAnimationFrame ||
 				window.oRequestAnimationFrame ||
 				function (callback) {
-					return window.setTimeout(callback, private_frame_time); // shoot for 60 fps
+					return window.setTimeout(callback, 10);
 				};
     })();
 	
@@ -373,7 +379,6 @@ define(function () {
 					var value = countNewCSS(me.cssOri[i],me.cssEnd[i],time_use,time_all,aniFunction);
 					setStyle(me.elem,props[i],value);
 				}
-			//	console.log(time_all,time_use);
 			}
 			requestAnimationFrame(showFrame);
         },
@@ -413,10 +418,30 @@ define(function () {
 	}
 	
 	//创建dom
-	function createDom(str){
+	function createDom(html){
 		var a = document.createElement('div');
-		a.innerHTML = str;
+		a.innerHTML = html;
 		return a.childNodes;
+	}
+	//创建style标签
+	function createStyleSheet(cssStr,attr){
+		var styleTag = document.createElement('style');
+		
+		attr = attr || {};
+		attr.type = "text/css";
+		for(var i in attr){
+			styleTag.setAttribute(i, attr[i]);
+		}
+		
+		// IE
+		if (styleTag.styleSheet) {
+			styleTag.styleSheet.cssText = cssStr;
+		} else {
+			var tt1 = document.createTextNode(cssStr);
+			styleTag.appendChild(tt1);
+		}
+		
+		return styleTag;
 	}
 	
 	//读取dom在页面中的位置
@@ -440,14 +465,14 @@ define(function () {
 	}
 	function outerWidth (elem){
 		if ( typeof elem.getBoundingClientRect !== 'undefined' ) {
-			return elem.getBoundingClientRect()['width'];
+			return elem.getBoundingClientRect()['width'] || 0;
 		}else{
 			return (parseInt(getStyle(elem,'borderLeftWidth')) + parseInt(getStyle(elem,'paddingLeft')) + parseInt(getStyle(elem,'width')) + parseInt(getStyle(elem,'paddingRight')) + parseInt(getStyle(elem,'borderRightWidth')));
 		}
 	}
 	function outerHeight (elem){
-		if ( typeof elem.getBoundingClientRect !== 'undefined' ) {
-			return elem.getBoundingClientRect()['height'];
+		if ( typeof(elem.getBoundingClientRect) !== 'undefined' ) {
+			return elem.getBoundingClientRect()['height'] || 0;
 		}else{
 			return (parseInt(getStyle(elem,'borderTopWidth')) + parseInt(getStyle(elem,'paddingTop')) + parseInt(getStyle(elem,'height')) + parseInt(getStyle(elem,'paddingBottom')) + parseInt(getStyle(elem,'borderBottomWidth')));
 		}
@@ -455,7 +480,7 @@ define(function () {
 	
 	//根据class查找元素
 	var findByClassName = (function(){
-		if(document.getElementsByClassName !== 'undefined'){
+		if(typeof(document.getElementsByClassName) !== 'undefined'){
 			//支持gEbCN
 			return function (dom,classStr){
 				return dom.getElementsByClassName(classStr);
@@ -477,6 +502,12 @@ define(function () {
 			};
 		}
 	})();
+	
+	function removeNode(elem){  
+		if(elem && elem.parentNode && elem.tagName != 'BODY'){  
+			elem.parentNode.removeChild(elem);  
+		}  
+	};
 	
 	//隐藏dom
 	function hide(elem){
@@ -529,16 +560,34 @@ define(function () {
 			fn && fn.call(DOM);
 		});
 	}
-	
-	
+	//缩小，淡出
+	function zoomOut(DOM,time,fn){
+		var op = getStyle(DOM,'opacity');
+		var width = parseInt(getStyle(DOM,'width'));
+		var height = parseInt(getStyle(DOM,'height'));
+		var marginLeft = parseInt(getStyle(DOM,'marginLeft'));
+		var marginTop = parseInt(getStyle(DOM,'marginTop'));
+		new anim(DOM,{
+			'width' : width/2,
+			'height' : height/2,
+			'overflow' : 'hidden',
+			'marginLeft' : (marginLeft + width/4),
+			'marginTop' : (marginTop + height/4),
+			'opacity' : 0
+		},time,function(){
+			DOM.style['opacity'] = op;
+			DOM.style['display'] = 'none';
+			fn && fn.call(DOM);
+		});
+	}
 	
 	/**
 	 * 页面加载
 	 */
 	var readyFns = [];
 	function completed() {
-		document.removeEventListener( "DOMContentLoaded", completed, false );
-		window.removeEventListener( "load", completed, false );
+		removeHandler(document,"DOMContentLoaded", completed);
+		removeHandler(window,"load", completed);
 		for(var i =0,total=readyFns.length;i<total;i++){
 			readyFns[i]();
 		}
@@ -549,8 +598,9 @@ define(function () {
 			callback && callback();
 		} else {
 			callback && readyFns.push(callback);
-			document.addEventListener( "DOMContentLoaded", completed, false );
-			window.addEventListener( "load", completed, false );
+			
+			bindHandler(document,'DOMContentLoaded',completed);
+			bindHandler(window,'load',completed);
 		}
 	}
 	
@@ -597,15 +647,20 @@ define(function () {
 	})();
 	
     return{
+		'TypeOf' : TypeOf,
+		'each' : each,
 		'css' : setCss,
 		'slideDown' : slideDown,
 		'slideUp' : slideUp,
 		'fadeIn' : fadeIn,
 		'fadeOut' : fadeOut,
+		'zoomOut' : zoomOut,
 		'animation' : function(a,b,c,d,e) {
 			return new anim(a,b,c,d,e);
 		},
 		'createDom' : createDom,
+		'removeNode' : removeNode,
+		'createStyleSheet' : createStyleSheet,
 		'findByClassName' : findByClassName,
 		'hasClass' : hasClass,
 		'offset' : offset,

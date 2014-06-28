@@ -38,7 +38,7 @@
 	var cover_tpl = require('template/cover.html');
 	var select_tpl = require('template/select.html');
 	
-	var popCSS = require('style.css','UI');
+	var popCSS = require('style.css');
 	
 	var isIE67 = false;
 	if(navigator.appName == "Microsoft Internet Explorer"){
@@ -57,11 +57,10 @@
 		private_mainDom = utils.findByClassName(private_allCnt,'UI_main_cnt')[0],
 		private_fixedScreenTopDom = utils.findByClassName(private_allCnt,'UI_fixedScreenTop_cnt')[0],
 		private_fixedScreenBottomDom = utils.findByClassName(private_allCnt,'UI_fixedScreenBottom_cnt')[0],
-		private_cssDom = utils.createDom('<style type="text/css" data-module="UI_plug" ></style>')[0],
-		private_window = window,
+		private_cssDom = null,
+		private_head = document.head || document.getElementsByTagName('head')[0],
 		private_winW,
 		private_winH,
-		private_doc = document,
 		private_docH,
 		private_scrollTop,
 		private_isSupportTouch = "ontouchend" in document ? true : false,
@@ -81,22 +80,35 @@
 	
 	function refreshSize(){
 		//重新计算窗口尺寸
-		private_winW = document.body.scrollWidth;
 		private_scrollTop = document.body.scrollTop;
+		private_winW = document.body.scrollWidth;
 		private_winH = window.innerHeight;
 		private_docH = document.body.scrollHeight;
 		
+		if(typeof private_winH != "number"){ 
+			if(document.compatMode == "number"){
+				private_winH = document.documentElement.clientHeight; 
+			}else{ 
+				private_winH = document.body.clientHeight; 
+			} 
+		} 
+		
+		
 		//向css环境写入动态css
-		private_cssDom.innerHTML = [
+		private_cssDom && utils.removeNode(private_cssDom);
+		var styleStr = [
 			'.UI_cover{height:' + private_winH + 'px;}',
 			'.UI_ask{top:' + (private_winH/2) + 'px;}',
 			'.UI_mask{height:' + private_winH + 'px;}'
 		].join('');
+		private_cssDom = utils.createStyleSheet(styleStr,{'data-module' : "UI_plug"});
+		private_head.appendChild(private_cssDom);
 	}
 	
 	function build_UI_DOM(){
-		document.head.appendChild(utils.createDom(popCSS)[0]);
-		document.head.appendChild(private_cssDom);
+		var styleSheet = utils.createStyleSheet(popCSS,{'data-module' : "UI"});
+		private_head.appendChild(styleSheet);
+		console.log(styleSheet,111111);
 		document.body.appendChild(private_allCnt);
 		//释放掉无用的内存
 		popCSS = null;
@@ -131,8 +143,8 @@
 			rebuild_fn = refreshSize;
 		}
 		//监听浏览器缩放、滚屏事件
-		utils.bind(private_window,'resize',rebuild_fn);
-		utils.bind(private_window,'scroll',rebuild_fn);
+		utils.bind(window,'resize',rebuild_fn);
+		utils.bind(window,'scroll',rebuild_fn);
 	}
 	
 	utils.ready(function(){
@@ -185,7 +197,7 @@
 			moving&&moving(e.pageX-dx,e.pageY-dy,l_start,t_start,w_start,h_start);
 		}
 		function up(e) {
-			dragMask.remove();
+			utils.removeNode(dragMask);
 			utils.unbind(document,'mousemove',move);
 			utils.unbind(document,'mouseup',up);
 			end&&end();
@@ -212,6 +224,7 @@
 		}else if(left + width > private_winW - gap.right){
 			left = private_winW - width - gap.right;
 		}
+		
 		return {
 			'top' : top,
 			'left' : left
@@ -219,6 +232,7 @@
 	}
 	//计算自适应页面位置的方法
 	function adaption(width,height){
+		console.log(private_winH,height,private_scrollTop);
 		var top = (private_winH - height)/2 + private_scrollTop;
 		var left = (private_winW - width)/2;
 		var newPosition = fix_position(top,left,width,height);
@@ -228,6 +242,7 @@
 		if(clientTop<gap.top){
 			clientTop = gap.top;
 		}
+		
 		return {
 			'top' : newPosition.top,
 			'left' : newPosition.left,
@@ -325,30 +340,19 @@
 			
 			var DOM = this.dom;
 			if(!effect){
-				DOM.remove();
+				utils.removeNode(DOM);
 			}else{
 				if(effect == 'fade'){
 					utils.fadeOut(DOM,time,function(){
-						DOM.remove();
+						utils.removeNode(DOM);
 					});
 				}else if(effect == 'slide'){
 					utils.slideUp(DOM,time,function(){
-						DOM.remove();
+						utils.removeNode(DOM);
 					});
 				}else if(effect == 'zoomOut'){
-					var width = parseInt(utils.getStyle(DOM,'width'));
-					var height = parseInt(utils.getStyle(DOM,'height'));
-					var marginLeft = parseInt(utils.getStyle(DOM,'marginLeft'));
-					var marginTop = parseInt(utils.getStyle(DOM,'marginTop'));
-					utils.animation(DOM,{
-						'width' : width/2,
-						'height' : height/2,
-						'overflow' : 'hidden',
-						'marginLeft' : (marginLeft + width/4),
-						'marginTop' : (marginTop + height/4),
-						'opacity' : 0
-					},time,function(){
-						DOM.remove();
+					utils.zoomOut(DOM,time,function(){
+						utils.removeNode(DOM);
 					});
 				}
 			}
@@ -370,14 +374,7 @@
 
 		var this_html = param['html'] || '';
 		var this_width = param['width'] || Math.min(600,private_winW-20);
-		var this_height = param['height'] ? parseInt(param['height']) : null;
 
-		//预定高度时
-		if(this_height){
-			utils.css(this.cntDom,{
-				'height' : this_height - 41
-			});
-		}
 
 		//当有确认参数时
 		if(param['confirm']){
@@ -388,7 +385,7 @@
 		//处理title参数
 		var caption_dom = utils.findByClassName(this.dom,'UI_pop_cpt')[0];
 		if(!param['title']){
-			caption_dom.remove();
+			utils.removeNode(caption_dom);
 		}else{
 			var title = param['title'] || '\u8BF7\u8F93\u5165\u6807\u9898';
 			
@@ -412,8 +409,9 @@
 		this.cntDom.innerHTML = this_html;
 		private_mainDom.appendChild(this.dom);
 		
+		
 		//fix position get size
-		var fixSize = adaption(this_width,(this_height?this_height:utils.outerHeight(this.dom)));
+		var fixSize = adaption(this_width,utils.outerHeight(this.dom));
 		var top = (param['top'] == +param['top']) ? param['top'] : fixSize.top;
 		var left = (param['left'] == +param['left']) ? param['left'] : fixSize.left;
 		
@@ -602,7 +600,7 @@
 	 * 简单的事件委托模型 
 	 */
 	function checkClick(event) {
-		var target = event.target;
+		var target = event.srcElement || event.target;
 		while (!utils.hasClass(target,'UI_plane')) {
 			target = target.parentNode;
 			if(!target){
@@ -617,10 +615,9 @@
 	
 	if(private_isSupportTouch){
 		//移动端使用touch
-		var doc = private_doc;
-		doc.addEventListener('touchstart',checkClick);
-		doc.addEventListener('MSPointerDown',checkClick);
-		doc.addEventListener('pointerdown',checkClick);
+		document.addEventListener('touchstart',checkClick);
+		document.addEventListener('MSPointerDown',checkClick);
+		document.addEventListener('pointerdown',checkClick);
 	}else{
 		//PC鼠标事件
 		utils.bind(document,'mousedown',checkClick);
@@ -742,7 +739,7 @@
 			'left' : private_winW/2,
 			'opacity' : 0
 		},120, function(){
-			dom_all.remove();
+			utils.removeNode(dom_all);
 		});
 	};
 

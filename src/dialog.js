@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2014-6-28 10:27
+ * @modified 2014-6-28 22:8
  * 
  **/
 
@@ -38,7 +38,7 @@
 	var cover_tpl = '<div class="UI_cover"><div class="UI_coverCnt"></div><a href="javascript:void(0)" class="UI_coverClose">〉</a></div>';
 	var select_tpl = '<div class="UI_select"><div class="UI_select_body"> {caption} <div class="UI_selectCnt">{list}</div></div><div class="UI_selectCancel"><a class="UI_select_btn" href="javascript:void(0)" data-index="-1">取消</a></div></div>';
 	
-	var popCSS = '<style type="text/css" data-module="UI">.UI_lawyer{position:absolute;top:0px;left:0px;z-index:4999;width:100%;height:0px;overflow:visible;font-family:"Microsoft Yahei"}.UI_lawyer a,.UI_lawyer a:hover{text-decoration:none;-webkit-tap-highlight-color:rgba(0,0,0,0);-webkit-tap-highlight-color:transparent;}.UI_mask{position:absolute;top:0px;left:0px;width:100%;background-color:#000;display:none;opacity:0.2}.UI_main_cnt{width:0px;height:0px;overflow:visible;}.UI_fixedScreenTop_cnt{position:absolute;z-index:4999;top:0px;left:0px;width:100%;height:0px;overflow:visible;}.UI_fixedScreenBottom_cnt{position:absolute;z-index:4999;left:0px;width:100%;height:0px;overflow:visible;}.UI_pop{width:200px;_border:1px solid #eee;position:absolute;top:400px;left:300px;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}.UI_pop_cpt{position:relative;height:36px;line-height:36px;overflow:hidden;border-bottom:1px solid #ebebeb;color:#333;font-size:16px;text-indent:15px;cursor:default;}.UI_pop_cnt{position:relative;min-height:100px;overflow:auto;width:100%;}.UI_pop_close{display:block;position:absolute;top:0px;right:0px;width:40px;height:36px;text-align:center;line-height:36px;color:#ddd;font-family:"Simsun";font-size:24px;font-weight:bold;text-decoration:none;transition:0.1s;}.UI_pop_close:hover{color:#888;text-decoration:none;}.UI_pop_close:active{color:#444}.UI_confirm{_border:1px solid #eee;position:absolute;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}.UI_confirm_text{padding:30px 10px 20px;line-height:26px;text-align:center;font-size:20px;color:#333;}.UI_ask{_border:1px solid #eee;position:absolute;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}.UI_ask_text{padding:25px 10px 15px;line-height:26px;text-align:center;font-size:18px;color:#333;}.UI_ask input{display:block;margin:0px auto 15px;height:30px;padding:4px 4px;line-height:22px;box-sizing:border-box;width:90%;}.UI_miniChatSlideCnt{width:220px;height:0px;overflow:hidden;position:absolute;border-radius:4px;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}.UI_miniChat{position:absolute;left:0px;bottom:0px;width:100%;_border:1px solid #eee;background:#fff;overflow:hidden;}.UI_miniChat_text{padding:20px 10px 10px;box-sizing:content-box;line-height:24px;text-align:center;font-size:14px;color:#333;}.UI_miniChat .UI_pop_confirm a{height:28px;line-height:28px;}.UI_pop_confirm{overflow:hidden;text-align:center;border-top:1px solid #ddd;}.UI_pop_confirm a{display:block;width:50%;height:36px;float:left;font-size:14px;line-height:36px;color:#03f;box-sizing:border-box;}.UI_pop_confirm_ok{border-right:1px solid #ddd;}.UI_pop_confirm a:hover{text-decoration:none;}.UI_plane{width:200px;position:absolute;top:400px;left:300px;}.UI_prompt{width:240px;position:absolute;left:50%;margin-left:-130px;padding:30px 10px;box-sizing:content-box;background:#fff;_border:1px solid #fafafa;border-radius:4px;box-shadow:2px 2px 10px rgba(0,0,0,0.5);}.UI_cnt{font-size:18px;color:#222;text-align:center;}.UI_cover{position:absolute;top:0px;left:0px;width:100%;height:100px;}.UI_coverCnt{position:relative;width:100%;height:100%;background:#fff;}.UI_coverClose{display:block;position:absolute;top:50%;left:0px;width:20px;height:60px;padding-left:5px;text-align:center;line-height:60px;color:#ddd;font-family:"Simsun";font-size:30px;background:#555;}.UI_coverClose:hover{background-color:#333;color:#fff;text-decoration:none;}.UI_select{position:absolute;width:100%;bottom:0px;padding-bottom:10px;}.UI_select a{display:block;height:40px;line-height:40px;text-align:center;color:#03f;font-size:16px;}.UI_select_body{margin:0px 10px 10px;border-radius:8px;overflow:hidden;background:#fff;}.UI_selectCpt{padding:8px 0px;}.UI_selectCpt h3,.UI_selectCpt p{margin:0px;font-size:15px;line-height:18px;text-align:center;color:#aaa;font-weight:normal;}.UI_selectCpt p{font-size:12px;}.UI_selectCnt a{border-top:1px solid #eee;margin-top:-1px;}.UI_selectCancel{margin:0px 10px;border-radius:8px;overflow:hidden;background:#fff;}.UI_fixedScreenBottom_cnt .UI_confirm{width:100%;width:100%;left:0px;bottom:0;border-radius:0px;box-shadow:0px 0px 5px rgba(0,0,0,0.8);}.UI_fixedScreenBottom_cnt .UI_confirm_text{padding:50px 10px;font-size:18px}.UI_fixedScreenBottom_cnt .UI_confirm .UI_pop_confirm{width:100%;padding:10px 0px 30px}.UI_fixedScreenBottom_cnt .UI_confirm a{display:block;height:40px;line-height:40px;border-radius:22px;margin:0px 20px;font-size:16px}.UI_fixedScreenBottom_cnt .UI_confirm a.UI_pop_confirm_ok{margin-bottom:15px;}</style>';
+	var popCSS = '.UI_lawyer{position:absolute;top:0px;left:0px;z-index:4999;width:100%;height:0px;overflow:visible;font-family:"Microsoft Yahei"}.UI_lawyer a,.UI_lawyer a:hover{text-decoration:none;-webkit-tap-highlight-color:rgba(0,0,0,0);-webkit-tap-highlight-color:transparent;}.UI_mask{position:absolute;top:0px;left:0px;width:100%;background-color:#000;display:none;opacity:0.2}.UI_main_cnt{width:0px;height:0px;overflow:visible;}.UI_fixedScreenTop_cnt{position:absolute;z-index:4999;top:0px;left:0px;width:100%;height:0px;overflow:visible;}.UI_fixedScreenBottom_cnt{position:absolute;z-index:4999;left:0px;width:100%;height:0px;overflow:visible;}.UI_pop{width:200px;_border:1px solid #eee;position:absolute;top:400px;left:300px;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}.UI_pop_cpt{position:relative;height:36px;line-height:36px;overflow:hidden;border-bottom:1px solid #ebebeb;color:#777;font-size:16px;text-indent:15px;cursor:default;}.UI_pop_cnt{position:relative;min-height:100px;overflow:auto;width:100%;}.UI_pop_close{display:block;position:absolute;top:0px;right:0px;width:40px;height:36px;text-align:center;line-height:36px;color:#ddd;font-family:"Simsun";font-size:22px;font-weight:bold;text-decoration:none;transition:0.1s;}.UI_pop_close:hover{color:#888;text-decoration:none;}.UI_pop_close:active{color:#222}.UI_confirm{_border:1px solid #eee;position:absolute;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}.UI_confirm_text{padding:30px 10px 20px;line-height:26px;text-align:center;font-size:20px;color:#333;}.UI_ask{_border:1px solid #eee;position:absolute;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}.UI_ask_text{padding:25px 10px 15px;line-height:26px;text-align:center;font-size:18px;color:#333;}.UI_ask input{display:block;margin:0px auto 15px;height:30px;padding:4px 4px;line-height:22px;box-sizing:border-box;width:90%;}.UI_miniChatSlideCnt{width:220px;height:0px;overflow:hidden;position:absolute;border-radius:4px;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}.UI_miniChat{position:absolute;left:0px;bottom:0px;width:100%;_border:1px solid #eee;background:#fff;overflow:hidden;}.UI_miniChat_text{padding:20px 10px 10px;box-sizing:content-box;line-height:24px;text-align:center;font-size:14px;color:#333;}.UI_miniChat .UI_pop_confirm a{height:28px;line-height:28px;}.UI_pop_confirm{overflow:hidden;text-align:center;border-top:1px solid #ddd;}.UI_pop_confirm a{display:block;width:50%;height:36px;float:left;font-size:14px;line-height:36px;color:#03f;box-sizing:border-box;transition: 0.15s;}.UI_pop_confirm_ok{border-right:1px solid #ddd;}@media(min-width:460px){.UI_pop_confirm a:hover{background : #eee}}.UI_plane{width:200px;position:absolute;top:400px;left:300px;}.UI_prompt{width:240px;position:absolute;left:50%;margin-left:-130px;padding:30px 10px;box-sizing:content-box;background:#fff;_border:1px solid #fafafa;border-radius:4px;box-shadow:2px 2px 10px rgba(0,0,0,0.5);}.UI_cnt{font-size:18px;color:#222;text-align:center;}.UI_cover{position:absolute;top:0px;left:0px;width:100%;height:100px;}.UI_coverCnt{position:relative;width:100%;height:100%;background:#fff;}.UI_coverClose{display:block;position:absolute;top:50%;left:0px;width:20px;height:60px;padding-left:5px;text-align:center;line-height:60px;color:#ddd;font-family:"Simsun";font-size:30px;background:#555;}.UI_coverClose:hover{background-color:#333;color:#fff;text-decoration:none;}.UI_select{position:absolute;width:100%;bottom:0px;padding-bottom:10px;}.UI_select a{display:block;height:40px;line-height:40px;text-align:center;color:#03f;font-size:16px;}.UI_select_body{margin:0px 10px 10px;border-radius:8px;overflow:hidden;background:#fff;}.UI_selectCpt{padding:8px 0px;}.UI_selectCpt h3,.UI_selectCpt p{margin:0px;font-size:15px;line-height:18px;text-align:center;color:#aaa;font-weight:normal;}.UI_selectCpt p{font-size:12px;}.UI_selectCnt a{border-top:1px solid #eee;margin-top:-1px;}.UI_selectCancel{margin:0px 10px;border-radius:8px;overflow:hidden;background:#fff;}.UI_fixedScreenBottom_cnt .UI_confirm{width:100%;width:100%;left:0px;bottom:0;border-radius:0px;box-shadow:0px 0px 5px rgba(0,0,0,0.8);}.UI_fixedScreenBottom_cnt .UI_confirm_text{padding:50px 10px;font-size:18px}.UI_fixedScreenBottom_cnt .UI_confirm .UI_pop_confirm{width:100%;padding:10px 0px 30px}.UI_fixedScreenBottom_cnt .UI_confirm a{display:block;height:40px;line-height:40px;border-radius:22px;margin:0px 20px;font-size:16px}.UI_fixedScreenBottom_cnt .UI_confirm a.UI_pop_confirm_ok{margin-bottom:15px;}';
 	
 	var isIE67 = false;
 	if(navigator.appName == "Microsoft Internet Explorer"){
@@ -57,11 +57,10 @@
 		private_mainDom = utils.findByClassName(private_allCnt,'UI_main_cnt')[0],
 		private_fixedScreenTopDom = utils.findByClassName(private_allCnt,'UI_fixedScreenTop_cnt')[0],
 		private_fixedScreenBottomDom = utils.findByClassName(private_allCnt,'UI_fixedScreenBottom_cnt')[0],
-		private_cssDom = utils.createDom('<style type="text/css" data-module="UI_plug" ></style>')[0],
-		private_window = window,
+		private_cssDom = null,
+		private_head = document.head || document.getElementsByTagName('head')[0],
 		private_winW,
 		private_winH,
-		private_doc = document,
 		private_docH,
 		private_scrollTop,
 		private_isSupportTouch = "ontouchend" in document ? true : false,
@@ -81,22 +80,35 @@
 	
 	function refreshSize(){
 		//重新计算窗口尺寸
-		private_winW = document.body.scrollWidth;
 		private_scrollTop = document.body.scrollTop;
+		private_winW = document.body.scrollWidth;
 		private_winH = window.innerHeight;
 		private_docH = document.body.scrollHeight;
 		
+		if(typeof private_winH != "number"){ 
+			if(document.compatMode == "number"){
+				private_winH = document.documentElement.clientHeight; 
+			}else{ 
+				private_winH = document.body.clientHeight; 
+			} 
+		} 
+		
+		
 		//向css环境写入动态css
-		private_cssDom.innerHTML = [
+		private_cssDom && utils.removeNode(private_cssDom);
+		var styleStr = [
 			'.UI_cover{height:' + private_winH + 'px;}',
 			'.UI_ask{top:' + (private_winH/2) + 'px;}',
 			'.UI_mask{height:' + private_winH + 'px;}'
 		].join('');
+		private_cssDom = utils.createStyleSheet(styleStr,{'data-module' : "UI_plug"});
+		private_head.appendChild(private_cssDom);
 	}
 	
 	function build_UI_DOM(){
-		document.head.appendChild(utils.createDom(popCSS)[0]);
-		document.head.appendChild(private_cssDom);
+		var styleSheet = utils.createStyleSheet(popCSS,{'data-module' : "UI"});
+		private_head.appendChild(styleSheet);
+		console.log(styleSheet,111111);
 		document.body.appendChild(private_allCnt);
 		//释放掉无用的内存
 		popCSS = null;
@@ -131,8 +143,8 @@
 			rebuild_fn = refreshSize;
 		}
 		//监听浏览器缩放、滚屏事件
-		utils.bind(private_window,'resize',rebuild_fn);
-		utils.bind(private_window,'scroll',rebuild_fn);
+		utils.bind(window,'resize',rebuild_fn);
+		utils.bind(window,'scroll',rebuild_fn);
 	}
 	
 	utils.ready(function(){
@@ -185,7 +197,7 @@
 			moving&&moving(e.pageX-dx,e.pageY-dy,l_start,t_start,w_start,h_start);
 		}
 		function up(e) {
-			dragMask.remove();
+			utils.removeNode(dragMask);
 			utils.unbind(document,'mousemove',move);
 			utils.unbind(document,'mouseup',up);
 			end&&end();
@@ -212,6 +224,7 @@
 		}else if(left + width > private_winW - gap.right){
 			left = private_winW - width - gap.right;
 		}
+		
 		return {
 			'top' : top,
 			'left' : left
@@ -219,6 +232,7 @@
 	}
 	//计算自适应页面位置的方法
 	function adaption(width,height){
+		console.log(private_winH,height,private_scrollTop);
 		var top = (private_winH - height)/2 + private_scrollTop;
 		var left = (private_winW - width)/2;
 		var newPosition = fix_position(top,left,width,height);
@@ -228,6 +242,7 @@
 		if(clientTop<gap.top){
 			clientTop = gap.top;
 		}
+		
 		return {
 			'top' : newPosition.top,
 			'left' : newPosition.left,
@@ -325,30 +340,19 @@
 			
 			var DOM = this.dom;
 			if(!effect){
-				DOM.remove();
+				utils.removeNode(DOM);
 			}else{
 				if(effect == 'fade'){
 					utils.fadeOut(DOM,time,function(){
-						DOM.remove();
+						utils.removeNode(DOM);
 					});
 				}else if(effect == 'slide'){
 					utils.slideUp(DOM,time,function(){
-						DOM.remove();
+						utils.removeNode(DOM);
 					});
 				}else if(effect == 'zoomOut'){
-					var width = parseInt(utils.getStyle(DOM,'width'));
-					var height = parseInt(utils.getStyle(DOM,'height'));
-					var marginLeft = parseInt(utils.getStyle(DOM,'marginLeft'));
-					var marginTop = parseInt(utils.getStyle(DOM,'marginTop'));
-					utils.animation(DOM,{
-						'width' : width/2,
-						'height' : height/2,
-						'overflow' : 'hidden',
-						'marginLeft' : (marginLeft + width/4),
-						'marginTop' : (marginTop + height/4),
-						'opacity' : 0
-					},time,function(){
-						DOM.remove();
+					utils.zoomOut(DOM,time,function(){
+						utils.removeNode(DOM);
 					});
 				}
 			}
@@ -370,14 +374,7 @@
 
 		var this_html = param['html'] || '';
 		var this_width = param['width'] || Math.min(600,private_winW-20);
-		var this_height = param['height'] ? parseInt(param['height']) : null;
 
-		//预定高度时
-		if(this_height){
-			utils.css(this.cntDom,{
-				'height' : this_height - 41
-			});
-		}
 
 		//当有确认参数时
 		if(param['confirm']){
@@ -388,7 +385,7 @@
 		//处理title参数
 		var caption_dom = utils.findByClassName(this.dom,'UI_pop_cpt')[0];
 		if(!param['title']){
-			caption_dom.remove();
+			utils.removeNode(caption_dom);
 		}else{
 			var title = param['title'] || '\u8BF7\u8F93\u5165\u6807\u9898';
 			
@@ -412,8 +409,9 @@
 		this.cntDom.innerHTML = this_html;
 		private_mainDom.appendChild(this.dom);
 		
+		
 		//fix position get size
-		var fixSize = adaption(this_width,(this_height?this_height:utils.outerHeight(this.dom)));
+		var fixSize = adaption(this_width,utils.outerHeight(this.dom));
 		var top = (param['top'] == +param['top']) ? param['top'] : fixSize.top;
 		var left = (param['left'] == +param['left']) ? param['left'] : fixSize.left;
 		
@@ -602,7 +600,7 @@
 	 * 简单的事件委托模型 
 	 */
 	function checkClick(event) {
-		var target = event.target;
+		var target = event.srcElement || event.target;
 		while (!utils.hasClass(target,'UI_plane')) {
 			target = target.parentNode;
 			if(!target){
@@ -617,10 +615,9 @@
 	
 	if(private_isSupportTouch){
 		//移动端使用touch
-		var doc = private_doc;
-		doc.addEventListener('touchstart',checkClick);
-		doc.addEventListener('MSPointerDown',checkClick);
-		doc.addEventListener('pointerdown',checkClick);
+		document.addEventListener('touchstart',checkClick);
+		document.addEventListener('MSPointerDown',checkClick);
+		document.addEventListener('pointerdown',checkClick);
 	}else{
 		//PC鼠标事件
 		utils.bind(document,'mousedown',checkClick);
@@ -742,7 +739,7 @@
 			'left' : private_winW/2,
 			'opacity' : 0
 		},120, function(){
-			dom_all.remove();
+			utils.removeNode(dom_all);
 		});
 	};
 
@@ -865,7 +862,6 @@
 		'drag' : drag
 	};
 },function () {
-	var private_frame_time = 1000 / 60;
 	
     var Tween = {
         Linear: function (t, b, c, d) { return c * t / d + b; },
@@ -1070,8 +1066,13 @@
 	 * 判断dom是否拥有某个class
 	 */
 	function hasClass(dom,classSingle){
+		var classStr = dom.className;
 		//dom有class 检测，无class，直接返回false
-		return (dom.className && dom.className.length) ? dom.className.match(new RegExp('(\\s|^)' + classSingle +'(\\s|$)')) : false;
+		if(classStr && classStr.length){
+			return dom.className.match(new RegExp('(\\s|^)' + classSingle +'(\\s|$)'));
+		}else{
+			return false;
+		}
 	}
 	//获取样式
 	function getStyle(elem, attr) {
@@ -1086,6 +1087,7 @@
 			w3style = elem.currentStyle[attr];
 		}
 		//w3style == "auto" ? w3style = "0px" : w3style;
+		console.log(w3style);
 		return w3style;
 	}
 	
@@ -1137,16 +1139,17 @@
 	 * dom设置样式
 	 */
 	function setStyle(elem,prop,value){
-		if(value == null){
+		if(!value && (value != +value)){
+			console.log(prop,value,'error');
 			return
 		}
 		prop = prop.toString();
 		if (prop == "opacity") {
+			elem.style['filter'] = 'alpha(opacity=' + value + ')';
 			value = value / 100;
 		} else if (value == +value){
 			value = value + "px";
 		}
-		
 		elem.style[prop] = value;
 	}
 	//设置css
@@ -1167,7 +1170,7 @@
 				window.mozRequestAnimationFrame ||
 				window.oRequestAnimationFrame ||
 				function (callback) {
-					return window.setTimeout(callback, private_frame_time); // shoot for 60 fps
+					return window.setTimeout(callback, 10);
 				};
     })();
 	
@@ -1235,7 +1238,6 @@
 					var value = countNewCSS(me.cssOri[i],me.cssEnd[i],time_use,time_all,aniFunction);
 					setStyle(me.elem,props[i],value);
 				}
-			//	console.log(time_all,time_use);
 			}
 			requestAnimationFrame(showFrame);
         },
@@ -1275,10 +1277,30 @@
 	}
 	
 	//创建dom
-	function createDom(str){
+	function createDom(html){
 		var a = document.createElement('div');
-		a.innerHTML = str;
+		a.innerHTML = html;
 		return a.childNodes;
+	}
+	//创建style标签
+	function createStyleSheet(cssStr,attr){
+		var styleTag = document.createElement('style');
+		
+		attr = attr || {};
+		attr.type = "text/css";
+		for(var i in attr){
+			styleTag.setAttribute(i, attr[i]);
+		}
+		
+		// IE
+		if (styleTag.styleSheet) {
+			styleTag.styleSheet.cssText = cssStr;
+		} else {
+			var tt1 = document.createTextNode(cssStr);
+			styleTag.appendChild(tt1);
+		}
+		
+		return styleTag;
 	}
 	
 	//读取dom在页面中的位置
@@ -1302,14 +1324,14 @@
 	}
 	function outerWidth (elem){
 		if ( typeof elem.getBoundingClientRect !== 'undefined' ) {
-			return elem.getBoundingClientRect()['width'];
+			return elem.getBoundingClientRect()['width'] || 0;
 		}else{
 			return (parseInt(getStyle(elem,'borderLeftWidth')) + parseInt(getStyle(elem,'paddingLeft')) + parseInt(getStyle(elem,'width')) + parseInt(getStyle(elem,'paddingRight')) + parseInt(getStyle(elem,'borderRightWidth')));
 		}
 	}
 	function outerHeight (elem){
-		if ( typeof elem.getBoundingClientRect !== 'undefined' ) {
-			return elem.getBoundingClientRect()['height'];
+		if ( typeof(elem.getBoundingClientRect) !== 'undefined' ) {
+			return elem.getBoundingClientRect()['height'] || 0;
 		}else{
 			return (parseInt(getStyle(elem,'borderTopWidth')) + parseInt(getStyle(elem,'paddingTop')) + parseInt(getStyle(elem,'height')) + parseInt(getStyle(elem,'paddingBottom')) + parseInt(getStyle(elem,'borderBottomWidth')));
 		}
@@ -1317,7 +1339,7 @@
 	
 	//根据class查找元素
 	var findByClassName = (function(){
-		if(document.getElementsByClassName !== 'undefined'){
+		if(typeof(document.getElementsByClassName) !== 'undefined'){
 			//支持gEbCN
 			return function (dom,classStr){
 				return dom.getElementsByClassName(classStr);
@@ -1339,6 +1361,12 @@
 			};
 		}
 	})();
+	
+	function removeNode(elem){  
+		if(elem && elem.parentNode && elem.tagName != 'BODY'){  
+			elem.parentNode.removeChild(elem);  
+		}  
+	};
 	
 	//隐藏dom
 	function hide(elem){
@@ -1391,16 +1419,34 @@
 			fn && fn.call(DOM);
 		});
 	}
-	
-	
+	//缩小，淡出
+	function zoomOut(DOM,time,fn){
+		var op = getStyle(DOM,'opacity');
+		var width = parseInt(getStyle(DOM,'width'));
+		var height = parseInt(getStyle(DOM,'height'));
+		var marginLeft = parseInt(getStyle(DOM,'marginLeft'));
+		var marginTop = parseInt(getStyle(DOM,'marginTop'));
+		new anim(DOM,{
+			'width' : width/2,
+			'height' : height/2,
+			'overflow' : 'hidden',
+			'marginLeft' : (marginLeft + width/4),
+			'marginTop' : (marginTop + height/4),
+			'opacity' : 0
+		},time,function(){
+			DOM.style['opacity'] = op;
+			DOM.style['display'] = 'none';
+			fn && fn.call(DOM);
+		});
+	}
 	
 	/**
 	 * 页面加载
 	 */
 	var readyFns = [];
 	function completed() {
-		document.removeEventListener( "DOMContentLoaded", completed, false );
-		window.removeEventListener( "load", completed, false );
+		removeHandler(document,"DOMContentLoaded", completed);
+		removeHandler(window,"load", completed);
 		for(var i =0,total=readyFns.length;i<total;i++){
 			readyFns[i]();
 		}
@@ -1411,8 +1457,9 @@
 			callback && callback();
 		} else {
 			callback && readyFns.push(callback);
-			document.addEventListener( "DOMContentLoaded", completed, false );
-			window.addEventListener( "load", completed, false );
+			
+			bindHandler(document,'DOMContentLoaded',completed);
+			bindHandler(window,'load',completed);
 		}
 	}
 	
@@ -1459,15 +1506,20 @@
 	})();
 	
     return{
+		'TypeOf' : TypeOf,
+		'each' : each,
 		'css' : setCss,
 		'slideDown' : slideDown,
 		'slideUp' : slideUp,
 		'fadeIn' : fadeIn,
 		'fadeOut' : fadeOut,
+		'zoomOut' : zoomOut,
 		'animation' : function(a,b,c,d,e) {
 			return new anim(a,b,c,d,e);
 		},
 		'createDom' : createDom,
+		'removeNode' : removeNode,
+		'createStyleSheet' : createStyleSheet,
 		'findByClassName' : findByClassName,
 		'hasClass' : hasClass,
 		'offset' : offset,
