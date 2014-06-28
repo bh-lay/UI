@@ -3,6 +3,8 @@
  * 包含dom查找，css样式，动画等
  */
 define(function () {
+	var private_frame_time = 1000 / 60;
+	
     var Tween = {
         Linear: function (t, b, c, d) { return c * t / d + b; },
         Quad: {
@@ -303,9 +305,10 @@ define(function () {
 				window.mozRequestAnimationFrame ||
 				window.oRequestAnimationFrame ||
 				function (callback) {
-					return window.setTimeout(callback, 1000 / 60); // shoot for 60 fps
+					return window.setTimeout(callback, private_frame_time); // shoot for 60 fps
 				};
     })();
+	
 	/**
 	 * 动画类
 	 *
@@ -338,11 +341,14 @@ define(function () {
     }
     anim.prototype = {
         startAnim: function () {
-            var that = this;
-            //当前帧
-			var cur_frame = 0;
-			//所有帧数
-			var all_frame = Math.ceil(that.durtime / (1000/60));
+            var me = this;
+			//全部时间 | 开始时间
+			var time_all = this.durtime;
+			var time_start = new Date();
+			
+			//运动曲线方程
+			var aniFunction = (eval(me.animType));
+			
             //获得需要操作的属性名
 			var props = [];
             for (var pro in this.cssObj) {
@@ -351,23 +357,23 @@ define(function () {
 				}
                 props.push(pro);
             }
-			//取得运动曲线方程
-			var aniFunction = (eval(that.animType));
 			
 			//显示当前帧（递归）
 			function showFrame(){
-				cur_frame++;
+				var time_use = new Date() - time_start;
 				
-				for (var i = 0; i < props.length; i++) {
-					var value = countNewCSS(that.cssOri[i],that.cssEnd[i],cur_frame,all_frame,aniFunction);
-					setStyle(that.elem,props[i],value);
-				}
-				
-				if (cur_frame < all_frame) {
+				if (time_use < time_all) {
 					requestAnimationFrame(showFrame);
 				}else{
-					that.onEnd && that.onEnd.call(that, that.elem);
+					time_use = time_all;
+					me.onEnd && me.onEnd.call(me, me.elem);
 				}
+				
+				for (var i = 0; i < props.length; i++) {
+					var value = countNewCSS(me.cssOri[i],me.cssEnd[i],time_use,time_all,aniFunction);
+					setStyle(me.elem,props[i],value);
+				}
+			//	console.log(time_all,time_use);
 			}
 			requestAnimationFrame(showFrame);
         },
@@ -376,7 +382,7 @@ define(function () {
         }
     }
 	//给定计算方式，得出新的CSS值
-	function countNewCSS(start,end,cur_frame,all_frame,fn){	
+	function countNewCSS(start,end,use_time,all_time,fn){	
 		var output
 		if (TypeOf(start) == "Array" && TypeOf(end) == "Array") {
 			//rgb初始值
@@ -388,20 +394,20 @@ define(function () {
 				g_m = end[1] - g_s,
 				b_m = end[2] - b_s;
 			//新的rgb值
-			var r_n = Math.ceil(fn(cur_frame, r_s, r_m, all_frame)),
-				g_n = Math.ceil(fn(cur_frame, g_s, g_m, all_frame)),
-				b_n = Math.ceil(fn(cur_frame, b_s, b_m, all_frame));
+			var r_n = Math.ceil(fn(use_time, r_s, r_m, all_time)),
+				g_n = Math.ceil(fn(use_time, g_s, g_m, all_time)),
+				b_n = Math.ceil(fn(use_time, b_s, b_m, all_time));
 			
 			if(start.length == 4 || end.length == 4){
 				var a_s = start[3] || 100;
 				var a_m = (end[3] || 100) - start[3];
-				var a_n = fn(cur_frame, a_s, a_m, all_frame);
+				var a_n = fn(use_time, a_s, a_m, all_time);
 				output = 'rgba(' + r_n + ',' + g_n + ',' + b_n + ',' + (a_n/100) + ')';
 			}else{
 				output = 'rgba(' + r_n + ',' + g_n + ',' + b_n + ')';
 			}
 		} else {
-			output = Math.ceil(fn(cur_frame, start, (end-start), all_frame));
+			output = fn(use_time, start, (end-start), all_time);
 		}
 		return output
 	}
