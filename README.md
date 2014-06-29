@@ -1,3 +1,6 @@
+响应式用户交互组件库UI
+======
+
 #一、简介
 
 ##1.1、UI是什么?
@@ -5,17 +8,18 @@
 
 剧中人在个人博客以及项目中反复使用的功能的公用视觉类的代码集合
 
-不是一个大而全的东西，仅仅是根据自己的需求整理，如果你对我的代码感兴趣，也欢迎你来使用！
+# 不是一个大而全的东西，仅仅是根据自己的需求整理，如果你对我的代码感兴趣，也欢迎你来使用！
 
-你可以先尝试体验下：[demo](http://htmlpreview.github.io/?https://github.com/bh-lay/UI/blob/master/demo.html)
+你可以先尝试体验下：[demo](http://htmlpreview.github.io/?https://github.com/bh-lay/UI/blob/master/demo.html)(github动态页面，请等待JS响应)
 
 ##1.2、UI目前有哪儿些内容？
 
-* 目前有虚拟弹层、弹框、提示框、确认框等功能
+* 目前有虚拟弹层、弹框、提示信息、确认对话、列表选择等功能
 * 支持对象化事件的调用
 * 支持窗体自由`拖拽`
 * 支持`自定义位置`，方便控制对象在页面中的呈现
-* 对象被注销有`回调支持`，方便确认对象
+* 对象被注销有`回调支持`，方便确认对象状态
+* 不依赖任何库，随拿随用
 
 ##1.3、问题反馈
 在使用中有任何问题，欢迎反馈给我，可以用以下联系方式跟我交流
@@ -24,66 +28,48 @@
 * QQ：279708284
 * weibo: [@剧中人](http://weibo.com/bhlay)
 
-##1.4、说明
-*细节实现依赖于[jquery](http://jquery.com)
 
-##1.5、关于作者
-
-```javascript
-  var bh_lay = {
-    nickName  : "剧中人",
-    site : "http://bh-lay.com/"
-  }
-```
-
-#二、使用
+#二、如何使用
 
 ## 2.0 基本配置
-
+---
 ### 2.0.1 UI.config.gap
-为pop弹框配置页面显示的边界，可用在弹框展开时与拖动处理时限定自身位置。
- 
- * @param {String} name 设置边界名（top/right/bottom/left）
- * @param {Number} vlue 设置边界尺寸
+为pop弹框配置页面显示的边界（默认值均为零），可用在弹框展开时与拖动处理时限定自身位置。
 
 ### 2.0.2 UI.config.zIndex
-全局设置弹框交互在页面中的层级
+设置组件在页面中的**z-index**层级
 
 ###demo
 ```javascript
 //设置边界
+//top right bottom left
 UI.config.gap('top',100);
 //设置层级
 UI.config.zIndex(5000);
 ```
 
-### 传入参数
+## 2.1 UI.pop 弹框
+用途比较广泛，可自定义尺寸位置、是否需要标题、确认按钮（是否需要及按钮文字）。
+### param 传入参数
+ * *Object* **param** 参数对象
+ * *String* [**param.title**] 弹框标题
+ * *String* **param.html** 弹框内容
+ * *String* [**param.width**] 弹框宽度
+ * *String* [**param.height**] 弹框高度
+ * *String* [**param.top**] 弹框与页面顶部距离
+ * *String* [**param.left**] 弹框与页面左侧距离
+ * *String* [**param.mask**] 是否显示蒙层
+ * *Function* [**param.closeFn**] 被关闭时的回调
+ * *Object|Function* [**param.confirm**] 使用对话方式（详细定义或只定义回调）
+ * *Array* [**param.confirm.btns**] 按钮自定义名称
+ * *Function* [**param.confirm.callback**] 确定时的回调方法
 
- * @param {String} name 设置边界名（top/right/bottom/left）
- * @param {Number} vlue 设置边界尺寸
-
-## 2.1、弹出框组件 @method UI.pop
-### 传入参数@param 
- * {Object} param the main paramter
- * {String} param.title 弹框标题
- * {String} param.html 弹框内容
- * {String} [param.width] 弹框宽度
- * {String} [param.height] 弹框高度
- * {String} [param.top] 弹框与页面顶部距离
- * {String} [param.left] 弹框与页面左侧距离
- * {String} [param.mask] 是否显示蒙层
- * {Function} [param.closeFn] 弹框关闭时的回调
- * {Object|Function} [param.confirm] 使用对话方式（详细定义或只定义回调）
- * {Array} [param.confirm.btns] 按钮自定义名称
- * {Function} [param.confirm.callback] 确定时的回调方法
-
-### 返回值@returns
- * {Object} pop
- * {String} pop.title 弹框标题
- * {Object} pop.dom 弹框所属DOM
- * {Object} pop.cntDom 弹框内容部分DOM
- * {Function} pop.close 关闭弹框的方法
- * {Function} pop.closeFn 弹框关闭时的回调
+### returns 返回值
+ * *Object* **pop** 弹框对象
+ * *Object* **pop.dom** 弹框所属DOM
+ * *Object* **pop.cntDom** 弹框内容部分DOM
+ * *Function* **pop.close** 关闭弹框的方法
+ * *Function* **pop.adapt** 自动调整对象在页面中的位置（用于弹框内容发生变化时）
  
 ###demo
 ```javascript
@@ -106,20 +92,20 @@ UI.pop({
 //  }
 });
 ```
- 
-## 2.2、确认对话框 @method UI.confirm
-### 传入参数@param 
- * {Object} param the main paramter
- * {String} param.text 提示内容
- * {Function} [param.closeFn] 关闭时的回调
- * {Array} [param.btns] 按钮自定义名称
- * {Function} [param.callback] 确定时的回调方法
 
-### 返回值@returns
- *  {Object} confirm
- * 	{Object} confirm.dom 弹框所属DOM
- * 	{Function} confirm.close 关闭弹框的方法
- * 	{Function} confirm.closeFn 弹框关闭时的回调
+## 2.2、 UI.confirm 确认对话框
+询问用户是否进行该操作。
+### param 传入参数
+ * *Object* **param** 参数对象
+ * *String* **param.text** 提示内容
+ * *Function* [**param.closeFn**] 被关闭时的回调
+ * *Array* [**param.btns**] 按钮自定义名称
+ * *Function* [**param.callback**] 确定时的回调方法
+
+### returns 返回值
+ * *Object* **confirm**
+ * *Object* **confirm.dom** 弹框所属DOM
+ * *Function* **confirm.close** 关闭弹框的方法
 
 ###demo
 ```javascript
@@ -132,41 +118,145 @@ UI.confirm({
 });
 ```
 
-## 2.3、虚拟弹层 @method UI.plane
- `特性`：没有样式，页面中只能同时存在一个plane实例化后的对象，点击自己以外的DOM，就会关掉自己，生命体征较弱的屌丝。
-### 传入参数@param
- * {Object} param the main paramter
- * {String} param.html
- * {String} [param.width]
- * {String} [param.height]
- * {String} [param.top]
- * {String} [param.left]
- * {Function} [param.closeFn]
+## 2.3、 UI.plane 虚拟弹层
+没有样式，页面中只能同时存在一个plane实例化后的对象，点击自己以外的DOM，就会关掉自己，生命体征较弱的屌丝。
+### param 传入参数
+ * *Object* **param** 参数对象
+ * *String* **param.html** 弹层内容
+ * *Number* [**param.width**] 宽度(默认为240px)
+ * *Number* [**param.height**] 高度
+ * *Number* [**param.top**]
+ * *Number* [**param.left**]
+ * *Function* [**param.closeFn**] 被关闭时的回调
 
-### 返回值@returns 
- * {Object} plane
- * {Object} plane.dom
- * {Function} plane.closeFn
+### returns 返回值 
+ * *Object* **plane** 弹层对象
+ * *Object* **plane.dom**
+ * *Function* **plane.closeFn**
 
-## 2.4、提示信息 @method UI.prompt
-###传入参数@param
- * {String} text
- * {String|Number} [time] 默认为1300ms，0为不自动关闭
+###demo
+```javascript
+    UI.plane({
+        'top' : 100,
+        'left' : 120,
+        'width' : 200,
+        'html' : '<div>....</div>'
+    });
+```
+## 2.4、UI.select 选择组件
+展示一组待选项，供用户选择，移动端样式仿IOS原生ActionSheet组件（web版样式尚未完成）
 
-### 返回值@returns
- * {Object} prompt
- * {Object} prompt.dom prompt所属DOM
- * {Function} prompt.tips 为prompt设置内容
- * {Function} confirm.close 关闭prompt
+### param 传入参数
+ * *Array* **list** 提示内容列表
+ * *Array* **list[0]** 提示内容选项
+ * *String* **list[0][0]** 提示内容选项标题
+ * *Function* **list[0][1]** 提示内容选项被选择后的回调
+ * *Object* [**param**] 参数对象
+ * *String* [**param.title**] 标题
+ * *String* [**param.intro**] 提示文字
+
+### returns 返回值
+ * *Object* **select** select对象
+ * *Object* **select.dom** select所属DOM
+
+###demo
+```javascript
+UI.select([
+	['劈脸呼你',function(){
+		UI.prompt('脸好疼');
+	}],
+	['一刀捅死你',function(){
+		UI.prompt('啊，我死了');
+	}],
+	['滚一边去',function(){
+		UI.prompt('滚远了');
+	}]
+],{
+	'title' : '侬想组啥？',
+	'intro' : '来一帮人，想打架么'
+});
+```
+## 2.5、UI.prompt 提示信息
+### param 传入参数
+ * *String* **text** 提示内容
+ * *Number* [**time**] 默认为1300ms，0为不自动关闭
+
+### returns 返回值
+ * *Object* **prompt**
+ * *Object* **prompt.dom** prompt所属DOM
+ * *Function* **prompt.tips** 为prompt设置内容
+ 接收text 和 time两个参数，关闭时间处理同UI.prompt主方法
+ * *Function* **prompt.close** 关闭prompt
 
 ###demo
 ```javascript
 //默认时间
-    P.prompt('操作失败');
+    UI.prompt('操作失败');
 //指定时间
-    P.prompt('操作失败',2400);
+    UI.prompt('操作失败',2400);
 //主动控制
-    var a = P.prompt('正在发送',0);
-    a.tips('发送成功');
-    a.close()
+    var a = UI.prompt('正在发送',0);
+    a.tips('发送成功'，1200);
+    
+    var b = UI.prompt('请等待……',0);
+    b.close();
+```
+## 2.6、UI.cover 全屏浮层
+覆盖整个页面的浮层，目前对关闭的设计有点生硬，欢迎提出宝贵意见。
+
+### param 传入参数
+ * *Object* **param** 参数对象
+ * *String* **param.html** 弹层内容
+ * *Function* [**param.closeFn**] 被关闭时的回调
+
+### returns 返回值
+ * *Object* **cover** cover对象
+ * *Object* **cover.dom** cover所属DOM
+ * *Object* **cover.closeDom** 关闭按钮DOM
+ * *Function* **cover.close** 关闭prompt
+
+###demo
+```javascript
+//默认时间
+    UI.prompt('操作失败');
+//指定时间
+    UI.prompt('操作失败',2400);
+//主动控制
+    var a = UI.prompt('正在发送',0);
+    a.tips('发送成功'，1200);
+    
+    var b = UI.prompt('请等待……',0);
+    b.close();
+```
+
+## 2.7、UI.ask 输入弹层
+用在需要用户输入数据时，以弹层的形式出现。
+
+### param 传入参数
+ * *String* **text** 引导信息
+ * *Function* [**callback**] 点击确定时的回调
+   默认会在掉用后关掉弹层，方法内return false会阻止关闭动作
+
+### returns 返回值
+ * *Object* **ask** ask对象
+ * *Object* **ask.dom** ask所属DOM
+ * *Function* **ask.setValue** 设置内容
+ * *Function* **ask.close** 关闭ask对象
+
+###demo
+```javascript
+UI.ask('你今年多大了？',function(year){
+	if(year == +year){
+		if(year > 30){
+			UI.prompt('都' + year + '岁了啊，这么老啊！');
+		}else if(year > 17){
+			UI.prompt('干柴烈火的年纪哦！');
+		}else{
+			UI.prompt('回家玩儿去！');
+		}
+	}else{
+		UI.prompt('写个数字会死啊!');
+		return false
+	}
+});
 ```
