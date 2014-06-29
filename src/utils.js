@@ -3,6 +3,35 @@
  * 包含dom查找，css样式，动画等
  */
 define(function () {
+	//判断是否支持css属性
+	var supports = (function() {
+		var div = document.createElement('div'),
+			vendors = 'Khtml,Ms,O,Moz,Webkit'.split(' '),
+			len = vendors.length;
+		
+		return function(prop) {
+			if ( prop in div.style ){
+				return true;
+			}
+
+			prop = prop.replace(/^[a-z]/, function(val) {
+				return val.toUpperCase();
+			});
+	
+			for(var i = 0; i<len; i++){
+				if ( vendors[len] + prop in div.style ) {
+					// browser supports box-shadow. Do what you need.
+					// Or use a bang (!) to test if the browser doesn't.
+					break 
+					return true;
+				}
+			}
+			return false;
+		};
+	})();
+	
+	
+	var private_css3 = (supports('-webkit-transition') && supports('-webkit-transform')) ? true : false;
 	
     var Tween = {
         Linear: function (t, b, c, d) { return c * t / d + b; },
@@ -217,19 +246,31 @@ define(function () {
 	}
 	//获取样式
 	function getStyle(elem, prop) {
-		var w3style;
+		var value;
 		prop == "borderWidth" ? prop = "borderLeftWidth" : prop;
 		if (elem.style[prop]){
-			w3style = elem.style[prop];
+			value = elem.style[prop];
 		} else if(document.defaultView) {
 			var style = document.defaultView.getComputedStyle(elem, null);
-			w3style = prop in style ? style[prop] : style.getPropertyValue(prop);
+			value = prop in style ? style[prop] : style.getPropertyValue(prop);
 		} else if (elem.currentStyle) {
-			w3style = elem.currentStyle[prop];
+			value = elem.currentStyle[prop];
 		}
-		//w3style == "auto" ? w3style = "0px" : w3style;
-		console.log(prop,w3style)
-		return w3style;
+		
+		
+		if (/\px$/.test(value)){
+			value = parseInt(value);
+		} else if( value == +value){
+			value = value = parseInt(value*10000)/10000;;
+		} else if(value == '' || value == 'medium'){
+			value = 0;
+		} else if (value == 'auto'){
+			if(prop == 'height'){
+				value = elem.clientHeight;
+			}
+		}
+		
+		return value;
 	}
 	
 
@@ -239,7 +280,7 @@ define(function () {
 	function setStyle(elem,prop,value){
 	
 		if(!value && (value != +value)){
-			console.log(prop,value,'error');
+			console.log(prop,'-',value,'-','error');
 			return
 		}
 		prop = prop.toString();
@@ -275,8 +316,8 @@ define(function () {
 			output = 100 * input;
 		} else if (/\px$/.test(input)){
 			output = parseInt(input);
-		} else {
-			output = input;
+		} else if( input == +input){
+			output = value = parseInt(input*10000)/10000;;
 		}
 		return output;
 	}
@@ -300,7 +341,6 @@ define(function () {
 			value = parseCSS_value(value);
 			
 			if(value || (value == +value)){
-				value = parseInt(value);
 				props.push(prop);
 				cssOri.push(value);
 				cssEnd.push(cssObj[prop]);
@@ -336,8 +376,12 @@ define(function () {
 				output = 'rgba(' + r_n + ',' + g_n + ',' + b_n + ')';
 			}
 		} else {
+			start = start * 10000;
+			end = end * 10000;
 			output = fn(use_time, start, (end-start), all_time);
+			output = output/10000;
 		}
+		
 		return output
 	}
 	var requestAnimationFrame = (function () {
@@ -366,10 +410,8 @@ define(function () {
 		this.cssOri = cssParse[1];
 		//属性目标值Array
 		this.cssEnd = cssParse[2];
-		
 		this.durtime = durtime;
 		this.animType = "Linear";
-		
 		this.onEnd = null;
 		if (args.length < 3) {
 			throw new Error("missing arguments [dom,cssObj,durtime]");
@@ -416,7 +458,6 @@ define(function () {
 			for (var i = 0; i < css_length; i++) {
 				//计算当前帧需要的属性值
 				var value = countNewCSS(me.cssOri[i],me.cssEnd[i],time_use,time_all,aniFunction);
-				
 				setStyle(me.elem,me.props[i],value);
 			}
 			
@@ -476,18 +517,30 @@ define(function () {
 		return box;
 	}
 	function outerWidth (elem){
+		var output;
 		if ( typeof elem.getBoundingClientRect !== 'undefined' ) {
-			return elem.getBoundingClientRect()['width'] || 0;
+			var rect = elem.getBoundingClientRect()['width'] || 0;
+			output = rect['width'];
+			if(typeof(output) == 'undefined'){
+				output = (getStyle(elem,'borderLeftWidth') + getStyle(elem,'paddingLeft') + getStyle(elem,'width') + getStyle(elem,'paddingRight') + getStyle(elem,'borderRightWidth'));
+			}
 		}else{
-			return (parseInt(getStyle(elem,'borderLeftWidth')) + parseInt(getStyle(elem,'paddingLeft')) + parseInt(getStyle(elem,'width')) + parseInt(getStyle(elem,'paddingRight')) + parseInt(getStyle(elem,'borderRightWidth')));
+			output = (getStyle(elem,'borderLeftWidth') + getStyle(elem,'paddingLeft') + getStyle(elem,'width') + getStyle(elem,'paddingRight') + getStyle(elem,'borderRightWidth'));
 		}
+		return  output || 0;
 	}
 	function outerHeight (elem){
-		if ( typeof(elem.getBoundingClientRect) !== 'undefined' ) {
-			return elem.getBoundingClientRect()['height'] || 0;
-		}else{
-			return (parseInt(getStyle(elem,'borderTopWidth')) + parseInt(getStyle(elem,'paddingTop')) + parseInt(getStyle(elem,'height')) + parseInt(getStyle(elem,'paddingBottom')) + parseInt(getStyle(elem,'borderBottomWidth')));
+		var output;
+		if ( typeof(elem.getBoundingClientRect) != 'undefined' ) {
+			var rect = elem.getBoundingClientRect();
+			output = rect['height'];
+			if(typeof(output) == 'undefined'){
+				output = (getStyle(elem,'borderTopWidth') + getStyle(elem,'paddingTop') + getStyle(elem,'height') + getStyle(elem,'paddingBottom') + getStyle(elem,'borderBottomWidth'));
+			}
+		}else{		
+			output = (getStyle(elem,'borderTopWidth') + getStyle(elem,'paddingTop') + getStyle(elem,'height') + getStyle(elem,'paddingBottom') + getStyle(elem,'borderBottomWidth'));
 		}
+		return  output || 0;
 	}
 	
 	//根据class查找元素
@@ -554,8 +607,7 @@ define(function () {
 		DOM.style['display'] = 'block';
 		//FIXME padding
 		new anim(DOM,{
-			'height' : 0,
-			'padding' : 0
+			'height' : 0
 		}, time, function(){
 			fn && fn.call(DOM);
 		});
@@ -573,26 +625,48 @@ define(function () {
 		});
 	}
 	//缩小，淡出
-	function zoomOut(DOM,time,fn){
+	var zoomOut = private_css3 ? function(DOM,time,fn){
 		var op = getStyle(DOM,'opacity');
+		var transt = getStyle(DOM,'-webkit-transition');
 		
+		setCss(DOM,{
+			'-webkit-transform' : 'scale(0.5)',
+			'-webkit-transition' : time + 'ms',
+			'opacity' : 0,
+		});
+		
+		var delay;
+		DOM.addEventListener("webkitTransitionEnd", function(){
+			var now = new Date();
+			delay = setTimeout(function(){
+				setCss(DOM,{
+					'-webkit-transform' : 'scale(1)',
+					'-webkit-transition' : transt,
+					'opacity' : op,
+				});
+				fn && fn.call(DOM);
+			},20);
+		}, true);
+	} : function (DOM,time,fn){
+		var op = getStyle(DOM,'opacity');
 		DOM.style['overflow'] = 'hidden';
-		var width = parseInt(getStyle(DOM,'width'));
+		var width = getStyle(DOM,'width');
 		var height = outerHeight(DOM);
-		var marginLeft = parseInt(getStyle(DOM,'marginLeft')) || 0;
-		var marginTop = parseInt(getStyle(DOM,'marginTop')) || 0;
+		var left = getStyle(DOM,'left') || 0;
+		var top = getStyle(DOM,'top') || 0;
+		
 		new anim(DOM,{
 			'width' : width/2,
 			'height' : height/2,
-			'marginLeft' : (marginLeft + width/4),
-			'marginTop' : (marginTop + height/4),
+			'left' : (left + width/4),
+			'top' : (top + height/4),
 			'opacity' : 0
 		},time,function(){
 			DOM.style['opacity'] = op;
 			DOM.style['display'] = 'none';
 			fn && fn.call(DOM);
 		});
-	}
+	};
 	
 	/**
 	 * 页面加载
@@ -659,10 +733,50 @@ define(function () {
 		}
 	})();
 	
+	//通用拖动方法
+	function drag(handle_dom,dom,param){
+		var param = param || {};
+		var moving = param['move'] || null;
+		var start = param['start'] || null;
+		var end = param['end'] || null;
+
+		var dx, dy,l_start,t_start,w_start,h_start;
+		bindHandler(handle_dom,'mousedown',down);
+		function down(e){
+//			e.preventDefault();
+//			e.stopPropagation();
+			dx = e.clientX;
+			dy = e.clientY;
+			l_start = getStyle(dom,'left');
+			t_start = getStyle(dom,'top');
+			w_start = outerWidth(dom);
+			h_start = outerHeight(dom);
+			
+			start&&start();
+			
+			bindHandler(document,'mousemove',move);
+			bindHandler(document,'mouseup',up);
+			
+		}
+		function move(e){
+			moving&&moving((e.clientX-dx),(e.clientY-dy),l_start,t_start,w_start,h_start);
+			
+			e.preventDefault && e.preventDefault();
+			e.stopPropagation && e.stopPropagation();
+			window.getSelection?window.getSelection().removeAllRanges():document.selection.empty();
+		}
+		function up(e) {
+			removeHandler(document,'mousemove',move);
+			removeHandler(document,'mouseup',up);
+			end&&end();
+		}
+	}
+	
     return{
 		'TypeOf' : TypeOf,
 		'each' : each,
 		'css' : setCss,
+		'supports' : supports,
 		'slideDown' : slideDown,
 		'slideUp' : slideUp,
 		'fadeIn' : fadeIn,
@@ -683,6 +797,7 @@ define(function () {
 		'ready' : ready,
 		'bind' : bindHandler,
 		'unbind' : removeHandler,
-		'hide' : hide
+		'hide' : hide,
+		'drag' : drag
     }
 });

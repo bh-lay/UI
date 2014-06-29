@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2014-6-29 1:37
+ * @modified 2014-6-29 17:28
  * 
  **/
 
@@ -38,7 +38,7 @@
 	var cover_tpl = '<div class="UI_cover"><div class="UI_coverCnt"></div><a href="javascript:void(0)" class="UI_coverClose">〉</a></div>';
 	var select_tpl = '<div class="UI_select"><div class="UI_select_body"> {caption} <div class="UI_selectCnt">{list}</div></div><div class="UI_selectCancel"><a class="UI_select_btn" href="javascript:void(0)" data-index="-1">取消</a></div></div>';
 	
-	var popCSS = '.UI_lawyer{position:absolute;top:0px;left:0px;z-index:4999;width:100%;height:0px;overflow:visible;font-family:"Microsoft Yahei"}.UI_lawyer a,.UI_lawyer a:hover{text-decoration:none;-webkit-tap-highlight-color:rgba(0,0,0,0);-webkit-tap-highlight-color:transparent;}.UI_mask{position:absolute;top:0px;left:0px;width:100%;background-color:#000;display:none;opacity:0.2}.UI_main_cnt{width:0px;height:0px;overflow:visible;}.UI_fixedScreenTop_cnt{position:absolute;z-index:4999;top:0px;left:0px;width:100%;height:0px;overflow:visible;}.UI_fixedScreenBottom_cnt{position:absolute;z-index:4999;left:0px;width:100%;height:0px;overflow:visible;}.UI_pop{width:200px;_border:1px solid #eee;position:absolute;top:400px;left:300px;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}.UI_pop_cpt{position:relative;height:36px;line-height:36px;overflow:hidden;border-bottom:1px solid #ebebeb;color:#777;font-size:16px;text-indent:15px;cursor:default;}.UI_pop_cnt{position:relative;min-height:100px;overflow:auto;width:100%;}.UI_pop_close{display:block;position:absolute;top:0px;right:0px;width:40px;height:36px;text-align:center;line-height:36px;color:#ddd;font-family:"Simsun";font-size:22px;font-weight:bold;text-decoration:none;transition:0.1s;}.UI_pop_close:hover{color:#888;text-decoration:none;}.UI_pop_close:active{color:#222}.UI_confirm{_border:1px solid #eee;position:absolute;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}.UI_confirm_text{padding:30px 10px 20px;line-height:26px;text-align:center;font-size:20px;color:#333;}.UI_ask{_border:1px solid #eee;position:absolute;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}.UI_ask_text{padding:25px 10px 15px;line-height:26px;text-align:center;font-size:18px;color:#333;}.UI_ask input{display:block;margin:0px auto 15px;height:30px;padding:4px 4px;line-height:22px;box-sizing:border-box;width:90%;}.UI_miniChatSlideCnt{width:220px;height:0px;overflow:hidden;position:absolute;border-radius:4px;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}.UI_miniChat{position:absolute;left:0px;bottom:0px;width:100%;_border:1px solid #eee;background:#fff;overflow:hidden;}.UI_miniChat_text{padding:20px 10px 10px;box-sizing:content-box;line-height:24px;text-align:center;font-size:14px;color:#333;}.UI_miniChat .UI_pop_confirm a{height:28px;line-height:28px;}.UI_pop_confirm{overflow:hidden;text-align:center;border-top:1px solid #ddd;}.UI_pop_confirm a{display:block;width:50%;height:36px;float:left;font-size:14px;line-height:36px;color:#03f;box-sizing:border-box;transition: 0.15s;}.UI_pop_confirm_ok{border-right:1px solid #ddd;}@media(min-width:460px){.UI_pop_confirm a:hover{background : #eee}}.UI_plane{width:200px;position:absolute;top:400px;left:300px;}.UI_prompt{width:240px;position:absolute;left:50%;margin-left:-130px;padding:30px 10px;box-sizing:content-box;background:#fff;_border:1px solid #fafafa;border-radius:4px;box-shadow:2px 2px 10px rgba(0,0,0,0.5);}.UI_cnt{font-size:18px;color:#222;text-align:center;}.UI_cover{position:absolute;top:0px;left:0px;width:100%;height:100px;}.UI_coverCnt{position:relative;width:100%;height:100%;background:#fff;}.UI_coverClose{display:block;position:absolute;top:50%;left:0px;width:20px;height:60px;padding-left:5px;text-align:center;line-height:60px;color:#ddd;font-family:"Simsun";font-size:30px;background:#555;}.UI_coverClose:hover{background-color:#333;color:#fff;text-decoration:none;}.UI_select{position:absolute;width:100%;bottom:0px;padding-bottom:10px;}.UI_select a{display:block;height:40px;line-height:40px;text-align:center;color:#03f;font-size:16px;}.UI_select_body{margin:0px 10px 10px;border-radius:8px;overflow:hidden;background:#fff;}.UI_selectCpt{padding:8px 0px;}.UI_selectCpt h3,.UI_selectCpt p{margin:0px;font-size:15px;line-height:18px;text-align:center;color:#aaa;font-weight:normal;}.UI_selectCpt p{font-size:12px;}.UI_selectCnt a{border-top:1px solid #eee;margin-top:-1px;}.UI_selectCancel{margin:0px 10px;border-radius:8px;overflow:hidden;background:#fff;}.UI_fixedScreenBottom_cnt .UI_confirm{width:100%;width:100%;left:0px;bottom:0;border-radius:0px;box-shadow:0px 0px 5px rgba(0,0,0,0.8);}.UI_fixedScreenBottom_cnt .UI_confirm_text{padding:50px 10px;font-size:18px}.UI_fixedScreenBottom_cnt .UI_confirm .UI_pop_confirm{width:100%;padding:10px 0px 30px}.UI_fixedScreenBottom_cnt .UI_confirm a{display:block;height:40px;line-height:40px;border-radius:22px;margin:0px 20px;font-size:16px}.UI_fixedScreenBottom_cnt .UI_confirm a.UI_pop_confirm_ok{margin-bottom:15px;}';
+	var popCSS = '.UI_lawyer{position:absolute;top:0px;left:0px;z-index:4999;width:100%;height:0px;overflow:visible;font-family:"Microsoft Yahei"}.UI_lawyer a,.UI_lawyer a:hover{text-decoration:none;-webkit-tap-highlight-color:rgba(0,0,0,0);-webkit-tap-highlight-color:transparent;}.UI_lawyer a:active{outline:none;}.UI_mask{position:absolute;top:0px;left:0px;width:100%;background-color:#000;display:none;opacity:0.2}.UI_main_cnt{width:0px;height:0px;overflow:visible;}.UI_fixedScreenTop_cnt{position:absolute;z-index:4999;top:0px;left:0px;width:100%;height:0px;overflow:visible;}.UI_fixedScreenBottom_cnt{position:absolute;z-index:4999;left:0px;width:100%;height:0px;overflow:visible;}.UI_pop{width:200px;_border:1px solid #eee;position:absolute;top:400px;left:300px;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}.UI_pop_cpt{position:relative;height:36px;line-height:36px;overflow:hidden;border-bottom:1px solid #ebebeb;color:#777;font-size:16px;text-indent:15px;cursor:default;}.UI_pop_cnt{position:relative;min-height:100px;overflow:auto;width:100%;}.UI_pop_close{display:block;position:absolute;top:0px;right:0px;width:40px;height:36px;text-align:center;line-height:36px;color:#ddd;font-family:"Simsun";font-size:22px;font-weight:bold;text-decoration:none;transition:0.1s;}.UI_pop_close:hover{color:#888;text-decoration:none;}.UI_pop_close:active{color:#222}.UI_confirm{_border:1px solid #eee;position:absolute;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}.UI_confirm_text{padding:30px 10px 20px;line-height:26px;text-align:center;font-size:20px;color:#333;}.UI_ask{_border:1px solid #eee;position:absolute;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}.UI_ask_text{padding:25px 10px 15px;line-height:26px;text-align:center;font-size:18px;color:#333;}.UI_ask input{display:block;margin:0px auto 15px;height:30px;padding:4px 4px;line-height:22px;box-sizing:border-box;width:90%;}.UI_miniChatSlideCnt{width:220px;height:0px;overflow:hidden;position:absolute;border-radius:4px;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}.UI_miniChat{position:absolute;left:0px;bottom:0px;width:100%;_border:1px solid #eee;background:#fff;overflow:hidden;}.UI_miniChat_text{padding:20px 10px 10px;box-sizing:content-box;line-height:24px;text-align:center;font-size:14px;color:#333;}.UI_miniChat .UI_pop_confirm a{height:28px;line-height:28px;}.UI_pop_confirm{overflow:hidden;text-align:center;border-top:1px solid #ddd;}.UI_pop_confirm a{display:block;width:50%;height:36px;float:left;font-size:14px;line-height:36px;color:#03f;box-sizing:border-box;transition: 0.15s;}.UI_pop_confirm_ok{border-right:1px solid #ddd;}@media(min-width:460px){.UI_pop_confirm a:hover{background : #eee}}.UI_plane{width:200px;position:absolute;top:400px;left:300px;}.UI_prompt{width:240px;position:absolute;left:50%;margin-left:-120px;box-sizing:content-box;background:#fff;_border:1px solid #fafafa;border-radius:4px;box-shadow:2px 2px 10px rgba(0,0,0,0.5);}.UI_cnt{padding:30px 10px;font-size:18px;color:#222;text-align:center;}.UI_cover{position:absolute;top:0px;left:0px;width:100%;height:100px;}.UI_coverCnt{position:relative;width:100%;height:100%;background:#fff;}.UI_coverClose{display:block;position:absolute;top:50%;left:0px;width:20px;height:60px;padding-left:5px;text-align:center;line-height:60px;color:#ddd;font-family:"Simsun";font-size:30px;background:#555;}.UI_coverClose:hover{background-color:#333;color:#fff;text-decoration:none;}.UI_select{position:absolute;width:100%;bottom:0px;padding-bottom:10px;}.UI_select a{display:block;height:40px;line-height:40px;text-align:center;color:#03f;font-size:16px;}.UI_select_body{margin:0px 10px 10px;border-radius:8px;overflow:hidden;background:#fff;}.UI_selectCpt{padding:8px 0px;}.UI_selectCpt h3,.UI_selectCpt p{margin:0px;font-size:15px;line-height:18px;text-align:center;color:#aaa;font-weight:normal;}.UI_selectCpt p{font-size:12px;}.UI_selectCnt a{border-top:1px solid #eee;margin-top:-1px;}.UI_selectCancel{margin:0px 10px;border-radius:8px;overflow:hidden;background:#fff;}.UI_fixedScreenBottom_cnt .UI_confirm{width:100%;width:100%;left:0px;bottom:0;border-radius:0px;box-shadow:0px 0px 5px rgba(0,0,0,0.8);}.UI_fixedScreenBottom_cnt .UI_confirm_text{padding:50px 10px;font-size:18px}.UI_fixedScreenBottom_cnt .UI_confirm .UI_pop_confirm{width:100%;padding:10px 0px 30px}.UI_fixedScreenBottom_cnt .UI_confirm a{display:block;height:40px;line-height:40px;border-radius:22px;margin:0px 20px;font-size:16px}.UI_fixedScreenBottom_cnt .UI_confirm a.UI_pop_confirm_ok{margin-bottom:15px;}';
 	
 	var isIE67 = false;
 	if(navigator.appName == "Microsoft Internet Explorer"){
@@ -59,7 +59,7 @@
 		private_fixedScreenBottomDom = utils.findByClassName(private_allCnt,'UI_fixedScreenBottom_cnt')[0],
 		private_cssDom = null,
 		private_head = document.head || document.getElementsByTagName('head')[0],
-		private_winW,
+		private_docW,
 		private_winH,
 		private_docH,
 		private_scrollTop,
@@ -76,36 +76,33 @@
 		'zIndex' : 499
 	};
 	
-	
-	
+	var bodyDom;
+	if (document.compatMode == "BackCompat") {
+		bodyDom = document.body;
+	}else{
+		//document.compatMode == \"CSS1Compat\" 
+		bodyDom = document.documentElement;
+	}
 	function refreshSize(){
 		//重新计算窗口尺寸
-		private_scrollTop = document.body.scrollTop;
-		private_winW = document.body.scrollWidth;
-		private_winH = window.innerHeight;
-		private_docH = document.body.scrollHeight;
-		
-		if(typeof private_winH != "number"){ 
-			if(document.compatMode == "number"){
-				private_winH = document.documentElement.clientHeight; 
-			}else{ 
-				private_winH = document.body.clientHeight; 
-			} 
-		} 
-		
+		private_scrollTop = document.documentElement.scrollTop == 0 ? document.body.scrollTop : document.documentElement.scrollTop;
+		private_winH = window.innerHeight || document.documentElement.clientHeight;
+		private_docH = bodyDom.scrollHeight;
+		private_docW = bodyDom.clientWidth;
 		
 		//向css环境写入动态css
 		private_cssDom && utils.removeNode(private_cssDom);
 		var styleStr = [
 			'.UI_cover{height:' + private_winH + 'px;}',
 			'.UI_ask{top:' + (private_winH/2) + 'px;}',
-			'.UI_mask{height:' + private_winH + 'px;}'
+			'.UI_mask{height:' + private_docH + 'px;}'
 		].join('');
 		private_cssDom = utils.createStyleSheet(styleStr,{'data-module' : "UI_plug"});
 		private_head.appendChild(private_cssDom);
 	}
 	
-	function build_UI_DOM(){
+	
+	utils.ready(function(){
 		var styleSheet = utils.createStyleSheet(popCSS,{'data-module' : "UI"});
 		private_head.appendChild(styleSheet);
 		
@@ -145,61 +142,9 @@
 		//监听浏览器缩放、滚屏事件
 		utils.bind(window,'resize',rebuild_fn);
 		utils.bind(window,'scroll',rebuild_fn);
-	}
-	
-	utils.ready(function(){
-		build_UI_DOM();
 	});
 	
 	
-	
-	//通用拖动方法
-	function drag(handle_dom,dom,param){
-		var param = param || {};
-		var moving = param['move'] || null;
-		var start = param['start'] || null;
-		var end = param['end'] || null;
-		var dragMask = utils.createDom(dragMask_tpl)[0];
-
-		var dx, dy,l_start,t_start,w_start,h_start;
-		utils.bind(handle_dom,'mousedown',down);
-		function down(e){
-			//更新窗口尺寸
-			refreshSize();
-//			e.preventDefault();
-//			e.stopPropagation();
-			dx = e.pageX;
-			dy = e.pageY;
-			l_start = parseInt(utils.getStyle(dom,'left'));
-			t_start = parseInt(utils.getStyle(dom,'top'));
-			w_start = parseInt(utils.outerWidth(dom));
-			h_start = parseInt(utils.outerHeight(dom));
-			
-			utils.bind(document,'mousemove',move);
-			utils.bind(document,'mouseup',up);
-			
-			utils.css(dragMask,{
-				'width' : private_winW,
-				'height' : private_winH,
-				'cursor' : utils.getStyle(handle_dom,'cursor')
-			});
-			private_fixedScreenTopDom.appendChild(dragMask);
-			start&&start();
-		}
-		function move(e){
-			//e.preventDefault();
-			//e.stopPropagation();
-		//	window.getSelection?window.getSelection().removeAllRanges():document.selection.empty();
-		//	moving&&moving(e.pageX-dx,e.pageY-dy,l_start,t_start,w_start,h_start);
-			console.log(e.pageX,1111)
-		}
-		function up(e) {
-			utils.removeNode(dragMask);
-			utils.unbind(document,'mousemove',move);
-			utils.unbind(document,'mouseup',up);
-			end&&end();
-		}
-	}
 	//通用限制位置区域的方法
 	function fix_position(top,left,width,height){
 		var gap = private_CONFIG.gap;
@@ -218,8 +163,8 @@
 		}
 		if(left < gap.left){
 			left =  gap.left;
-		}else if(left + width > private_winW - gap.right){
-			left = private_winW - width - gap.right;
+		}else if(left + width > private_docW - gap.right){
+			left = private_docW - width - gap.right;
 		}
 		
 		return {
@@ -230,20 +175,20 @@
 	//计算自适应页面位置的方法
 	function adaption(width,height){
 		var top = (private_winH - height)/2 + private_scrollTop;
-		var left = (private_winW - width)/2;
-		var newPosition = fix_position(top,left,width,height);
-
+		var left = (private_docW - width)/2;
+		
 		var gap = private_CONFIG.gap;
-		var clientTop = (private_winH - height)/2;
-		if(clientTop<gap.top){
-			clientTop = gap.top;
+		var screenTop = (private_winH - height)/2;
+		if(screenTop<gap.top){
+			screenTop = gap.top;
 		}
 		
+		var newPosition = fix_position(top,left,width,height);
 		return {
 			'top' : newPosition.top,
 			'left' : newPosition.left,
-			'clientTop' : clientTop,
-			'clientLeft' : newPosition.left
+			'screenTop' : screenTop,
+			'screenLeft' : newPosition.left
 		}
 	}
 	
@@ -369,7 +314,7 @@
 		this._mask = param['mask'] || false;
 
 		var this_html = param['html'] || '';
-		var this_width = param['width'] || Math.min(600,private_winW-20);
+		var this_width = param['width'] || Math.min(600,private_docW-20);
 
 
 		//当有确认参数时
@@ -387,15 +332,33 @@
 			
 			caption_dom.innerHTML = title;
 			//can drag is pop
-			UI.drag(caption_dom,this.dom,{
-				'move' : function(dx,dy,l_start,t_start,w_start,h_start){
-					var top = dy + t_start;
-					var left = dx + l_start;
+			var dragMask = null;
+			utils.drag(caption_dom,this.dom,{
+				'start' : function(){
+					//更新窗口尺寸
+					refreshSize();
+					
+					dragMask = utils.createDom(dragMask_tpl)[0];
+					utils.css(dragMask,{
+						'width' : private_docW,
+						'height' : private_winH,
+						'cursor' : utils.getStyle(caption_dom,'cursor')
+					});
+					private_fixedScreenTopDom.appendChild(dragMask);
+				},
+				'move' : function(mx,my,l_start,t_start,w_start,h_start){
+					var left = mx + l_start;
+					var top = my + t_start;
+					
 					var newSize = fix_position(top,left,w_start,h_start);
 					utils.css(this_pop.dom,{
 						'left' : newSize.left,
 						'top' : newSize.top
 					});
+				},
+				'end' : function (){
+					dragMask && utils.removeNode(dragMask);
+					dragMask = null;
 				}
 			});
 		}
@@ -469,12 +432,12 @@
 		// create pop
 		utils.css(this.dom,{
 			'width' : 300,
-			'left' : newPosition.clientLeft,
-			'top' : newPosition.clientTop - 100
+			'left' : newPosition.screenLeft,
+			'top' : newPosition.screenTop - 100
 		});
 		utils.animation(this.dom,{
 			'opacity' : 1,
-			'top' : newPosition.clientTop
+			'top' : newPosition.screenTop
 		},100,'Back.easeOut');
 		private_fixedScreenTopDom.appendChild(this.dom);
 
@@ -531,7 +494,7 @@
 		utils.css(this.dom,{
 			'width' : 300,
 			'opacity' : 0,
-			'left' : newPosition.clientLeft,
+			'left' : newPosition.screenLeft,
 			'marginTop' : -200
 		});
 		utils.animation(this.dom,{
@@ -567,7 +530,7 @@
 			'opacity' : 0
 		});
 		utils.animation(this.dom,{
-			'top' : newPosition.clientTop,
+			'top' : newPosition.screenTop,
 			'opacity' : 1
 		},140,'Back.easeOut');
 		
@@ -712,7 +675,7 @@
 		utils.hide(this.closeDom);
 		// create pop
 		utils.css(this.cntDom,{
-			'left' : private_winW*2/3,
+			'left' : private_docW*2/3,
 			'opacity' : 0
 		});
 		utils.animation(this.cntDom,{
@@ -730,7 +693,7 @@
 		
 		utils.fadeOut(this.closeDom,80);
 		utils.animation(this.cntDom,{
-			'left' : private_winW/2,
+			'left' : private_docW/2,
 			'opacity' : 0
 		},120, function(){
 			utils.removeNode(dom_all);
@@ -852,10 +815,38 @@
 		},
 		'select' : function(){
 			return new SELECT(arguments[0],arguments[1]);
-		},
-		'drag' : drag
+		}
 	};
 },function () {
+	//判断是否支持css属性
+	var supports = (function() {
+		var div = document.createElement('div'),
+			vendors = 'Khtml,Ms,O,Moz,Webkit'.split(' '),
+			len = vendors.length;
+		
+		return function(prop) {
+			if ( prop in div.style ){
+				return true;
+			}
+
+			prop = prop.replace(/^[a-z]/, function(val) {
+				return val.toUpperCase();
+			});
+	
+			for(var i = 0; i<len; i++){
+				if ( vendors[len] + prop in div.style ) {
+					// browser supports box-shadow. Do what you need.
+					// Or use a bang (!) to test if the browser doesn't.
+					break 
+					return true;
+				}
+			}
+			return false;
+		};
+	})();
+	
+	
+	var private_css3 = (supports('-webkit-transition') && supports('-webkit-transform')) ? true : false;
 	
     var Tween = {
         Linear: function (t, b, c, d) { return c * t / d + b; },
@@ -1070,19 +1061,31 @@
 	}
 	//获取样式
 	function getStyle(elem, prop) {
-		var w3style;
+		var value;
 		prop == "borderWidth" ? prop = "borderLeftWidth" : prop;
 		if (elem.style[prop]){
-			w3style = elem.style[prop];
+			value = elem.style[prop];
 		} else if(document.defaultView) {
 			var style = document.defaultView.getComputedStyle(elem, null);
-			w3style = prop in style ? style[prop] : style.getPropertyValue(prop);
+			value = prop in style ? style[prop] : style.getPropertyValue(prop);
 		} else if (elem.currentStyle) {
-			w3style = elem.currentStyle[prop];
+			value = elem.currentStyle[prop];
 		}
-		//w3style == "auto" ? w3style = "0px" : w3style;
-		console.log(prop,w3style)
-		return w3style;
+		
+		
+		if (/\px$/.test(value)){
+			value = parseInt(value);
+		} else if( value == +value){
+			value = value = parseInt(value*10000)/10000;;
+		} else if(value == '' || value == 'medium'){
+			value = 0;
+		} else if (value == 'auto'){
+			if(prop == 'height'){
+				value = elem.clientHeight;
+			}
+		}
+		
+		return value;
 	}
 	
 
@@ -1092,7 +1095,7 @@
 	function setStyle(elem,prop,value){
 	
 		if(!value && (value != +value)){
-			console.log(prop,value,'error');
+			console.log(prop,'-',value,'-','error');
 			return
 		}
 		prop = prop.toString();
@@ -1128,8 +1131,8 @@
 			output = 100 * input;
 		} else if (/\px$/.test(input)){
 			output = parseInt(input);
-		} else {
-			output = input;
+		} else if( input == +input){
+			output = value = parseInt(input*10000)/10000;;
 		}
 		return output;
 	}
@@ -1153,7 +1156,6 @@
 			value = parseCSS_value(value);
 			
 			if(value || (value == +value)){
-				value = parseInt(value);
 				props.push(prop);
 				cssOri.push(value);
 				cssEnd.push(cssObj[prop]);
@@ -1189,8 +1191,12 @@
 				output = 'rgba(' + r_n + ',' + g_n + ',' + b_n + ')';
 			}
 		} else {
+			start = start * 10000;
+			end = end * 10000;
 			output = fn(use_time, start, (end-start), all_time);
+			output = output/10000;
 		}
+		
 		return output
 	}
 	var requestAnimationFrame = (function () {
@@ -1219,10 +1225,8 @@
 		this.cssOri = cssParse[1];
 		//属性目标值Array
 		this.cssEnd = cssParse[2];
-		
 		this.durtime = durtime;
 		this.animType = "Linear";
-		
 		this.onEnd = null;
 		if (args.length < 3) {
 			throw new Error("missing arguments [dom,cssObj,durtime]");
@@ -1269,7 +1273,6 @@
 			for (var i = 0; i < css_length; i++) {
 				//计算当前帧需要的属性值
 				var value = countNewCSS(me.cssOri[i],me.cssEnd[i],time_use,time_all,aniFunction);
-				
 				setStyle(me.elem,me.props[i],value);
 			}
 			
@@ -1329,18 +1332,30 @@
 		return box;
 	}
 	function outerWidth (elem){
+		var output;
 		if ( typeof elem.getBoundingClientRect !== 'undefined' ) {
-			return elem.getBoundingClientRect()['width'] || 0;
+			var rect = elem.getBoundingClientRect()['width'] || 0;
+			output = rect['width'];
+			if(typeof(output) == 'undefined'){
+				output = (getStyle(elem,'borderLeftWidth') + getStyle(elem,'paddingLeft') + getStyle(elem,'width') + getStyle(elem,'paddingRight') + getStyle(elem,'borderRightWidth'));
+			}
 		}else{
-			return (parseInt(getStyle(elem,'borderLeftWidth')) + parseInt(getStyle(elem,'paddingLeft')) + parseInt(getStyle(elem,'width')) + parseInt(getStyle(elem,'paddingRight')) + parseInt(getStyle(elem,'borderRightWidth')));
+			output = (getStyle(elem,'borderLeftWidth') + getStyle(elem,'paddingLeft') + getStyle(elem,'width') + getStyle(elem,'paddingRight') + getStyle(elem,'borderRightWidth'));
 		}
+		return  output || 0;
 	}
 	function outerHeight (elem){
-		if ( typeof(elem.getBoundingClientRect) !== 'undefined' ) {
-			return elem.getBoundingClientRect()['height'] || 0;
-		}else{
-			return (parseInt(getStyle(elem,'borderTopWidth')) + parseInt(getStyle(elem,'paddingTop')) + parseInt(getStyle(elem,'height')) + parseInt(getStyle(elem,'paddingBottom')) + parseInt(getStyle(elem,'borderBottomWidth')));
+		var output;
+		if ( typeof(elem.getBoundingClientRect) != 'undefined' ) {
+			var rect = elem.getBoundingClientRect();
+			output = rect['height'];
+			if(typeof(output) == 'undefined'){
+				output = (getStyle(elem,'borderTopWidth') + getStyle(elem,'paddingTop') + getStyle(elem,'height') + getStyle(elem,'paddingBottom') + getStyle(elem,'borderBottomWidth'));
+			}
+		}else{		
+			output = (getStyle(elem,'borderTopWidth') + getStyle(elem,'paddingTop') + getStyle(elem,'height') + getStyle(elem,'paddingBottom') + getStyle(elem,'borderBottomWidth'));
 		}
+		return  output || 0;
 	}
 	
 	//根据class查找元素
@@ -1407,8 +1422,7 @@
 		DOM.style['display'] = 'block';
 		//FIXME padding
 		new anim(DOM,{
-			'height' : 0,
-			'padding' : 0
+			'height' : 0
 		}, time, function(){
 			fn && fn.call(DOM);
 		});
@@ -1426,26 +1440,48 @@
 		});
 	}
 	//缩小，淡出
-	function zoomOut(DOM,time,fn){
+	var zoomOut = private_css3 ? function(DOM,time,fn){
 		var op = getStyle(DOM,'opacity');
+		var transt = getStyle(DOM,'-webkit-transition');
 		
+		setCss(DOM,{
+			'-webkit-transform' : 'scale(0.5)',
+			'-webkit-transition' : time + 'ms',
+			'opacity' : 0,
+		});
+		
+		var delay;
+		DOM.addEventListener("webkitTransitionEnd", function(){
+			var now = new Date();
+			delay = setTimeout(function(){
+				setCss(DOM,{
+					'-webkit-transform' : 'scale(1)',
+					'-webkit-transition' : transt,
+					'opacity' : op,
+				});
+				fn && fn.call(DOM);
+			},20);
+		}, true);
+	} : function (DOM,time,fn){
+		var op = getStyle(DOM,'opacity');
 		DOM.style['overflow'] = 'hidden';
-		var width = parseInt(getStyle(DOM,'width'));
+		var width = getStyle(DOM,'width');
 		var height = outerHeight(DOM);
-		var marginLeft = parseInt(getStyle(DOM,'marginLeft')) || 0;
-		var marginTop = parseInt(getStyle(DOM,'marginTop')) || 0;
+		var left = getStyle(DOM,'left') || 0;
+		var top = getStyle(DOM,'top') || 0;
+		
 		new anim(DOM,{
 			'width' : width/2,
 			'height' : height/2,
-			'marginLeft' : (marginLeft + width/4),
-			'marginTop' : (marginTop + height/4),
+			'left' : (left + width/4),
+			'top' : (top + height/4),
 			'opacity' : 0
 		},time,function(){
 			DOM.style['opacity'] = op;
 			DOM.style['display'] = 'none';
 			fn && fn.call(DOM);
 		});
-	}
+	};
 	
 	/**
 	 * 页面加载
@@ -1512,10 +1548,50 @@
 		}
 	})();
 	
+	//通用拖动方法
+	function drag(handle_dom,dom,param){
+		var param = param || {};
+		var moving = param['move'] || null;
+		var start = param['start'] || null;
+		var end = param['end'] || null;
+
+		var dx, dy,l_start,t_start,w_start,h_start;
+		bindHandler(handle_dom,'mousedown',down);
+		function down(e){
+//			e.preventDefault();
+//			e.stopPropagation();
+			dx = e.clientX;
+			dy = e.clientY;
+			l_start = getStyle(dom,'left');
+			t_start = getStyle(dom,'top');
+			w_start = outerWidth(dom);
+			h_start = outerHeight(dom);
+			
+			start&&start();
+			
+			bindHandler(document,'mousemove',move);
+			bindHandler(document,'mouseup',up);
+			
+		}
+		function move(e){
+			moving&&moving((e.clientX-dx),(e.clientY-dy),l_start,t_start,w_start,h_start);
+			
+			e.preventDefault && e.preventDefault();
+			e.stopPropagation && e.stopPropagation();
+			window.getSelection?window.getSelection().removeAllRanges():document.selection.empty();
+		}
+		function up(e) {
+			removeHandler(document,'mousemove',move);
+			removeHandler(document,'mouseup',up);
+			end&&end();
+		}
+	}
+	
     return{
 		'TypeOf' : TypeOf,
 		'each' : each,
 		'css' : setCss,
+		'supports' : supports,
 		'slideDown' : slideDown,
 		'slideUp' : slideUp,
 		'fadeIn' : fadeIn,
@@ -1536,6 +1612,7 @@
 		'ready' : ready,
 		'bind' : bindHandler,
 		'unbind' : removeHandler,
-		'hide' : hide
+		'hide' : hide,
+		'drag' : drag
     }
 });

@@ -59,7 +59,7 @@
 		private_fixedScreenBottomDom = utils.findByClassName(private_allCnt,'UI_fixedScreenBottom_cnt')[0],
 		private_cssDom = null,
 		private_head = document.head || document.getElementsByTagName('head')[0],
-		private_winW,
+		private_docW,
 		private_winH,
 		private_docH,
 		private_scrollTop,
@@ -76,36 +76,33 @@
 		'zIndex' : 499
 	};
 	
-	
-	
+	var bodyDom;
+	if (document.compatMode == "BackCompat") {
+		bodyDom = document.body;
+	}else{
+		//document.compatMode == \"CSS1Compat\" 
+		bodyDom = document.documentElement;
+	}
 	function refreshSize(){
 		//重新计算窗口尺寸
-		private_scrollTop = document.body.scrollTop;
-		private_winW = document.body.scrollWidth;
-		private_winH = window.innerHeight;
-		private_docH = document.body.scrollHeight;
-		
-		if(typeof private_winH != "number"){ 
-			if(document.compatMode == "number"){
-				private_winH = document.documentElement.clientHeight; 
-			}else{ 
-				private_winH = document.body.clientHeight; 
-			} 
-		} 
-		
+		private_scrollTop = document.documentElement.scrollTop == 0 ? document.body.scrollTop : document.documentElement.scrollTop;
+		private_winH = window.innerHeight || document.documentElement.clientHeight;
+		private_docH = bodyDom.scrollHeight;
+		private_docW = bodyDom.clientWidth;
 		
 		//向css环境写入动态css
 		private_cssDom && utils.removeNode(private_cssDom);
 		var styleStr = [
 			'.UI_cover{height:' + private_winH + 'px;}',
 			'.UI_ask{top:' + (private_winH/2) + 'px;}',
-			'.UI_mask{height:' + private_winH + 'px;}'
+			'.UI_mask{height:' + private_docH + 'px;}'
 		].join('');
 		private_cssDom = utils.createStyleSheet(styleStr,{'data-module' : "UI_plug"});
 		private_head.appendChild(private_cssDom);
 	}
 	
-	function build_UI_DOM(){
+	
+	utils.ready(function(){
 		var styleSheet = utils.createStyleSheet(popCSS,{'data-module' : "UI"});
 		private_head.appendChild(styleSheet);
 		
@@ -145,61 +142,9 @@
 		//监听浏览器缩放、滚屏事件
 		utils.bind(window,'resize',rebuild_fn);
 		utils.bind(window,'scroll',rebuild_fn);
-	}
-	
-	utils.ready(function(){
-		build_UI_DOM();
 	});
 	
 	
-	
-	//通用拖动方法
-	function drag(handle_dom,dom,param){
-		var param = param || {};
-		var moving = param['move'] || null;
-		var start = param['start'] || null;
-		var end = param['end'] || null;
-		var dragMask = utils.createDom(dragMask_tpl)[0];
-
-		var dx, dy,l_start,t_start,w_start,h_start;
-		utils.bind(handle_dom,'mousedown',down);
-		function down(e){
-			//更新窗口尺寸
-			refreshSize();
-//			e.preventDefault();
-//			e.stopPropagation();
-			dx = e.pageX;
-			dy = e.pageY;
-			l_start = parseInt(utils.getStyle(dom,'left'));
-			t_start = parseInt(utils.getStyle(dom,'top'));
-			w_start = parseInt(utils.outerWidth(dom));
-			h_start = parseInt(utils.outerHeight(dom));
-			
-			utils.bind(document,'mousemove',move);
-			utils.bind(document,'mouseup',up);
-			
-			utils.css(dragMask,{
-				'width' : private_winW,
-				'height' : private_winH,
-				'cursor' : utils.getStyle(handle_dom,'cursor')
-			});
-			private_fixedScreenTopDom.appendChild(dragMask);
-			start&&start();
-		}
-		function move(e){
-			//e.preventDefault();
-			//e.stopPropagation();
-		//	window.getSelection?window.getSelection().removeAllRanges():document.selection.empty();
-			moving&&moving(e.pageX-dx,e.pageY-dy,l_start,t_start,w_start,h_start);
-		//	console.log(e.pageX,1111)
-		}
-		function up(e) {
-			utils.removeNode(dragMask);
-			utils.unbind(document,'mousemove',move);
-			utils.unbind(document,'mouseup',up);
-			end&&end();
-		}
-	}
 	//通用限制位置区域的方法
 	function fix_position(top,left,width,height){
 		var gap = private_CONFIG.gap;
@@ -218,8 +163,8 @@
 		}
 		if(left < gap.left){
 			left =  gap.left;
-		}else if(left + width > private_winW - gap.right){
-			left = private_winW - width - gap.right;
+		}else if(left + width > private_docW - gap.right){
+			left = private_docW - width - gap.right;
 		}
 		
 		return {
@@ -230,20 +175,20 @@
 	//计算自适应页面位置的方法
 	function adaption(width,height){
 		var top = (private_winH - height)/2 + private_scrollTop;
-		var left = (private_winW - width)/2;
-		var newPosition = fix_position(top,left,width,height);
-
+		var left = (private_docW - width)/2;
+		
 		var gap = private_CONFIG.gap;
-		var clientTop = (private_winH - height)/2;
-		if(clientTop<gap.top){
-			clientTop = gap.top;
+		var screenTop = (private_winH - height)/2;
+		if(screenTop<gap.top){
+			screenTop = gap.top;
 		}
 		
+		var newPosition = fix_position(top,left,width,height);
 		return {
 			'top' : newPosition.top,
 			'left' : newPosition.left,
-			'clientTop' : clientTop,
-			'clientLeft' : newPosition.left
+			'screenTop' : screenTop,
+			'screenLeft' : newPosition.left
 		}
 	}
 	
@@ -369,7 +314,7 @@
 		this._mask = param['mask'] || false;
 
 		var this_html = param['html'] || '';
-		var this_width = param['width'] || Math.min(600,private_winW-20);
+		var this_width = param['width'] || Math.min(600,private_docW-20);
 
 
 		//当有确认参数时
@@ -387,15 +332,33 @@
 			
 			caption_dom.innerHTML = title;
 			//can drag is pop
-			UI.drag(caption_dom,this.dom,{
-				'move' : function(dx,dy,l_start,t_start,w_start,h_start){
-					var top = dy + t_start;
-					var left = dx + l_start;
+			var dragMask = null;
+			utils.drag(caption_dom,this.dom,{
+				'start' : function(){
+					//更新窗口尺寸
+					refreshSize();
+					
+					dragMask = utils.createDom(dragMask_tpl)[0];
+					utils.css(dragMask,{
+						'width' : private_docW,
+						'height' : private_winH,
+						'cursor' : utils.getStyle(caption_dom,'cursor')
+					});
+					private_fixedScreenTopDom.appendChild(dragMask);
+				},
+				'move' : function(mx,my,l_start,t_start,w_start,h_start){
+					var left = mx + l_start;
+					var top = my + t_start;
+					
 					var newSize = fix_position(top,left,w_start,h_start);
 					utils.css(this_pop.dom,{
 						'left' : newSize.left,
 						'top' : newSize.top
 					});
+				},
+				'end' : function (){
+					dragMask && utils.removeNode(dragMask);
+					dragMask = null;
 				}
 			});
 		}
@@ -469,12 +432,12 @@
 		// create pop
 		utils.css(this.dom,{
 			'width' : 300,
-			'left' : newPosition.clientLeft,
-			'top' : newPosition.clientTop - 100
+			'left' : newPosition.screenLeft,
+			'top' : newPosition.screenTop - 100
 		});
 		utils.animation(this.dom,{
 			'opacity' : 1,
-			'top' : newPosition.clientTop
+			'top' : newPosition.screenTop
 		},100,'Back.easeOut');
 		private_fixedScreenTopDom.appendChild(this.dom);
 
@@ -531,7 +494,7 @@
 		utils.css(this.dom,{
 			'width' : 300,
 			'opacity' : 0,
-			'left' : newPosition.clientLeft,
+			'left' : newPosition.screenLeft,
 			'marginTop' : -200
 		});
 		utils.animation(this.dom,{
@@ -567,7 +530,7 @@
 			'opacity' : 0
 		});
 		utils.animation(this.dom,{
-			'top' : newPosition.clientTop,
+			'top' : newPosition.screenTop,
 			'opacity' : 1
 		},140,'Back.easeOut');
 		
@@ -712,7 +675,7 @@
 		utils.hide(this.closeDom);
 		// create pop
 		utils.css(this.cntDom,{
-			'left' : private_winW*2/3,
+			'left' : private_docW*2/3,
 			'opacity' : 0
 		});
 		utils.animation(this.cntDom,{
@@ -730,7 +693,7 @@
 		
 		utils.fadeOut(this.closeDom,80);
 		utils.animation(this.cntDom,{
-			'left' : private_winW/2,
+			'left' : private_docW/2,
 			'opacity' : 0
 		},120, function(){
 			utils.removeNode(dom_all);
@@ -852,7 +815,6 @@
 		},
 		'select' : function(){
 			return new SELECT(arguments[0],arguments[1]);
-		},
-		'drag' : drag
+		}
 	};
 },require('utils.js'));
