@@ -419,12 +419,15 @@
 		var this_text = param['text'] || '\u8BF7\u8F93\u5165\u786E\u8BA4\u4FE1\u606F！';
 		var callback = param['callback'] || null;
 		var this_html = confirm_tpl.replace(/{text}/,this_text);
-		this._mask = true;
+		this._mask = typeof(param['mask']) == 'boolean' ? param['mask'] : false;
 		this.dom = utils.createDom(this_html)[0];
 		this.closeFn = param['closeFn'] || null;
 		
 		//显示蒙层
-		showMask();
+		if(this._mask){
+			showMask();
+		}
+		
 		add_confirm(this.dom,param,function(){
 			this_pop.close();
 		});

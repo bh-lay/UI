@@ -567,7 +567,7 @@ define(function () {
 			};
 		}
 	})();
-	
+	//移除dom节点
 	function removeNode(elem){  
 		if(elem && elem.parentNode && elem.tagName != 'BODY'){  
 			elem.parentNode.removeChild(elem);  
@@ -743,8 +743,8 @@ define(function () {
 		var dx, dy,l_start,t_start,w_start,h_start;
 		bindHandler(handle_dom,'mousedown',down);
 		function down(e){
-//			e.preventDefault();
-//			e.stopPropagation();
+			e.preventDefault && e.preventDefault();
+			e.stopPropagation && e.stopPropagation();
 			dx = e.clientX;
 			dy = e.clientY;
 			l_start = getStyle(dom,'left');

@@ -24,7 +24,8 @@
 	width:100%;
 	background-color:#000;
 	display:none;
-	opacity:0.2
+	opacity:0.2;
+	filter:alpha(opacity=20)
 }
 .UI_main_cnt {
 	width:0px;
@@ -88,7 +89,7 @@
 	line-height:36px;
 	color:#ddd;
 	font-family:"Simsun";
-	font-size:22px;
+	font-size:20px;
 	font-weight:bold;
 	text-decoration:none;
 	transition:0.1s;
