@@ -4,13 +4,7 @@
 #一、简介
 
 ##1.1、UI是什么?
-此处UI意为：user interface 和 user interaction
-
-剧中人在个人博客以及项目中反复使用的功能的公用视觉类的代码集合
-
-# 不是一个大而全的东西，仅仅是根据自己的需求整理，如果你对我的代码感兴趣，也欢迎你来使用！
-
-你可以先尝试体验下：[demo](http://htmlpreview.github.io/?https://github.com/bh-lay/UI/blob/master/demo.html)(github动态页面，请等待JS响应)
+UI是前端公用的视觉交互（user interface 、 user interaction）类公用组建，用于和用户间的对话及动态界面展示。[demo](http://htmlpreview.github.io/?https://github.com/bh-lay/UI/blob/master/demo.html)(github动态页面，请等待JS响应)
 
 ##1.2、UI目前有哪儿些内容？
 
@@ -32,11 +26,10 @@
 #二、如何使用
 
 ## 2.0 基本配置
----
-### 2.0.1 UI.config.gap
+### UI.config.gap
 为pop弹框配置页面显示的边界（默认值均为零），可用在弹框展开时与拖动处理时限定自身位置。
 
-### 2.0.2 UI.config.zIndex
+### UI.config.zIndex
 设置组件在页面中的**z-index**层级
 
 ###demo
@@ -49,7 +42,7 @@ UI.config.zIndex(5000);
 ```
 
 ## 2.1 UI.pop 弹框
-用途比较广泛，可自定义尺寸位置、是否需要标题、确认按钮（是否需要及按钮文字）。
+用途比较广泛，可自定义尺寸位置、是否需要标题、是否显示蒙层、确认按钮（是否需要及按钮文字）等。
 ### param 传入参数
  * *Object* **param** 参数对象
  * *String* [**param.title**] 弹框标题
@@ -58,7 +51,7 @@ UI.config.zIndex(5000);
  * *String* [**param.height**] 弹框高度
  * *String* [**param.top**] 弹框与页面顶部距离
  * *String* [**param.left**] 弹框与页面左侧距离
- * *String* [**param.mask**] 是否显示蒙层
+ * *String* [**param.mask**] 是否显示蒙层（默认不显示）
  * *Function* [**param.closeFn**] 被关闭时的回调
  * *Object|Function* [**param.confirm**] 使用对话方式（详细定义或只定义回调）
  * *Array* [**param.confirm.btns**] 按钮自定义名称
@@ -100,6 +93,7 @@ UI.pop({
  * *String* **param.text** 提示内容
  * *Function* [**param.closeFn**] 被关闭时的回调
  * *Array* [**param.btns**] 按钮自定义名称
+ * *String* [**param.mask**] 是否显示蒙层(默认显示)
  * *Function* [**param.callback**] 确定时的回调方法
 
 ### returns 返回值
@@ -213,20 +207,13 @@ UI.select([
  * *Object* **cover** cover对象
  * *Object* **cover.dom** cover所属DOM
  * *Object* **cover.closeDom** 关闭按钮DOM
- * *Function* **cover.close** 关闭prompt
+ * *Function* **cover.close** 关闭cover
 
 ###demo
 ```javascript
-//默认时间
-    UI.prompt('操作失败');
-//指定时间
-    UI.prompt('操作失败',2400);
-//主动控制
-    var a = UI.prompt('正在发送',0);
-    a.tips('发送成功'，1200);
-    
-    var b = UI.prompt('请等待……',0);
-    b.close();
+UI.cover({
+    'html' : '<div>....</div>'
+});
 ```
 
 ## 2.7、UI.ask 输入弹层
