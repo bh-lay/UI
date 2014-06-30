@@ -419,7 +419,7 @@
 		var this_text = param['text'] || '\u8BF7\u8F93\u5165\u786E\u8BA4\u4FE1\u606F！';
 		var callback = param['callback'] || null;
 		var this_html = confirm_tpl.replace(/{text}/,this_text);
-		this._mask = typeof(param['mask']) == 'boolean' ? param['mask'] : false;
+		this._mask = typeof(param['mask']) == 'boolean' ? param['mask'] : true;
 		this.dom = utils.createDom(this_html)[0];
 		this.closeFn = param['closeFn'] || null;
 		
@@ -676,6 +676,9 @@
 		});
 
 		utils.hide(this.closeDom);
+		
+		//记录body的scrollY设置
+		this._bodyOverflowY = utils.getStyle(document.body,'overflowY');
 		// create pop
 		utils.css(this.cntDom,{
 			'left' : private_docW*2/3,
@@ -686,20 +689,26 @@
 			'opacity' : 1
 		}, 80,function(){
 			utils.fadeIn(this_cover.closeDom,100);
+			utils.css(document.body,{
+				'overflowY' : 'hidden'
+			});
 		});
 		
 		private_fixedScreenTopDom.appendChild(this.dom);
 	}
 	//使用close方法
 	COVER.prototype['close'] = function(){
-		var dom_all = this.dom;
+		var me = this;
 		
-		utils.fadeOut(this.closeDom,80);
+		utils.fadeOut(this.closeDom,80);		
+		utils.css(document.body,{
+			'overflowY' : me._bodyOverflowY
+		});
 		utils.animation(this.cntDom,{
 			'left' : private_docW/2,
 			'opacity' : 0
 		},120, function(){
-			utils.removeNode(dom_all);
+			utils.removeNode(me.dom);
 		});
 	};
 

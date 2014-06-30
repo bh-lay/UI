@@ -68,7 +68,9 @@
 			});
 		}
 		function showCover(){
-			UI.cover();
+			UI.cover({
+				'html' : '<div style="width:200px;height:1000px;margin:auto;background:#eee;color:#fff;text-align:center;padding:100px 0px;">1<br/><br/><br/><br/>1<br/><br/><br/><br/>1<br/><br/><br/><br/>1<br/><br/><br/><br/>1<br/><br/><br/><br/>1<br/><br/><br/><br/>1<br/><br/><br/><br/>1<br/><br/><br/><br/>1<br/><br/><br/><br/></div>'
+			});
 		}
 		function showAsk(){
 			UI.ask('你今年多大了？',function(year){
