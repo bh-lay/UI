@@ -549,7 +549,7 @@
 			return
 		}
 		setTimeout(function(){
-			this_prompt.close(time);
+			this_prompt.close();
 		},(time || 1500));
 	};
 

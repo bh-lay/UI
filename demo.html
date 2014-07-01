@@ -5,7 +5,7 @@
 	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
 	<title>UI_demo</title>
 	<style type="text/css">
-	body{background:#aaa;margin:0px;padding:50px 20px;height:600px}
+	body{background:#aaa;margin:0px;padding:80px 20px 50px;height:550px}
 	.cnt{max-width:400px;margin:auto;font-family:"Microsoft Yahei";}
 	input{width:100%;height:40px;display:block;margin:0px 0px 20px;padding:0px;font-family:inherit;}
 	h1{font-weight:normal;font-size: 28px;}
@@ -36,13 +36,17 @@
 		}
 		function showConfirmPop(){
 			UI.pop({
-			  'title' : '我是自定义按钮的弹框',
-			  'html' : '请我吃饭吧！',
+			  'title' : '这哥们儿帅么',
+			  'html' : '<div style="height:200px;background:url(http://asset.bh-lay.com/images/cover/newSkin.jpg) no-repeat center"></div>',
 			  'confirm' : {
-			    'btns' : ['好的','不干'],
+			    'btns' : ['好帅哦','真丑'],
 			    'callback' : function(){
-			      UI.prompt('你是好人！');
-			    }
+					UI.prompt('真有眼光！');
+			    },
+				'cancel' : function(){
+					UI.prompt('没眼光,去选(好帅哦)！',1800);
+					return false;
+				}
 			  }
 			});
 		}
@@ -88,16 +92,16 @@
 		function showPlane(elem){
 			var offset = UI._utils.offset(elem);
 			UI.plane({
-				'width' : UI._utils.outerWidth(elem),
-				'top' : offset.top,
-				'left' : offset.left,
-				'html' : '<div style="height:150px;background:#eee;"></div>'
+				'width' : UI._utils.outerWidth(elem) + 20,
+				'top' : offset.top - 40,
+				'left' : offset.left - 10,
+				'html' : '<div style="height:150px;background:#eee;box-shadow: 0px 0px 10px #000;"></div>'
 			});
 		}
 		
 		function showCover(){
 			UI.cover({
-				'html' : '<div style="width:200px;height:1000px;margin:auto;background:#eee;color:#fff;text-align:center;padding:100px 0px;">1<br/><br/><br/><br/>1<br/><br/><br/><br/>1<br/><br/><br/><br/>1<br/><br/><br/><br/>1<br/><br/><br/><br/>1<br/><br/><br/><br/>1<br/><br/><br/><br/>1<br/><br/><br/><br/>1<br/><br/><br/><br/></div>'
+				'html' : '<div style="color:#333;text-align:center;padding:100px 0px;">响应式用户交互组件库<br/><br/><br/><br/><br/><br/>响应式用户交互组件库<br/><br/><br/><br/><br/><br/>响应式用户交互组件库<br/><br/><br/><br/><br/><br/>响应式用户交互组件库<br/><br/><br/><br/><br/><br/>响应式用户交互组件库<br/><br/><br/><br/><br/><br/>响应式用户交互组件库<br/><br/><br/><br/><br/><br/>响应式用户交互组件库<br/><br/><br/><br/><br/><br/>响应式用户交互组件库</div>'
 			});
 		}
 		function showAsk(){
