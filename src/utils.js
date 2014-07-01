@@ -511,36 +511,43 @@ define(function () {
 		if ( typeof elem.getBoundingClientRect !== 'undefined' ) {
 			size = elem.getBoundingClientRect();
 		}
+		box.screen_top = size.top;
+		box.screen_left = size.left;
 		box.top = size.top + document.body.scrollTop;
 		box.left = size.left + document.body.scrollLeft;
 		
 		return box;
 	}
-	function outerWidth (elem){
-		var output;
-		if ( typeof elem.getBoundingClientRect !== 'undefined' ) {
-			var rect = elem.getBoundingClientRect()['width'] || 0;
-			output = rect['width'];
-			if(typeof(output) == 'undefined'){
-				output = (getStyle(elem,'borderLeftWidth') + getStyle(elem,'paddingLeft') + getStyle(elem,'width') + getStyle(elem,'paddingRight') + getStyle(elem,'borderRightWidth'));
-			}
-		}else{
-			output = (getStyle(elem,'borderLeftWidth') + getStyle(elem,'paddingLeft') + getStyle(elem,'width') + getStyle(elem,'paddingRight') + getStyle(elem,'borderRightWidth'));
-		}
-		return  output || 0;
+	
+	var outerWidth,
+		outerHeight;
+	var testDom = document.createElement('div');
+	//用生命在计算宽度
+	function count_outerWidth (elem){
+		return (getStyle(elem,'borderLeftWidth') + getStyle(elem,'paddingLeft') + getStyle(elem,'width') + getStyle(elem,'paddingRight') + getStyle(elem,'borderRightWidth'));
 	}
-	function outerHeight (elem){
-		var output;
-		if ( typeof(elem.getBoundingClientRect) != 'undefined' ) {
-			var rect = elem.getBoundingClientRect();
-			output = rect['height'];
+	//用生命在计算高度
+	function count_outerHeight (elem){
+		return (getStyle(elem,'borderTopWidth') + getStyle(elem,'paddingTop') + getStyle(elem,'height') + getStyle(elem,'paddingBottom') + getStyle(elem,'borderBottomWidth'));
+	}
+	if(testDom.getBoundingClientRect !== 'undefined'){
+		outerWidth = function(elem){
+			var output = elem.getBoundingClientRect()['width'] || 0;
 			if(typeof(output) == 'undefined'){
-				output = (getStyle(elem,'borderTopWidth') + getStyle(elem,'paddingTop') + getStyle(elem,'height') + getStyle(elem,'paddingBottom') + getStyle(elem,'borderBottomWidth'));
+				output = count_outerWidth(elem);
 			}
-		}else{		
-			output = (getStyle(elem,'borderTopWidth') + getStyle(elem,'paddingTop') + getStyle(elem,'height') + getStyle(elem,'paddingBottom') + getStyle(elem,'borderBottomWidth'));
-		}
-		return  output || 0;
+			return output;
+		};
+		outerHeight = function(elem){
+			var output = elem.getBoundingClientRect()['height'] || 0;
+			if(typeof(output) == 'undefined'){
+				output = count_outerHeight(elem);
+			}
+			return output;
+		};
+	}else{
+		outerWidth = count_outerWidth;
+		outerHeight = count_outerHeight;
 	}
 	
 	//根据class查找元素
@@ -603,11 +610,11 @@ define(function () {
 	//滑入
 	function slideDown(DOM,time,fn){
 		DOM.style['overflow'] = 'hidden';
-		DOM.style['opacity'] = 0;
 		DOM.style['display'] = 'block';
+		var height = DOM.scrollHeight;
 		//FIXME padding
 		new anim(DOM,{
-			'height' : 0
+			'height' : height
 		}, time, function(){
 			fn && fn.call(DOM);
 		});

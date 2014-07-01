@@ -562,15 +562,17 @@
 	 * 简单的事件委托模型 
 	 */
 	function checkClick(event) {
-		var target = event.srcElement || event.target;
-		while (!utils.hasClass(target,'UI_plane')) {
-			target = target.parentNode;
-			if(!target){
-				//close the active plane
-				private_activePlane&&private_activePlane.close();
-				break
+		setTimeout(function(){
+			var target = event.srcElement || event.target;
+			while (!utils.hasClass(target,'UI_plane')) {
+				target = target.parentNode;
+				if(!target){
+					//close the active plane
+					private_activePlane&&private_activePlane.close();
+					break
+				}
 			}
-		}
+		});
 	}
 	
 	if(private_isSupportTouch){
@@ -580,17 +582,20 @@
 		document.addEventListener('pointerdown',checkClick);
 	}else{
 		//PC鼠标事件
-		utils.bind(document,'mousedown',checkClick);
+		utils.bind(document,'mouseup',checkClick);
 	}
 	
 	
 	function PLANE(param){
+		var this_plane = this;		
+		
 		//如果有已展开的PLANE，干掉他
 		private_activePlane&&private_activePlane.close();
-		private_activePlane = this;
+		setTimeout(function(){
+			private_activePlane = this_plane;
+		},20);
 
 		var param = param || {};
-		var this_plane = this;		
 
 		var this_html = param['html'] || '';
 		this.closeFn = param['closeFn'] || null;
@@ -749,22 +754,36 @@
 		
 		this.dom = utils.createDom(this_html)[0];
 		this._mask = true;
+		this.closeFn = param.closeFn || null;
 		
+		if(private_docW > 460){
+			this._mask = false;
+			utils.css(this.dom,{
+				'top' : param.top || 100,
+				'left' : param.left || 100,
+				'width' : param.width || 200,
+				'height' : 0
+			});
+			private_mainDom.appendChild(this.dom);
+			utils.slideDown(this.dom,80);
+		} else {
+			utils.css(this.dom,{
+				'bottom' : -100,
+				'opacity' : 0
+			});
+			
+			private_fixedScreenBottomDom.appendChild(this.dom);
+			
+			utils.animation(this.dom, {
+				'bottom' : 0,
+				'opacity' : 1
+			}, 300, 'Bounce.easeOut');
+		}
 		
 		//显示蒙层
-		showMask();
-		
-		utils.css(this.dom,{
-			'bottom' : -100,
-			'opacity' : 0
-		});
-		
-		private_fixedScreenBottomDom.appendChild(this.dom);
-		
-		utils.animation(this.dom, {
-			'bottom' : 0,
-			'opacity' : 1
-		}, 300, 'Bounce.easeOut');
+		if(this._mask){
+			showMask();
+		}
 		var btns = utils.findByClassName(this.dom,'UI_select_btn');
 		for(var i=0,total=btns.length;i<total;i++){
 			(function(index){

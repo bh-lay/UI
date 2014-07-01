@@ -5,19 +5,22 @@
 	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
 	<title>UI_demo</title>
 	<style type="text/css">
-	body{background:#aaa;margin:0px;padding:100px 20px;height:1000px}
+	body{background:#aaa;margin:0px;padding:50px 20px;height:1000px}
 	.cnt{max-width:400px;margin:auto;font-family:"Microsoft Yahei";}
 	input{width:100%;height:40px;display:block;margin:0px 0px 20px;padding:0px;font-family:inherit;}
 	</style>
 </head>
 <body>
 	<div class="cnt">
+		<h1>响应式用户交互组件库</h1>
+		<p>当前为<b>WEB</b><i></i>模式（分界线460px）</p>
 		<input type="button" onclick="showPop()" value="弹框"/>
 		<input type="button" onclick="showConfirmPop()" value="带对话的弹框"/>
+		<input type="button" onclick="showSelect(this)" value="选择列表(样式响应)"/>
 		<input type="button" onclick="showConfirm()" value="确认框"/>
 		<input type="button" onclick="showAsk()" value="问我点啥吧"/>
 		<input type="button" onclick="showMessage()" value="提示信息"/>
-		<input type="button" onclick="showSelect()" value="选择列表"/>
+		<input type="button" onclick="showPlane(this)" value="屌丝层"/>
 		<input type="button" onclick="showCover()" value="全屏浮层"/>
 	</div>
 	<script type="text/javascript" src="src/dialog.js"></script>
@@ -51,8 +54,13 @@
 		function showMessage(){
 			UI.prompt('我快死了');
 		}
-		function showSelect(){
-			UI.select([
+		var active_select = null;
+		function showSelect(elem){
+			var offset = UI._utils.offset(elem);
+			if(active_select) {
+				return
+			}
+			active_select = UI.select([
 				['劈脸呼你',function(){
 					UI.prompt('脸好疼');
 				}],
@@ -64,9 +72,25 @@
 				}]
 			],{
 				'title' : '侬想组啥？',
-				'intro' : '来一帮人，想打架么'
+				'intro' : '来一帮人，想打架么',
+				'top' : offset.top + UI._utils.outerHeight(elem),
+				'width' : UI._utils.outerWidth(elem),
+				'left' : offset.left,
+				'closeFn' : function(){
+					active_select = null;
+				}
 			});
 		}
+		function showPlane(elem){
+			var offset = UI._utils.offset(elem);
+			UI.plane({
+				'width' : UI._utils.outerWidth(elem),
+				'top' : offset.top,
+				'left' : offset.left,
+				'html' : '<div style="height:150px;background:#eee;"></div>'
+			});
+		}
+		
 		function showCover(){
 			UI.cover({
 				'html' : '<div style="width:200px;height:1000px;margin:auto;background:#eee;color:#fff;text-align:center;padding:100px 0px;">1<br/><br/><br/><br/>1<br/><br/><br/><br/>1<br/><br/><br/><br/>1<br/><br/><br/><br/>1<br/><br/><br/><br/>1<br/><br/><br/><br/>1<br/><br/><br/><br/>1<br/><br/><br/><br/>1<br/><br/><br/><br/></div>'
@@ -88,6 +112,28 @@
 				}
 			});
 		}
+		
+		var bodyDom;
+		if (document.compatMode == "BackCompat") {
+			bodyDom = document.body;
+		}else{
+			bodyDom = document.documentElement;
+		}
+		function countSize(){
+			var width = bodyDom.clientWidth;
+			var numDom = document.getElementsByTagName('i')[0];
+			var deviceDom = document.getElementsByTagName('b')[0];
+			numDom.innerHTML = width + 'px';
+			if(width > 460){
+				deviceDom.innerHTML = 'WEB';
+			}else{
+				deviceDom.innerHTML = '手机端';
+			}
+		}
+		UI._utils.ready(function(){
+			countSize();
+			UI._utils.bind(window,'resize',countSize);
+		});
 	</script>
 </body>
 </html>

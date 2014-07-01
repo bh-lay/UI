@@ -255,7 +255,6 @@
 .UI_select {
 	position:absolute;
 	width:100%;
-	bottom:0px;
 	padding-bottom:10px;
 }
 .UI_select a {
@@ -296,30 +295,18 @@
 	overflow:hidden;
 	background:#fff;
 }
-.UI_fixedScreenBottom_cnt .UI_confirm {
-	width:100%;
-	width:100%;
-	left:0px;
-	bottom:0;
-	border-radius:0px;
-	box-shadow:0px 0px 5px rgba(0,0,0,0.8);
+.UI_main_cnt .UI_select {
+	width: 200px;
+	padding: 0px;
+	border-radius: 0px;
 }
-.UI_fixedScreenBottom_cnt .UI_confirm_text {
-	padding:50px 10px;
-	font-size:18px
+.UI_main_cnt .UI_select_body,.UI_main_cnt .UI_selectCancel {
+	margin: 0px;
+	border-radius: 0px;
 }
-.UI_fixedScreenBottom_cnt .UI_confirm .UI_pop_confirm {
-	width:100%;
-	padding:10px 0px 30px
-}
-.UI_fixedScreenBottom_cnt .UI_confirm a {
-	display:block;
-	height:40px;
-	line-height:40px;
-	border-radius:22px;
-	margin:0px 20px;
-	font-size:16px
-}
-.UI_fixedScreenBottom_cnt .UI_confirm  a.UI_pop_confirm_ok {
-	margin-bottom:15px;
+
+.UI_main_cnt .UI_select a{
+	height: 30px;
+	line-height: 30px;
+	font-size: 14px;
 }
