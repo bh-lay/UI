@@ -9,7 +9,7 @@
 (function(global,doc,UI_factory,utils_factory){
 	
 	//初始化工具类
-	var utils = utils_factory();
+	var utils = utils_factory(global,doc);
 	
 	//初始化UI模块
 	var UI = UI_factory(global,doc,utils);
@@ -557,7 +557,14 @@
 	 *	PLANE 
 	 */
 	//the active plane
-	private_activePlane = null;
+	private_activePlane = [];
+	
+	function closePlane(){
+		for(var i=0,total=private_activePlane.length;i<total;i++){
+			private_activePlane[i].close();
+		}
+		private_activePlane = [];
+	}
 	/**
 	 * 简单的事件委托模型 
 	 */
@@ -568,11 +575,11 @@
 				target = target.parentNode;
 				if(!target){
 					//close the active plane
-					private_activePlane&&private_activePlane.close();
+					closePlane();
 					break
 				}
 			}
-		});
+		})
 	}
 	
 	if(private_isSupportTouch){
@@ -587,13 +594,12 @@
 	
 	
 	function PLANE(param){
-		var this_plane = this;		
+		var this_plane = this;
 		
-		//如果有已展开的PLANE，干掉他
-		private_activePlane&&private_activePlane.close();
 		setTimeout(function(){
-			private_activePlane = this_plane;
-		},20);
+			private_activePlane.push(this_plane);
+		},10);
+		
 
 		var param = param || {};
 

@@ -2,7 +2,7 @@
  * 定义工具类
  * 包含dom查找，css样式，动画等
  */
-define(function () {
+define(function (window,document) {
 	//判断是否支持css属性
 	var supports = (function() {
 		var div = document.createElement('div'),
@@ -740,34 +740,62 @@ define(function () {
 		}
 	})();
 	
+	function checkEventForClass(event,classStr,dom){
+		var target = event.srcElement || event.target;
+		while (1) {
+			if(target == dom){
+				return false;
+			}
+			if(hasClass(target,classStr)){
+				return target;
+			}
+			if(!target){
+				return false;
+			}
+			target = target.parentNode;
+		}
+	}
+	function bind(elem, type,a,b){
+		var className,fn;
+		if(typeof(a) == 'string'){
+			className = a.replace(/^\./,'');
+			fn = b;
+			bindHandler(elem,type,function(e){
+				var bingoDom = checkEventForClass(e,className,elem);
+				if(bingoDom){
+					fn && fn.call(bingoDom);
+				}
+			});
+		}else{
+			fn = a;
+			bindHandler(elem,type,fn);
+		}
+	}
 	//通用拖动方法
 	function drag(handle_dom,dom,param){
 		var param = param || {};
-		var moving = param['move'] || null;
-		var start = param['start'] || null;
-		var end = param['end'] || null;
-
-		var dx, dy,l_start,t_start,w_start,h_start;
-		bindHandler(handle_dom,'mousedown',down);
-		function down(e){
+		var onStart = param['start'] || null;
+		var onMove = param['move'] || null;
+		var onEnd = param['end'] || null;
+		
+		var X, Y,L,T,W,H;
+		bindHandler(handle_dom,'mousedown',function (e){
 			e.preventDefault && e.preventDefault();
 			e.stopPropagation && e.stopPropagation();
-			dx = e.clientX;
-			dy = e.clientY;
-			l_start = getStyle(dom,'left');
-			t_start = getStyle(dom,'top');
-			w_start = outerWidth(dom);
-			h_start = outerHeight(dom);
-			
-			start&&start();
-			
+			X = e.clientX;
+			Y = e.clientY;
+			L = getStyle(dom,'left');
+			T = getStyle(dom,'top');
+			W = outerWidth(dom);
+			H = outerHeight(dom);
+			onStart && onStart.call(dom,X,Y);
 			bindHandler(document,'mousemove',move);
 			bindHandler(document,'mouseup',up);
-			
-		}
+		});
+		
 		function move(e){
-			moving&&moving((e.clientX-dx),(e.clientY-dy),l_start,t_start,w_start,h_start);
-			
+			onMove && onMove.call(dom,(e.clientX - X),(e.clientY - Y),L,T,W,H);
+			//做了点儿猥琐的事情，你懂得
 			e.preventDefault && e.preventDefault();
 			e.stopPropagation && e.stopPropagation();
 			window.getSelection?window.getSelection().removeAllRanges():document.selection.empty();
@@ -775,7 +803,7 @@ define(function () {
 		function up(e) {
 			removeHandler(document,'mousemove',move);
 			removeHandler(document,'mouseup',up);
-			end&&end();
+			onEnd && onEnd.call(dom);
 		}
 	}
 	

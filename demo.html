@@ -89,19 +89,27 @@
 				}
 			});
 		}
+		var active_plane = null;
 		function showPlane(elem){
 			var offset = UI._utils.offset(elem);
-			UI.plane({
+			if(active_plane){
+				active_plane.close();
+				return
+			}
+			active_plane = UI.plane({
 				'width' : UI._utils.outerWidth(elem) + 20,
-				'top' : offset.top - 40,
+				'top' : offset.top - 150,
 				'left' : offset.left - 10,
-				'html' : '<div style="height:150px;background:#eee;box-shadow: 0px 0px 10px #000;"></div>'
+				'html' : '<div style="height:150px;line-height:150px;text-align:center;color:#333;background:#eee;box-shadow: 0px 0px 10px #000;">我最可怜，点一下外面就没了</div>',
+				'closeFn' : function(){
+					active_plane = null;
+				}
 			});
 		}
 		
 		function showCover(){
 			UI.cover({
-				'html' : '<div style="color:#333;text-align:center;padding:100px 0px;">响应式用户交互组件库<br/><br/><br/><br/><br/><br/>响应式用户交互组件库<br/><br/><br/><br/><br/><br/>响应式用户交互组件库<br/><br/><br/><br/><br/><br/>响应式用户交互组件库<br/><br/><br/><br/><br/><br/>响应式用户交互组件库<br/><br/><br/><br/><br/><br/>响应式用户交互组件库<br/><br/><br/><br/><br/><br/>响应式用户交互组件库<br/><br/><br/><br/><br/><br/>响应式用户交互组件库</div>'
+				'html' : '<div style="color:#333;text-align:center;padding:100px 0px;">关闭按钮好搓啊，给个建议呗！<br/><br/><br/><br/><br/><br/>关闭按钮好搓啊，给个建议呗！<br/><br/><br/><br/><br/><br/>关闭按钮好搓啊，给个建议呗！<br/><br/><br/><br/><br/><br/>关闭按钮好搓啊，给个建议呗！<br/><br/><br/><br/><br/><br/>关闭按钮好搓啊，给个建议呗！<br/><br/><br/><br/><br/><br/>关闭按钮好搓啊，给个建议呗！<br/><br/><br/><br/><br/><br/>关闭按钮好搓啊，给个建议呗！<br/><br/><br/><br/><br/><br/>关闭按钮好搓啊，给个建议呗！</div>'
 			});
 		}
 		function showAsk(){
