@@ -1,10 +1,12 @@
 响应式用户交互组件库UI
 ======
+##抢先查看[DEMO](http://htmlpreview.github.io/?https://github.com/bh-lay/UI/blob/master/demo.html)
+写这么大，这下该能看到了吧！
 
 #一、简介
 
 ##1.1、UI是什么?
-UI是前端公用的视觉交互（user interface 、 user interaction）类公用组建，用于和用户间的对话及动态界面展示。[demo](http://htmlpreview.github.io/?https://github.com/bh-lay/UI/blob/master/demo.html)(github动态页面，请等待JS响应)
+UI是前端公用的视觉交互（user interface 、 user interaction）类公用组建，用于和用户间的对话及动态界面展示。
 
 ##1.2、UI目前有哪儿些内容？
 
