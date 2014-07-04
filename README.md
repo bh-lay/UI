@@ -1,7 +1,5 @@
-响应式用户交互组件库UI
+响应式用户交互组件库UI（[demo](http://htmlpreview.github.io/?https://github.com/bh-lay/UI/blob/master/demo.html)）
 ======
-##抢先查看[DEMO](http://htmlpreview.github.io/?https://github.com/bh-lay/UI/blob/master/demo.html)
-写这么大，这下该能看到了吧！
 
 #一、简介
 
