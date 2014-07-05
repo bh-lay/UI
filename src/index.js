@@ -607,6 +607,7 @@
 	 */
 	function checkClick(event) {
 		setTimeout(function(){
+			console.log('close');
 			var target = event.srcElement || event.target;
 			while (!utils.hasClass(target,'UI_plane')) {
 				target = target.parentNode;
@@ -616,26 +617,27 @@
 					break
 				}
 			}
-		})
+		});
 	}
 	
-	if(private_isSupportTouch){
-		//移动端使用touch
-		document.addEventListener('touchstart',checkClick);
-		document.addEventListener('MSPointerDown',checkClick);
-		document.addEventListener('pointerdown',checkClick);
-	}else{
+//	if(private_isSupportTouch){
+//		//移动端使用touch
+//		document.addEventListener('touchstart',checkClick);
+//		document.addEventListener('MSPointerDown',checkClick);
+//		document.addEventListener('pointerdown',checkClick);
+//	}else{
 		//PC鼠标事件
 		utils.bind(document,'mouseup',checkClick);
-	}
+//	}
 	
 	
 	function PLANE(param){
 		var this_plane = this;
 		
 		setTimeout(function(){
+		console.log('push');
 			private_activePlane.push(this_plane);
-		},10);
+		},50);
 		
 
 		var param = param || {};
@@ -821,7 +823,7 @@
 			utils.animation(this.dom, {
 				'bottom' : 0,
 				'opacity' : 1
-			}, 300, 'BounceEaseOut');
+			}, 300, 'ElasticEaseOut');
 		}
 		
 		//显示蒙层

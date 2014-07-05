@@ -260,7 +260,7 @@ define(function (window,document) {
 	function setStyle(elem,prop,value){
 	
 		if(typeof(value) != 'string' && (value != +value)){
-			console.log(prop,'-',value,'-','error');
+			//console.log(prop,'-',value,'-','error');
 			return
 		}
 		prop = prop.toString();
