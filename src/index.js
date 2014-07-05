@@ -299,7 +299,47 @@
 			}
 		}
 	}
+	var animDom = utils.createDom('<div style="position:absolute;background:#fff;"></div>')[0];
 	
+	//入场
+	function opening(DOM,cssEnd,fromDom,time,tween,fn){
+		var normalHeight = cssEnd.height || utils.getStyle(DOM,'height');
+		utils.hide(DOM);
+		var cssStart = {
+			'width' : cssEnd.width,
+			'height' : cssEnd.height,
+			'left' : cssEnd.left,
+			'top' : (cssEnd.top ? cssEnd.top - 100 : null),
+			'opacity' : 0
+		};
+		if(fromDom){
+			tween = 'SineEaseIn';
+			time = 200;
+			var offset = utils.offset(fromDom);
+			cssStart.top = offset.top;
+			cssStart.left = offset.left;
+			cssStart.height = utils.getStyle(fromDom,'height');
+			cssStart.width = utils.getStyle(fromDom,'width');
+			cssStart.opacity = 0.5;
+		}
+		console.log(cssEnd.top,111);
+		//放置于初始位置
+		private_mainDom.appendChild(animDom);
+		utils.css(animDom,cssStart);
+		//动画开始
+		utils.animation(animDom,{
+			'width' : cssEnd.width,
+			'height' : normalHeight,
+			'left' : cssEnd.left,
+			'top' : cssEnd.top,
+			'opacity' : 1
+		},time,tween,function(){
+			utils.removeNode(animDom);
+			cssEnd.display = 'block';
+			utils.css(DOM,cssEnd);
+			fn && fn();
+		});
+	}
 	/**
 	 * 弹框
 	 * pop 
@@ -374,22 +414,16 @@
 		var top = (param['top'] == +param['top']) ? param['top'] : fixSize.top;
 		var left = (param['left'] == +param['left']) ? param['left'] : fixSize.left;
 		
-		// create pop
-		utils.css(this.dom,{
+		opening(this.dom,{
 			'width' : this_width,
-			'left' : left,
-			'top' : top - 100,
-			'opacity' : 0
-		});
-		utils.animation(this.dom,{
 			'top' : top,
-			'opacity' : 1
-		},100,'Sine.easeOut');
+			'left' : left
+		},param.anim_from,200,'QuadEaseIn');
 		
 		var close_dom = utils.findByClassName(this.dom,'UI_pop_close')[0];
 		utils.bind(close_dom,'click',function(){
 			this_pop.close();
-		})
+		});
 		
 		if(this._mask){
 			showMask();
@@ -433,16 +467,19 @@
 		});
 		var newPosition = adaption(300,160);
 		// create pop
-		utils.css(this.dom,{
+		
+		
+		
+		private_fixedScreenTopDom.appendChild(this.dom);
+		opening(this.dom,{
 			'width' : 300,
 			'left' : newPosition.screenLeft,
-			'top' : newPosition.screenTop - 100
+			'top' : newPosition.top - 100
+		},param.anim_from,100,'BackEaseOut',function(){
+			utils.css(this_pop.dom,{
+				'top' : newPosition.screenTop - 100
+			});
 		});
-		utils.animation(this.dom,{
-			'opacity' : 1,
-			'top' : newPosition.screenTop
-		},100,'Back.easeOut');
-		private_fixedScreenTopDom.appendChild(this.dom);
 
 	}
 	CONFIRM.prototype['close'] = CLOSEMETHOD('fade');
@@ -451,9 +488,9 @@
 	/**
 	 * ASK 
 	 */
-	function ASK(text,callback){
+	function ASK(text,callback,param){
 		var this_pop = this;
-
+		var param = param || {};
 		var this_text = text || '\u8BF7\u8F93\u5165\u786E\u8BA4\u4FE1\u606F！';
 		var this_html = ask_tpl.replace(/{text}/,this_text);
 
@@ -493,19 +530,19 @@
 		});
 
 		var newPosition = adaption(300,160);
-		// create pop
-		utils.css(this.dom,{
-			'width' : 300,
-			'opacity' : 0,
-			'left' : newPosition.screenLeft,
-			'marginTop' : -200
-		});
-		utils.animation(this.dom,{
-			'opacity' : 1,
-			'marginTop' : -100
-		},100,'Back.easeOut');
 
 		private_fixedScreenTopDom.appendChild(this.dom);
+		console.log(param,param.anim_from,'12');
+		opening(this.dom,{
+			'width' : 300,
+			'left' : newPosition.screenLeft,
+			'top' : private_scrollTop + private_winH/2 - 100
+		},param.anim_from,100,'BackEaseOut',function(){
+			utils.css(this_pop.dom,{
+				'marginTop' : -100,
+				'top' : ''
+			});
+		});
 	}
 	ASK.prototype['close'] = CLOSEMETHOD('fade');
 	ASK.prototype['setValue'] = function(text){
@@ -535,7 +572,7 @@
 		utils.animation(this.dom,{
 			'top' : newPosition.screenTop,
 			'opacity' : 1
-		},140,'Back.easeOut');
+		},140,'BackEaseOut');
 		
 		private_fixedScreenTopDom.appendChild(this.dom);
 	}
@@ -686,34 +723,35 @@
 			this_cover.close();
 		});
 
-		utils.hide(this.closeDom);
-		
+				
+		private_fixedScreenTopDom.appendChild(this.dom);
 		//记录body的scrollY设置
 		this._bodyOverflowY = utils.getStyle(document.body,'overflowY');
-		// create pop
-		utils.css(this.cntDom,{
-			'left' : private_docW*2/3,
-			'opacity' : 0
-		});
-		utils.animation(this.cntDom,{
-			'left' : 0,
-			'opacity' : 1
-		}, 80,function(){
-			utils.fadeIn(this_cover.closeDom,100);
+		
+		opening(this.dom,{
+			'width' : private_docW,
+			'top' : private_scrollTop,
+			'left' : 0
+		},param.anim_from,200,'QuadEaseIn',function(){
 			utils.css(document.body,{
 				'overflowY' : 'hidden'
 			});
+			utils.css(this_cover.dom,{
+				'width' : '',
+				'top' : 0
+			});
 		});
-		
-		private_fixedScreenTopDom.appendChild(this.dom);
 	}
 	//使用close方法
 	COVER.prototype['close'] = function(){
 		var me = this;
 		
-		utils.fadeOut(this.closeDom,80);		
+		utils.fadeOut(this.closeDom,80);
 		utils.css(document.body,{
 			'overflowY' : me._bodyOverflowY
+		});
+		utils.css(this.cntDom,{
+			'overflowY' : 'hidden'
 		});
 		utils.animation(this.cntDom,{
 			'left' : private_docW/2,
@@ -783,7 +821,7 @@
 			utils.animation(this.dom, {
 				'bottom' : 0,
 				'opacity' : 1
-			}, 300, 'Bounce.easeOut');
+			}, 300, 'BounceEaseOut');
 		}
 		
 		//显示蒙层
@@ -838,8 +876,8 @@
 		'confirm' : function(){
 			return new CONFIRM(arguments[0]);
 		},
-		'ask' : function(text,callback){
-			return new ASK(text,callback);
+		'ask' : function(text,callback,param){
+			return new ASK(text,callback,param);
 		},
 		'prompt' : function(txt,time){
 			return new prompt(txt,time);

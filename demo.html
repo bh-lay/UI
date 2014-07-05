@@ -18,29 +18,31 @@
 	<div class="cnt">
 		<h1>响应式用户交互组件库</h1>
 		<p>当前为<b>等待资源响应状态</b><i>正在检测尺寸</i>（分界线460px）</p>
-		<input type="button" onclick="showPop()" value="弹框"/>
-		<input type="button" onclick="showConfirmPop()" value="带对话的弹框"/>
+		<input type="button" onclick="showPop(this)" value="弹框"/>
+		<input type="button" onclick="showConfirmPop(this)" value="带对话的弹框"/>
 		<input type="button" onclick="showSelect(this)" value="选择列表(样式响应)"/>
-		<input type="button" onclick="showConfirm()" value="确认框"/>
-		<input type="button" onclick="showAsk()" value="问我点啥吧"/>
+		<input type="button" onclick="showConfirm(this)" value="确认框"/>
+		<input type="button" onclick="showAsk(this)" value="问我点啥吧"/>
 		<input type="button" onclick="showMessage()" value="提示信息"/>
 		<input type="button" onclick="showPlane(this)" value="屌丝层"/>
-		<input type="button" onclick="showCover()" value="全屏浮层"/>
+		<input type="button" onclick="showCover(this)" value="全屏浮层"/>
 	</div>
 	<!--
 	<script type="text/javascript" src="src/dialog.min.js"></script>
 	-->
 	<script type="text/javascript" src="src/dialog.js"></script>
 	<script type="text/javascript">
-		function showPop(){
+		function showPop(elem){
 			var pop = UI.pop({
+			  'anim_from' : elem,
 			  'html' : '<div style="height:340px;background:url(http://asset.bh-lay.com/images/cover/newSkin.jpg) no-repeat center"></div>'
 			});
 		}
-		function showConfirmPop(){
+		function showConfirmPop(elem){
 			UI.pop({
 			  'title' : '这哥们儿帅么',
 			  'html' : '<div style="height:200px;background:url(http://asset.bh-lay.com/images/cover/newSkin.jpg) no-repeat center"></div>',
+			  'anim_from' : elem,
 			  'confirm' : {
 			    'btns' : ['好帅哦','真丑'],
 			    'callback' : function(){
@@ -53,10 +55,11 @@
 			  }
 			});
 		}
-		function showConfirm(){
+		function showConfirm(elem){
 			UI.confirm({
 			  'text' : '请我吃饭吧！',
 			  'btns' : ['好的呀','不愿意'],
+			  'anim_from' : elem,
 			  'callback' : function(){
 			    UI.prompt('你是好人！');
 			  }
@@ -110,12 +113,13 @@
 			});
 		}
 		
-		function showCover(){
+		function showCover(elem){
 			UI.cover({
+				'anim_from' : elem,
 				'html' : '<div style="color:#333;text-align:center;padding:100px 0px;">关闭按钮好搓啊，给个建议呗！<br/><br/><br/><br/><br/><br/>关闭按钮好搓啊，给个建议呗！<br/><br/><br/><br/><br/><br/>关闭按钮好搓啊，给个建议呗！<br/><br/><br/><br/><br/><br/>关闭按钮好搓啊，给个建议呗！<br/><br/><br/><br/><br/><br/>关闭按钮好搓啊，给个建议呗！<br/><br/><br/><br/><br/><br/>关闭按钮好搓啊，给个建议呗！<br/><br/><br/><br/><br/><br/>关闭按钮好搓啊，给个建议呗！<br/><br/><br/><br/><br/><br/>关闭按钮好搓啊，给个建议呗！</div>'
 			});
 		}
-		function showAsk(){
+		function showAsk(elem){
 			UI.ask('你今年多大了？',function(year){
 				if(year == +year){
 					if(year > 30){
@@ -129,6 +133,8 @@
 					UI.prompt('写个数字会死啊!');
 					return false
 				}
+			},{
+			  'anim_from' : elem,
 			});
 		}
 		
