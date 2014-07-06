@@ -4,15 +4,13 @@ function getStyleSheet(src){
 	var cssStr = fs.readFileSync(src,'UTF-8')
 	
 	//过滤注释
-	var txt = cssStr.replace(/\\*.+\*\//g,'');
+	var txt = cssStr.replace(/\/\*.*?\*\//g,'');
 	//过滤换行
 	var txt = txt.replace(/\r|\n/g,'');
 	//过滤连续空格
 	txt = txt.replace(/\s+/g,' ');
 	//过滤不必要的空格
-	txt = txt.replace(/\s*{\s*/g,'{');
-	txt = txt.replace(/\s*}\s*/g,'}');
-	txt = txt.replace(/\s*;\s*/g,';');
+	txt = txt.replace(/\s*({|}|;|:)\s*/g,'$1');
 	
 	return txt;
 }
