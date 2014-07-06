@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified require('Date')
+ * @modified requires('Date')
  * 
  **/
 
@@ -26,18 +26,18 @@
 	/**
 	 * base template
 	 */
-	var allCnt_tpl = require('template/base.html');
-	var dragMask_tpl = require('template/dragMask.html');
-	var pop_tpl = require('template/pop.html');
-	var confirm_tpl = require('template/confirm.html');
-	var ask_tpl = require('template/ask.html');
-	var confirmBar_tpl = require('template/confirmBar.html');
-	var plane_tpl = require('template/plane.html');
-	var prompt_tpl = require('template/prompt.html');
-	var cover_tpl = require('template/cover.html');
-	var select_tpl = require('template/select.html');
+	var allCnt_tpl = requires('template/base.html');
+	var dragMask_tpl = requires('template/dragMask.html');
+	var pop_tpl = requires('template/pop.html');
+	var confirm_tpl = requires('template/confirm.html');
+	var ask_tpl = requires('template/ask.html');
+	var confirmBar_tpl = requires('template/confirmBar.html');
+	var plane_tpl = requires('template/plane.html');
+	var prompt_tpl = requires('template/prompt.html');
+	var cover_tpl = requires('template/cover.html');
+	var select_tpl = requires('template/select.html');
 	
-	var popCSS = require('style.css');
+	var popCSS = requires('style.css');
 	
 	var isIE67 = false;
 	if(navigator.appName == "Microsoft Internet Explorer"){
@@ -823,4 +823,4 @@
 			return new SELECT(arguments[0],arguments[1]);
 		}
 	};
-},require('utils.js'));
+},requires('utils.js'));

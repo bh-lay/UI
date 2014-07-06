@@ -40,7 +40,7 @@ function getTemplate(src){
 
 function checkMainFiles(src){
 	var str = fs.readFileSync(src,'UTF-8');
-	str = str.replace(/require\(((?:\,|\s|\w|\.|\/|\'|\")+)\)/g,function(a,b){
+	str = str.replace(/requires\(((?:\,|\s|\w|\.|\/|\'|\")+)\)/g,function(a,b){
 		//过滤无意义的空格
 		b = b.replace(/\s*\,\s*/g,',');
 		//过滤引号
