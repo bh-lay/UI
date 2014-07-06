@@ -29,7 +29,6 @@
 	var allCnt_tpl = require('template/base.html');
 	var dragMask_tpl = require('template/dragMask.html');
 	var pop_tpl = require('template/pop.html');
-	var miniChat_tpl = require('template/miniChat.html');
 	var confirm_tpl = require('template/confirm.html');
 	var ask_tpl = require('template/ask.html');
 	var confirmBar_tpl = require('template/confirmBar.html');
@@ -101,32 +100,43 @@
 		private_head.appendChild(private_cssDom);
 	}
 	
-	
+	//初始化组件基础功能
 	utils.ready(function(){
+		//插入css样式表
 		var styleSheet = utils.createStyleSheet(popCSS,{'data-module' : "UI"});
 		private_head.appendChild(styleSheet);
 		
+		//插入弹框基础dom
 		document.body.appendChild(private_allCnt);
+		
 		//释放掉无用的内存
 		popCSS = null;
-		allCnt = null;
+		allCnt_tpl = null;
 		
 		//更新窗口尺寸
 		refreshSize();
 		setTimeout(refreshSize,500);
+		
 		var rebuild_fn = null;
-		/**
-		 *	fix Prompt Mask position & size 
-		 */ 
 		if(isIE67){
-			utils.css(private_fixedScreenTopDom,{'top' : private_scrollTop});
-			utils.css(private_fixedScreenBottomDom,{'top' : private_scrollTop + private_winH});
+			utils.css(private_fixedScreenTopDom,{
+				'top' : private_scrollTop
+			});
+			utils.css(private_fixedScreenBottomDom,{
+				'top' : private_scrollTop + private_winH
+			});
 			
 			rebuild_fn = function(){
 				refreshSize();
-				utils.css(private_fixedScreenTopDom,{'top' : private_scrollTop});
-				utils.css(private_fixedScreenBottomDom,{'top' : private_scrollTop + private_winH});
-				utils.css(private_maskDom,{'top' : private_scrollTop});
+				utils.css(private_fixedScreenTopDom,{
+					'top' : private_scrollTop
+				});
+				utils.css(private_fixedScreenBottomDom,{
+					'top' : private_scrollTop + private_winH
+				});
+				utils.css(private_maskDom,{
+					'top' : private_scrollTop
+				});
 			};
 		}else{
 			utils.css(private_fixedScreenTopDom,{
@@ -139,25 +149,26 @@
 			});
 			rebuild_fn = refreshSize;
 		}
+		
 		//监听浏览器缩放、滚屏事件
 		utils.bind(window,'resize',rebuild_fn);
 		utils.bind(window,'scroll',rebuild_fn);
 	});
 	
 	
-	//通用限制位置区域的方法
+	//限制位置区域的方法
 	function fix_position(top,left,width,height){
 		var gap = private_CONFIG.gap;
 		if(top<private_scrollTop + gap.top){
-			//Beyond the screen(top)
+			//屏幕上方
 			top = private_scrollTop  + gap.top;
 		}else if(top + height - private_scrollTop > private_winH - gap.bottom) {
-			//Beyond the screen(bottom)
+			//屏幕下方
 			if(height > private_winH - gap.top - gap.bottom){
-				//Is higher than the screen
+				//比屏幕高
 				top = private_scrollTop + gap.top;
 			}else{
-				//Is shorter than the screen
+				//比屏幕矮
 				top = private_scrollTop + private_winH - height - gap.bottom;
 			}
 		}
@@ -221,31 +232,14 @@
 		});
 		dom.appendChild(utils.createDom(this_html)[0]);
 		
-		//点击确认按钮
-		var ok_dom = utils.findByClassName(dom,'UI_pop_confirm_ok')[0];
-		utils.bind(ok_dom,'click',function(){
-			if(callback){
-				//根据执行结果判断是否要关闭弹框
-				var result = callback();
-				if(result != false){
-					close();
-				}
-			}else{
-				close();
-			}
+		//绑定事件，根据执行结果判断是否要关闭弹框
+		utils.bind(dom,'click','.UI_pop_confirm_ok',function(){
+			//点击确认按钮
+			callback ? ((callback() != false) && close()) : close();
 		});
-		//点击取消按钮
-		var cancel_dom = utils.findByClassName(dom,'UI_pop_confirm_cancel')[0];
-		utils.bind(cancel_dom,'click',function(){
-			if(cancel){
-				//根据执行结果判断是否要关闭弹框
-				var result = cancel();
-				if(result != false){
-					close();
-				}
-			}else{
-				close();
-			}
+		utils.bind(dom,'click','.UI_pop_confirm_cancel',function(){
+			//点击取消按钮
+			cancel ? ((cancel() != false) && close()) : close();
 		});
 	}
 	
@@ -270,7 +264,7 @@
 			effect = effect || default_effect;
 			time = parseInt(time || default_time) || 80;
 			
-			//处理关闭回调、蒙层
+			//处理关闭回调、蒙层检测
 			this.closeFn && this.closeFn();
 			if(this._mask){
 				private_maskCount--
@@ -299,9 +293,9 @@
 			}
 		}
 	}
-	var animDom = utils.createDom('<div style="position:absolute;background:#fff;"></div>')[0];
 	
 	//入场
+	var animDom = utils.createDom('<div style="position:absolute;background:#fff;"></div>')[0];
 	function opening(DOM,cssEnd,fromDom,time,tween,fn){
 		var normalHeight = cssEnd.height || utils.getStyle(DOM,'height');
 		utils.hide(DOM);
@@ -322,7 +316,6 @@
 			cssStart.width = utils.getStyle(fromDom,'width');
 			cssStart.opacity = 0.5;
 		}
-		console.log(cssEnd.top,111);
 		//放置于初始位置
 		private_mainDom.appendChild(animDom);
 		utils.css(animDom,cssStart);
@@ -420,8 +413,7 @@
 			'left' : left
 		},param.anim_from,200,'QuadEaseIn');
 		
-		var close_dom = utils.findByClassName(this.dom,'UI_pop_close')[0];
-		utils.bind(close_dom,'click',function(){
+		utils.bind(this.dom,'click','.UI_pop_close',function(){
 			this_pop.close();
 		});
 		
@@ -468,8 +460,6 @@
 		var newPosition = adaption(300,160);
 		// create pop
 		
-		
-		
 		private_fixedScreenTopDom.appendChild(this.dom);
 		opening(this.dom,{
 			'width' : 300,
@@ -509,8 +499,7 @@
 		this.dom.appendChild(utils.createDom(this_html)[0]);
 		
 		//确定
-		var ok_dom = utils.findByClassName(this.dom,'UI_pop_confirm_ok')[0];
-		utils.bind(ok_dom,'click',function(){
+		utils.bind(this.dom,'click','.UI_pop_confirm_ok',function(){
 			var value = this_pop.inputDom.value;
 			if(this_pop.callback){
 				//根据执行结果判断是否要关闭弹框
@@ -522,17 +511,15 @@
 				this_pop.close();
 			}
 		});
-		
 		//取消
-		var cancel_dom = utils.findByClassName(this.dom,'UI_pop_confirm_cancel')[0];
-		utils.bind(cancel_dom,'click',function(){
+		utils.bind(this.dom,'click','.UI_pop_confirm_cancel',function(){
 			this_pop.close();
 		});
 
 		var newPosition = adaption(300,160);
 
 		private_fixedScreenTopDom.appendChild(this.dom);
-		console.log(param,param.anim_from,'12');
+		
 		opening(this.dom,{
 			'width' : 300,
 			'left' : newPosition.screenLeft,
@@ -564,17 +551,16 @@
 		
 		var newPosition = adaption(260,100);
 		// create pop
-		
 		utils.css(this.dom,{
 			'top' : 0,
 			'opacity' : 0
 		});
+		private_fixedScreenTopDom.appendChild(this.dom);
 		utils.animation(this.dom,{
 			'top' : newPosition.screenTop,
 			'opacity' : 1
 		},140,'BackEaseOut');
 		
-		private_fixedScreenTopDom.appendChild(this.dom);
 	}
 	prompt.prototype['close'] = CLOSEMETHOD('zoomOut',150);
 	prompt.prototype['tips'] = function(txt,time){
@@ -607,7 +593,6 @@
 	 */
 	function checkClick(event) {
 		setTimeout(function(){
-			console.log('close');
 			var target = event.srcElement || event.target;
 			while (!utils.hasClass(target,'UI_plane')) {
 				target = target.parentNode;
@@ -619,25 +604,16 @@
 			}
 		});
 	}
-	
-//	if(private_isSupportTouch){
-//		//移动端使用touch
-//		document.addEventListener('touchstart',checkClick);
-//		document.addEventListener('MSPointerDown',checkClick);
-//		document.addEventListener('pointerdown',checkClick);
-//	}else{
-		//PC鼠标事件
-		utils.bind(document,'mouseup',checkClick);
-//	}
+
+	utils.bind(document,'mouseup',checkClick);
 	
 	
 	function PLANE(param){
 		var this_plane = this;
 		
 		setTimeout(function(){
-		console.log('push');
 			private_activePlane.push(this_plane);
-		},50);
+		},20);
 		
 
 		var param = param || {};
@@ -658,51 +634,7 @@
 		});
 		private_mainDom.appendChild(this.dom);
 	}
-	PLANE.prototype['close'] = CLOSEMETHOD();
-
-	/**
-	 *	miniChat 
-	 */
-
-	function miniChat(param){
-		var param = param || {};
-		var this_chat = this;
-
-		var text = param['text'] || '\u8BF7\u8F93\u5165\u6807\u9898';
-		var this_tpl = miniChat_tpl.replace('{text}',text);
-		
-		this.dom = utils.createDom(this_tpl)[0];
-		this.closeFn = param['closeFn'] || null;
-		
-		//视觉上的弹框（仅为dom的一部分）
-		var visual_box = utils.findByClassName(this.dom,'UI_miniChat')[0];
-		//当有确认参数时
-		add_confirm(visual_box,param,function(){
-			this_chat.close('slide');
-		});
-		
-
-		var fixSize = adaption(220,110);
-		
-		var top = typeof(param['top']) == 'number' ? param['top'] : fixSize.top;
-		var left = typeof(param['left']) == 'number' ? param['left'] : fixSize.left;
-
-		// create pop
-		utils.css(this.dom,{
-			'left' : left,
-			'top' : top
-		});
-		
-		private_mainDom.appendChild(this.dom);
-		var height = utils.outerHeight(visual_box);
-		
-		utils.animation(this.dom,{
-			'height' : height
-		}, 100);
-		
-	}
-	miniChat.prototype['close'] = CLOSEMETHOD();
-
+	PLANE.prototype['close'] = CLOSEMETHOD('fade',200);
 
 
 	/***
@@ -711,18 +643,17 @@
 	 */
 	function COVER(param){
 		var param = param || {};
-		var this_cover = this;
+		var me = this;
 		this.dom = utils.createDom(cover_tpl)[0];
 		this.cntDom = utils.findByClassName(this.dom,'UI_coverCnt')[0];
-		this.closeDom = utils.findByClassName(this.dom,'UI_coverClose')[0];
 		this.closeFn = param['closeFn'] || null;
 
 		var this_html = param['html'] || '';
 		//insert html
 		this.cntDom.innerHTML = this_html;
 		
-		utils.bind(this.closeDom,'click',function(){
-			this_cover.close();
+		utils.bind(this.dom,'click','.UI_coverClose',function(){
+			me.close();
 		});
 
 				
@@ -738,7 +669,7 @@
 			utils.css(document.body,{
 				'overflowY' : 'hidden'
 			});
-			utils.css(this_cover.dom,{
+			utils.css(me.dom,{
 				'width' : '',
 				'top' : 0
 			});
@@ -748,17 +679,13 @@
 	COVER.prototype['close'] = function(){
 		var me = this;
 		
-		utils.fadeOut(this.closeDom,80);
 		utils.css(document.body,{
 			'overflowY' : me._bodyOverflowY
 		});
 		utils.css(this.cntDom,{
 			'overflowY' : 'hidden'
 		});
-		utils.animation(this.cntDom,{
-			'left' : private_docW/2,
-			'opacity' : 0
-		},120, function(){
+		utils.zoomOut(this.cntDom,400, function(){
 			utils.removeNode(me.dom);
 		});
 	};
@@ -804,14 +731,19 @@
 		
 		if(private_docW > 460){
 			this._mask = false;
-			utils.css(this.dom,{
+			new PLANE({
 				'top' : param.top || 100,
 				'left' : param.left || 100,
 				'width' : param.width || 200,
-				'height' : 0
+				'height' : 0,
+				'closeFn' : function(){
+					this_sel.close();
+				}
+			}).dom.appendChild(this.dom);
+			utils.css(this.dom,{
+				'position' : 'relative',
+				'width' : '100%'
 			});
-			private_mainDom.appendChild(this.dom);
-			utils.slideDown(this.dom,80);
 		} else {
 			utils.css(this.dom,{
 				'bottom' : -100,
@@ -871,9 +803,6 @@
 					});
 				}
 			}
-		},
-		'miniChat' : function(){
-			return new miniChat(arguments[0]);
 		},
 		'confirm' : function(){
 			return new CONFIRM(arguments[0]);

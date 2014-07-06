@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2014-7-6 10:33
+ * @modified 2014-7-6 8:18
  * 
  **/
 
@@ -100,43 +100,32 @@
 		private_head.appendChild(private_cssDom);
 	}
 	
-	//初始化组件基础功能
+	
 	utils.ready(function(){
-		//插入css样式表
 		var styleSheet = utils.createStyleSheet(popCSS,{'data-module' : "UI"});
 		private_head.appendChild(styleSheet);
 		
-		//插入弹框基础dom
 		document.body.appendChild(private_allCnt);
-		
 		//释放掉无用的内存
 		popCSS = null;
-		allCnt_tpl = null;
+		allCnt = null;
 		
 		//更新窗口尺寸
 		refreshSize();
 		setTimeout(refreshSize,500);
-		
 		var rebuild_fn = null;
+		/**
+		 *	fix Prompt Mask position & size 
+		 */ 
 		if(isIE67){
-			utils.css(private_fixedScreenTopDom,{
-				'top' : private_scrollTop
-			});
-			utils.css(private_fixedScreenBottomDom,{
-				'top' : private_scrollTop + private_winH
-			});
+			utils.css(private_fixedScreenTopDom,{'top' : private_scrollTop});
+			utils.css(private_fixedScreenBottomDom,{'top' : private_scrollTop + private_winH});
 			
 			rebuild_fn = function(){
 				refreshSize();
-				utils.css(private_fixedScreenTopDom,{
-					'top' : private_scrollTop
-				});
-				utils.css(private_fixedScreenBottomDom,{
-					'top' : private_scrollTop + private_winH
-				});
-				utils.css(private_maskDom,{
-					'top' : private_scrollTop
-				});
+				utils.css(private_fixedScreenTopDom,{'top' : private_scrollTop});
+				utils.css(private_fixedScreenBottomDom,{'top' : private_scrollTop + private_winH});
+				utils.css(private_maskDom,{'top' : private_scrollTop});
 			};
 		}else{
 			utils.css(private_fixedScreenTopDom,{
@@ -149,26 +138,25 @@
 			});
 			rebuild_fn = refreshSize;
 		}
-		
 		//监听浏览器缩放、滚屏事件
 		utils.bind(window,'resize',rebuild_fn);
 		utils.bind(window,'scroll',rebuild_fn);
 	});
 	
 	
-	//限制位置区域的方法
+	//通用限制位置区域的方法
 	function fix_position(top,left,width,height){
 		var gap = private_CONFIG.gap;
 		if(top<private_scrollTop + gap.top){
-			//屏幕上方
+			//Beyond the screen(top)
 			top = private_scrollTop  + gap.top;
 		}else if(top + height - private_scrollTop > private_winH - gap.bottom) {
-			//屏幕下方
+			//Beyond the screen(bottom)
 			if(height > private_winH - gap.top - gap.bottom){
-				//比屏幕高
+				//Is higher than the screen
 				top = private_scrollTop + gap.top;
 			}else{
-				//比屏幕矮
+				//Is shorter than the screen
 				top = private_scrollTop + private_winH - height - gap.bottom;
 			}
 		}
@@ -232,13 +220,12 @@
 		});
 		dom.appendChild(utils.createDom(this_html)[0]);
 		
-		//绑定事件，根据执行结果判断是否要关闭弹框
+		
 		utils.bind(dom,'click','.UI_pop_confirm_ok',function(){
-			//点击确认按钮
+			//点击确认按钮,根据执行结果判断是否要关闭弹框
 			callback ? ((callback() != false) && close()) : close();
-		});
-		utils.bind(dom,'click','.UI_pop_confirm_cancel',function(){
-			//点击取消按钮
+		})('click','.UI_pop_confirm_cancel',function(){
+			//点击取消按钮,根据执行结果判断是否要关闭弹框
 			cancel ? ((cancel() != false) && close()) : close();
 		});
 	}
@@ -264,7 +251,7 @@
 			effect = effect || default_effect;
 			time = parseInt(time || default_time) || 80;
 			
-			//处理关闭回调、蒙层检测
+			//处理关闭回调、蒙层
 			this.closeFn && this.closeFn();
 			if(this._mask){
 				private_maskCount--
@@ -293,9 +280,9 @@
 			}
 		}
 	}
+	var animDom = utils.createDom('<div style="position:absolute;background:#fff;"></div>')[0];
 	
 	//入场
-	var animDom = utils.createDom('<div style="position:absolute;background:#fff;"></div>')[0];
 	function opening(DOM,cssEnd,fromDom,time,tween,fn){
 		var normalHeight = cssEnd.height || utils.getStyle(DOM,'height');
 		utils.hide(DOM);
@@ -460,6 +447,8 @@
 		var newPosition = adaption(300,160);
 		// create pop
 		
+		
+		
 		private_fixedScreenTopDom.appendChild(this.dom);
 		opening(this.dom,{
 			'width' : 300,
@@ -510,9 +499,8 @@
 			}else{
 				this_pop.close();
 			}
-		});
-		//取消
-		utils.bind(this.dom,'click','.UI_pop_confirm_cancel',function(){
+		})('click','.UI_pop_confirm_cancel',function(){
+			//取消
 			this_pop.close();
 		});
 
@@ -551,16 +539,17 @@
 		
 		var newPosition = adaption(260,100);
 		// create pop
+		
 		utils.css(this.dom,{
 			'top' : 0,
 			'opacity' : 0
 		});
-		private_fixedScreenTopDom.appendChild(this.dom);
 		utils.animation(this.dom,{
 			'top' : newPosition.screenTop,
 			'opacity' : 1
 		},140,'BackEaseOut');
 		
+		private_fixedScreenTopDom.appendChild(this.dom);
 	}
 	prompt.prototype['close'] = CLOSEMETHOD('zoomOut',150);
 	prompt.prototype['tips'] = function(txt,time){
@@ -824,7 +813,6 @@
 		}
 	};
 },function (window,document) {
-	
 	//判断是否支持css属性
 	var supports = (function() {
 		var div = document.createElement('div'),
@@ -842,6 +830,8 @@
 	
 			for(var i = 0; i<len; i++){
 				if ( vendors[len] + prop in div.style ) {
+					// browser supports box-shadow. Do what you need.
+					// Or use a bang (!) to test if the browser doesn't.
 					break 
 					return true;
 				}
@@ -858,11 +848,79 @@
 		QuadEaseIn: function (t, b, c, d) {
 			return c * (t /= d) * t + b;
 		},
+		QuadEaseOut: function (t, b, c, d) {
+			return -c * (t /= d) * (t - 2) + b;
+		},
+		QuadEaseInOut: function (t, b, c, d) {
+			if ((t /= d / 2) < 1) return c / 2 * t * t + b;
+			return -c / 2 * ((--t) * (t - 2) - 1) + b;
+		},
+		CubicEaseIn: function (t, b, c, d) {
+			return c * (t /= d) * t * t + b;
+		},
+		CubicEaseOut: function (t, b, c, d) {
+			return c * ((t = t / d - 1) * t * t + 1) + b;
+		},
+		CubicEaseInOut: function (t, b, c, d) {
+			if ((t /= d / 2) < 1) return c / 2 * t * t * t + b;
+			return c / 2 * ((t -= 2) * t * t + 2) + b;
+		},
+		QuartEaseIn: function (t, b, c, d) {
+			return c * (t /= d) * t * t * t + b;
+		},
+		QuartEaseOut: function (t, b, c, d) {
+			return -c * ((t = t / d - 1) * t * t * t - 1) + b;
+		},
+		QuartEaseInOut: function (t, b, c, d) {
+			if ((t /= d / 2) < 1) return c / 2 * t * t * t * t + b;
+			return -c / 2 * ((t -= 2) * t * t * t - 2) + b;
+		},
+		QuintEaseIn: function (t, b, c, d) {
+			return c * (t /= d) * t * t * t * t + b;
+		},
+		QuintEaseOut: function (t, b, c, d) {
+			return c * ((t = t / d - 1) * t * t * t * t + 1) + b;
+		},
+		QuintEaseInOut: function (t, b, c, d) {
+			if ((t /= d / 2) < 1) return c / 2 * t * t * t * t * t + b;
+			return c / 2 * ((t -= 2) * t * t * t * t + 2) + b;
+		},
 		SineEaseIn: function (t, b, c, d) {
 			return -c * Math.cos(t / d * (Math.PI / 2)) + c + b;
 		},
 		SineEaseOut: function (t, b, c, d) {
 			return c * Math.sin(t / d * (Math.PI / 2)) + b;
+		},
+		SineEaseInOut: function (t, b, c, d) {
+			return -c / 2 * (Math.cos(Math.PI * t / d) - 1) + b;
+		},
+		ExpoEaseIn: function (t, b, c, d) {
+			return (t == 0) ? b : c * Math.pow(2, 10 * (t / d - 1)) + b;
+		},
+		ExpoEaseOut: function (t, b, c, d) {
+			return (t == d) ? b + c : c * (-Math.pow(2, -10 * t / d) + 1) + b;
+		},
+		ExpoEaseInOut: function (t, b, c, d) {
+			if (t == 0) return b;
+			if (t == d) return b + c;
+			if ((t /= d / 2) < 1) return c / 2 * Math.pow(2, 10 * (t - 1)) + b;
+			return c / 2 * (-Math.pow(2, -10 * --t) + 2) + b;
+		},
+		CircEaseIn: function (t, b, c, d) {
+			return -c * (Math.sqrt(1 - (t /= d) * t) - 1) + b;
+		},
+		CircEaseOut: function (t, b, c, d) {
+			return c * Math.sqrt(1 - (t = t / d - 1) * t) + b;
+		},
+		CircEaseInOut: function (t, b, c, d) {
+			if ((t /= d / 2) < 1) return -c / 2 * (Math.sqrt(1 - t * t) - 1) + b;
+			return c / 2 * (Math.sqrt(1 - (t -= 2) * t) + 1) + b;
+		},
+		ElasticEaseIn: function (t, b, c, d, a, p) {
+			if (t == 0) return b; if ((t /= d) == 1) return b + c; if (!p) p = d * .3;
+			if (!a || a < Math.abs(c)) { a = c; var s = p / 4; }
+			else var s = p / (2 * Math.PI) * Math.asin(c / a);
+			return -(a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p)) + b;
 		},
 		ElasticEaseOut: function (t, b, c, d, a, p) {
 			if (t == 0) return b; if ((t /= d) == 1) return b + c; if (!p) p = d * .3;
@@ -870,12 +928,72 @@
 			else var s = p / (2 * Math.PI) * Math.asin(c / a);
 			return (a * Math.pow(2, -10 * t) * Math.sin((t * d - s) * (2 * Math.PI) / p) + c + b);
 		},
+		ElasticEaseInOut: function (t, b, c, d, a, p) {
+			if (t == 0) return b; if ((t /= d / 2) == 2) return b + c; if (!p) p = d * (.3 * 1.5);
+			if (!a || a < Math.abs(c)) { a = c; var s = p / 4; }
+			else var s = p / (2 * Math.PI) * Math.asin(c / a);
+			if (t < 1) return -.5 * (a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p)) + b;
+			return a * Math.pow(2, -10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p) * .5 + c + b;
+		},
+		BackEaseIn: function (t, b, c, d, s) {
+			if (s == undefined) s = 1.70158;
+			return c * (t /= d) * t * ((s + 1) * t - s) + b;
+		},
 		BackEaseOut: function (t, b, c, d, s) {
 			if (s == undefined) s = 1.70158;
 			return c * ((t = t / d - 1) * t * ((s + 1) * t + s) + 1) + b;
+		},
+		BackEaseInOut: function (t, b, c, d, s) {
+			if (s == undefined) s = 1.70158;
+			if ((t /= d / 2) < 1) return c / 2 * (t * t * (((s *= (1.525)) + 1) * t - s)) + b;
+			return c / 2 * ((t -= 2) * t * (((s *= (1.525)) + 1) * t + s) + 2) + b;
+		},
+		BounceEaseIn: function (t, b, c, d) {
+			return c - Tween.Bounce.easeOut(d - t, 0, c, d) + b;
+		},
+		BounceEaseOut: function (t, b, c, d) {
+			if ((t /= d) < (1 / 2.75)) {
+				return c * (7.5625 * t * t) + b;
+			} else if (t < (2 / 2.75)) {
+				return c * (7.5625 * (t -= (1.5 / 2.75)) * t + .75) + b;
+			} else if (t < (2.5 / 2.75)) {
+				return c * (7.5625 * (t -= (2.25 / 2.75)) * t + .9375) + b;
+			} else {
+				return c * (7.5625 * (t -= (2.625 / 2.75)) * t + .984375) + b;
+			}
+		},
+		BounceEaseInOut: function (t, b, c, d) {
+			if (t < d / 2){
+				return Tween.Bounce.easeIn(t * 2, 0, c, d) * .5 + b;
+			}else{
+				return Tween.Bounce.easeOut(t * 2 - d, 0, c, d) * .5 + c * .5 + b;
+			}
 		}
     }
-	
+
+    var color = {
+        sub: function (str, start, len) {
+            if (len) return str.substring(start, start + len);
+            else return str.substring(start);
+        },
+        hex: function (i) {  // 返回16进制颜色表示
+            if (i < 0) return "00";
+            else if (i > 255) return "ff";
+            else { var str = "0" + i.toString(16); return str.substring(str.length - 2); }
+        },
+        //获取颜色数据    
+        GetColors: function (sColor) {
+            sColor = sColor.replace("#", "");
+            var r, g, b;
+            if (sColor.length > 3) {
+                r = color.sub(sColor, 0, 2); g = color.sub(sColor, 2, 2); b = color.sub(sColor, 4, 2);
+            } else {
+                r = color.sub(sColor, 0, 1); g = color.sub(sColor, 1, 1); b = color.sub(sColor, 2, 1);
+                r += r; g += g; b += b;
+            }
+            return [parseInt(r, 16), parseInt(g, 16), parseInt(b, 16)];
+        }
+    }
 	/**
 	 * 判断对象类型
 	 * String Number Array
@@ -975,9 +1093,28 @@
 		}
 	}
 	
+	//格式化css属性值
+	function parseCSS_value(input){
+		var output;
+		if (input == "transparent") {
+			output = [255, 255, 255,0];
+		}else if (/^#/.test(input)) {
+			output = color.GetColors(input);
+		} else if (/^rgb/.test(input)) {
+			//获得css值为rgba或rgb对应值（数组）
+			output = input.match(/([0-9]+)/g);
+		} else if (input == "opacity") {
+			output = 100 * input;
+		} else if (/\px$/.test(input)){
+			output = parseInt(input);
+		} else if( input == +input){
+			output = value = parseInt(input*10000)/10000;;
+		}
+		return output;
+	}
+	
 	/**
-	 * 获取动画所需的参数，只获取为数字的参数
-	 *
+	 * 获取动画所需的参数
 	 * 属性名
 	 * 初始值
 	 * 目标值
@@ -992,13 +1129,9 @@
 			}
 			
 			var value = getStyle(elem, prop);
-			//格式化css属性值
-			if (/\px$/.test(value)){
-				value = parseInt(value);
-			}
+			value = parseCSS_value(value);
 			
-			if(value !== '' && (value == +value)){
-				value = parseInt(value*10000)/10000;
+			if(value || (value == +value)){
 				props.push(prop);
 				cssOri.push(value);
 				cssEnd.push(cssObj[prop]);
@@ -1010,10 +1143,37 @@
 	
 	//给定计算方式，当前帧的CSS值
 	function countNewCSS(start,end,use_time,all_time,fn){
-		start = start * 10000;
-		end = end * 10000;
+		var output
+		if (TypeOf(start) == "Array" && TypeOf(end) == "Array") {
+			//rgb初始值
+			var r_s = start[0],
+				g_s = start[1],
+				b_s = start[2];
+			//rgb变化差值
+			var r_m = end[0] - r_s,
+				g_m = end[1] - g_s,
+				b_m = end[2] - b_s;
+			//新的rgb值
+			var r_n = Math.ceil(fn(use_time, r_s, r_m, all_time)),
+				g_n = Math.ceil(fn(use_time, g_s, g_m, all_time)),
+				b_n = Math.ceil(fn(use_time, b_s, b_m, all_time));
+			
+			if(start.length == 4 || end.length == 4){
+				var a_s = start[3] || 100;
+				var a_m = (end[3] || 100) - start[3];
+				var a_n = fn(use_time, a_s, a_m, all_time);
+				output = 'rgba(' + r_n + ',' + g_n + ',' + b_n + ',' + (a_n/100) + ')';
+			}else{
+				output = 'rgba(' + r_n + ',' + g_n + ',' + b_n + ')';
+			}
+		} else {
+			start = start * 10000;
+			end = end * 10000;
+			output = fn(use_time, start, (end-start), all_time);
+			output = output/10000;
+		}
 		
-		return  fn(use_time, start, (end-start), all_time)/10000;
+		return output
 	}
 	var requestAnimationFrame = (function () {
         return  window.requestAnimationFrame ||
@@ -1057,6 +1217,7 @@
 				this.onEnd = args[4];
 			}
 		}
+		this.animType = 'Tween.' + this.animType;
 		this.startAnim();
     }
     anim.prototype['startAnim'] = function () {
@@ -1066,7 +1227,7 @@
 		var time_start = new Date();
 		
 		//运动曲线方程
-		var aniFunction = Tween[me.animType];
+		var aniFunction = (eval(me.animType));
 		
 		//是否已结束动画
 		var is_end = false;
@@ -1100,6 +1261,55 @@
 	};
 	
 	
+	
+	//创建dom
+	function createDom(html){
+		var a = document.createElement('div');
+		a.innerHTML = html;
+		return a.childNodes;
+	}
+	//创建style标签
+	function createStyleSheet(cssStr,attr){
+		var styleTag = document.createElement('style');
+		
+		attr = attr || {};
+		attr.type = "text/css";
+		for(var i in attr){
+			styleTag.setAttribute(i, attr[i]);
+		}
+		
+		// IE
+		if (styleTag.styleSheet) {
+			styleTag.styleSheet.cssText = cssStr;
+		} else {
+			var tt1 = document.createTextNode(cssStr);
+			styleTag.appendChild(tt1);
+		}
+		
+		return styleTag;
+	}
+	
+	//读取dom在页面中的位置
+	function offset(elem){
+		var box = {
+			'top' : 0,
+			'left' : 0,
+			'screen_top' : 0,
+			'screen_left' : 0
+		}
+		var size;
+		
+		if ( typeof elem.getBoundingClientRect !== 'undefined' ) {
+			size = elem.getBoundingClientRect();
+		}
+		box.screen_top = size.top;
+		box.screen_left = size.left;
+		box.top = size.top + document.body.scrollTop;
+		box.left = size.left + document.body.scrollLeft;
+		
+		return box;
+	}
+	
 	var outerWidth,
 		outerHeight;
 	var testDom = document.createElement('div');
@@ -1114,20 +1324,104 @@
 	if(testDom.getBoundingClientRect !== 'undefined'){
 		outerWidth = function(elem){
 			var output = elem.getBoundingClientRect()['width'] || 0;
-			
-			return typeof(output) != 'undefined' ? output : count_outerWidth(elem);
+			if(typeof(output) == 'undefined'){
+				output = count_outerWidth(elem);
+			}
+			return output;
 		};
 		outerHeight = function(elem){
 			var output = elem.getBoundingClientRect()['height'] || 0;
-			
-			return typeof(output) != 'undefined' ? output : count_outerHeight(elem);
+			if(typeof(output) == 'undefined'){
+				output = count_outerHeight(elem);
+			}
+			return output;
 		};
 	}else{
 		outerWidth = count_outerWidth;
 		outerHeight = count_outerHeight;
 	}
 	
+	//根据class查找元素
+	var findByClassName = (function(){
+		if(typeof(document.getElementsByClassName) !== 'undefined'){
+			//支持gEbCN
+			return function (dom,classStr){
+				return dom.getElementsByClassName(classStr);
+			};
+		}else{
+			//无奈采用遍历法
+			return function (dom,classStr){
+				var returns = [];
+				//尝试获取所有元素
+				var caches = dom.getElementsByTagName("*");
+				//遍历结果
+				each(caches,function(i,thisDom){
+					//检查class是否合法
+					if(hasClass(thisDom,classStr)){
+						returns.push(thisDom);
+					}
+				});
+				return returns;
+			};
+		}
+	})();
+	//移除dom节点
+	function removeNode(elem){  
+		if(elem && elem.parentNode && elem.tagName != 'BODY'){  
+			elem.parentNode.removeChild(elem);  
+		}  
+	};
 	
+	//隐藏dom
+	function hide(elem){
+		elem.style['display'] = 'none';
+	}
+	//淡出
+	function fadeOut(DOM,time,fn){
+		var op = getStyle(DOM,'opacity');
+		new anim(DOM,{
+			'opacity' : 0
+		}, time,function(){
+			DOM.style['opacity'] = op;
+			DOM.style['display'] = 'none';
+			fn && fn.call(DOM);
+		});
+	}
+	//淡入
+	function fadeIn(DOM,time,fn){
+		var op = getStyle(DOM,'opacity');
+		DOM.style['opacity'] = 0;
+		DOM.style['display'] = 'block';
+		new anim(DOM,{
+			'opacity' : op
+		}, time, function(){
+			fn && fn.call(DOM);
+		});
+	}
+	//滑入
+	function slideDown(DOM,time,fn){
+		DOM.style['overflow'] = 'hidden';
+		DOM.style['display'] = 'block';
+		var height = DOM.scrollHeight;
+		//FIXME padding
+		new anim(DOM,{
+			'height' : height
+		}, time, function(){
+			fn && fn.call(DOM);
+		});
+	}
+	//滑出
+	function slideUp(DOM,time,fn){
+		DOM.style['overflow'] = 'hidden';
+		//FIXME padding
+		new anim(DOM,{
+			'height' : 0,
+			'padding' : 0
+		}, time,function(){
+			DOM.style['display'] = 'none';
+			fn && fn.call(DOM);
+		});
+	}
 	//缩小，淡出
 	var zoomOut = private_css3 ? function(DOM,time,fn){
 		var op = getStyle(DOM,'opacity');
@@ -1143,6 +1437,7 @@
 		DOM.addEventListener("webkitTransitionEnd", function(){
 			clearTimeout(delay);
 			delay = setTimeout(function(){
+				console.log(new Date());
 				setCss(DOM,{
 					'-webkit-transform' : 'scale(1)',
 					'-webkit-transition' : transt,
@@ -1267,6 +1562,10 @@
 			fn = a;
 			bindHandler(elem,type,fn);
 		}
+		//提供最原始的链式调用
+		return function(type,a,b){
+			return bind(elem,type,a,b);
+		};
 	}
 	//通用拖动方法
 	function drag(handle_dom,dom,param){
@@ -1304,136 +1603,32 @@
 		}
 	}
 	
-    return {
+    return{
 		'TypeOf' : TypeOf,
 		'each' : each,
 		'css' : setCss,
 		'supports' : supports,
+		'slideDown' : slideDown,
+		'slideUp' : slideUp,
+		'fadeIn' : fadeIn,
+		'fadeOut' : fadeOut,
 		'zoomOut' : zoomOut,
+		'animation' : function(a,b,c,d,e) {
+			return new anim(a,b,c,d,e);
+		},
+		'createDom' : createDom,
+		'removeNode' : removeNode,
+		'createStyleSheet' : createStyleSheet,
+		'findByClassName' : findByClassName,
 		'hasClass' : hasClass,
+		'offset' : offset,
 		'getStyle' : getStyle,
 		'outerWidth' : outerWidth,
 		'outerHeight' : outerHeight,
 		'ready' : ready,
 		'bind' : bind,
 		'unbind' : removeHandler,
-		'drag' : drag,
-		//隐藏dom
-		'hide' : function (elem){
-			elem.style['display'] = 'none';
-		},
-		'animation' : function (a,b,c,d,e) {
-			return new anim(a,b,c,d,e);
-		},
-		//创建dom
-		'createDom' : function (html){
-			var a = document.createElement('div');
-			a.innerHTML = html;
-			return a.childNodes;
-		},
-		//移除dom节点
-		'removeNode' : function (elem){  
-			if(elem && elem.parentNode && elem.tagName != 'BODY'){  
-				elem.parentNode.removeChild(elem);  
-			}  
-		},
-		//创建style标签
-		'createStyleSheet' : function (cssStr,attr){
-			var styleTag = document.createElement('style');
-			
-			attr = attr || {};
-			attr.type = "text/css";
-			for(var i in attr){
-				styleTag.setAttribute(i, attr[i]);
-			}
-			
-			// IE
-			if (styleTag.styleSheet) {
-				styleTag.styleSheet.cssText = cssStr;
-			} else {
-				var tt1 = document.createTextNode(cssStr);
-				styleTag.appendChild(tt1);
-			}
-			
-			return styleTag;
-		},
-		//根据class查找元素
-		'findByClassName' : (function(){
-			if(typeof(document.getElementsByClassName) !== 'undefined'){
-				//支持gEbCN
-				return function (dom,classStr){
-					return dom.getElementsByClassName(classStr);
-				};
-			}else{
-				//无奈采用遍历法
-				return function (dom,classStr){
-					var returns = [];
-					//尝试获取所有元素
-					var caches = dom.getElementsByTagName("*");
-					//遍历结果
-					each(caches,function(i,thisDom){
-						//检查class是否合法
-						if(hasClass(thisDom,classStr)){
-							returns.push(thisDom);
-						}
-					});
-					return returns;
-				};
-			}
-		})(),
-		 //读取dom在页面中的位置
-		'offset' : function (elem){
-			var box = {
-				'top' : 0,
-				'left' : 0,
-				'screen_top' : 0,
-				'screen_left' : 0
-			}
-			var size;
-			
-			if ( typeof elem.getBoundingClientRect !== 'undefined' ) {
-				size = elem.getBoundingClientRect();
-			}
-			box.screen_top = size.top;
-			box.screen_left = size.left;
-			box.top = size.top + document.body.scrollTop;
-			box.left = size.left + document.body.scrollLeft;
-			
-			return box;
-		},
-		//滑出
-		'slideUp' : function (DOM,time,fn){
-			DOM.style['overflow'] = 'hidden';
-			//FIXME padding
-			new anim(DOM,{
-				'height' : 0,
-				'padding' : 0
-			}, time,function(){
-				DOM.style['display'] = 'none';
-				fn && fn.call(DOM);
-			});
-		},
-		//淡入
-		'fadeIn' : function (DOM,time,fn){
-			var op = getStyle(DOM,'opacity');
-			DOM.style['opacity'] = 0;
-			DOM.style['display'] = 'block';
-			new anim(DOM,{
-				'opacity' : op
-			}, time, function(){
-				fn && fn.call(DOM);
-			});
-		},
-		//淡出
-		'fadeOut' : function (DOM,time,fn){
-			var op = getStyle(DOM,'opacity');
-			new anim(DOM,{
-				'opacity' : 0
-			}, time,function(){
-				DOM.style['opacity'] = op;
-				DOM.style['display'] = 'none';
-				fn && fn.call(DOM);
-			});
-		}
+		'hide' : hide,
+		'drag' : drag
     }
 });

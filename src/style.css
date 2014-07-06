@@ -141,35 +141,6 @@
 	box-sizing:border-box;
 	width:90%;
 }
-.UI_miniChatSlideCnt {
-	width:220px;
-	height:0px;
-	overflow:hidden;
-	position:absolute;
-	border-radius:4px;
-	box-shadow:2px 3px 10px rgba(0,0,0,0.6);
-}
-.UI_miniChat {
-	position:absolute;
-	left:0px;
-	bottom:0px;
-	width:100%;
-	_border:1px solid #eee;
-	background:#fff;
-	overflow:hidden;
-}
-.UI_miniChat_text {
-	padding:20px 10px 10px;
-	box-sizing:content-box;
-	line-height:24px;
-	text-align:center;
-	font-size:14px;
-	color:#333;
-}
-.UI_miniChat .UI_pop_confirm a {
-	height:28px;
-	line-height:28px;
-}
 .UI_pop_confirm {
 	overflow:hidden;
 	text-align:center;
