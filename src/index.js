@@ -411,7 +411,7 @@
 			'width' : this_width,
 			'top' : top,
 			'left' : left
-		},param.anim_from,200,'QuadEaseIn');
+		},param.from,200,'QuadEaseIn');
 		
 		utils.bind(this.dom,'click','.UI_pop_close',function(){
 			this_pop.close();
@@ -465,7 +465,7 @@
 			'width' : 300,
 			'left' : newPosition.screenLeft,
 			'top' : newPosition.top - 100
-		},param.anim_from,100,'BackEaseOut',function(){
+		},param.from,100,'BackEaseOut',function(){
 			utils.css(this_pop.dom,{
 				'top' : newPosition.screenTop - 100
 			});
@@ -524,7 +524,7 @@
 			'width' : 300,
 			'left' : newPosition.screenLeft,
 			'top' : private_scrollTop + private_winH/2 - 100
-		},param.anim_from,100,'BackEaseOut',function(){
+		},param.from,100,'BackEaseOut',function(){
 			utils.css(this_pop.dom,{
 				'marginTop' : -100,
 				'top' : ''
@@ -665,7 +665,7 @@
 			'width' : private_docW,
 			'top' : private_scrollTop,
 			'left' : 0
-		},param.anim_from,200,'QuadEaseIn',function(){
+		},param.from,200,'QuadEaseIn',function(){
 			utils.css(document.body,{
 				'overflowY' : 'hidden'
 			});

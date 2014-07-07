@@ -34,7 +34,7 @@
 	<script type="text/javascript">
 		function showPop(elem){
 			var pop = UI.pop({
-			  'anim_from' : elem,
+			  'from' : elem,
 			  'html' : '<div style="height:340px;background:url(http://asset.bh-lay.com/images/cover/newSkin.jpg) no-repeat center"></div>'
 			});
 		}
@@ -42,7 +42,7 @@
 			UI.pop({
 			  'title' : '这哥们儿帅么',
 			  'html' : '<div style="height:200px;background:url(http://asset.bh-lay.com/images/cover/newSkin.jpg) no-repeat center"></div>',
-			  'anim_from' : elem,
+			  'from' : elem,
 			  'confirm' : {
 			    'btns' : ['好帅哦','真丑'],
 			    'callback' : function(){
@@ -59,7 +59,7 @@
 			UI.confirm({
 			  'text' : '请我吃饭吧！',
 			  'btns' : ['好的呀','不愿意'],
-			  'anim_from' : elem,
+			  'from' : elem,
 			  'callback' : function(){
 			    UI.prompt('你是好人！');
 			  }
@@ -115,7 +115,7 @@
 		
 		function showCover(elem){
 			UI.cover({
-				'anim_from' : elem,
+				'from' : elem,
 				'html' : '<div style="color:#333;text-align:center;padding:100px 0px;">关闭按钮好搓啊，给个建议呗！<br/><br/><br/><br/><br/><br/>关闭按钮好搓啊，给个建议呗！<br/><br/><br/><br/><br/><br/>关闭按钮好搓啊，给个建议呗！<br/><br/><br/><br/><br/><br/>关闭按钮好搓啊，给个建议呗！<br/><br/><br/><br/><br/><br/>关闭按钮好搓啊，给个建议呗！<br/><br/><br/><br/><br/><br/>关闭按钮好搓啊，给个建议呗！<br/><br/><br/><br/><br/><br/>关闭按钮好搓啊，给个建议呗！<br/><br/><br/><br/><br/><br/>关闭按钮好搓啊，给个建议呗！</div>'
 			});
 		}
@@ -134,7 +134,7 @@
 					return false
 				}
 			},{
-			  'anim_from' : elem,
+			  'from' : elem,
 			});
 		}
 		
