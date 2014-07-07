@@ -131,7 +131,6 @@ define(function (window,document) {
 	function setStyle(elem,prop,value){
 	
 		if(typeof(value) != 'string' && (value != +value)){
-			//console.log(prop,'-',value,'-','error');
 			return
 		}
 		prop = prop.toString();
@@ -141,7 +140,6 @@ define(function (window,document) {
 		} else if (value == +value && value != ''){
 			value = value + "px";
 		}
-		//console.log(prop,value)
 		elem.style[prop] = value;
 	}
 	//设置css
@@ -187,13 +185,6 @@ define(function (window,document) {
 		return [props,cssOri,cssEnd];
 	}
 	
-	//给定计算方式，当前帧的CSS值
-	function countNewCSS(start,end,use_time,all_time,fn){
-		start = start * 10000;
-		end = end * 10000;
-		
-		return  fn(use_time, start, (end-start), all_time)/10000;
-	}
 	var requestAnimationFrame = (function () {
         return  window.requestAnimationFrame ||
 				window.webkitRequestAnimationFrame ||
@@ -263,10 +254,12 @@ define(function (window,document) {
 				time_use = time_all;
 				is_end = true;
 			}
-			
+			var start,end,value;
 			for (var i = 0; i < css_length; i++) {
 				//计算当前帧需要的属性值
-				var value = countNewCSS(me.cssOri[i],me.cssEnd[i],time_use,time_all,aniFunction);
+				start = me.cssOri[i] * 10000;
+				end = me.cssEnd[i] * 10000;
+				value = aniFunction(time_use, start, (end-start), time_all)/10000;
 				setStyle(me.elem,me.props[i],value);
 			}
 			
@@ -419,15 +412,13 @@ define(function (window,document) {
 	function checkEventForClass(event,classStr,dom){
 		var target = event.srcElement || event.target;
 		while (1) {
-			if(target == dom){
+			if(target == dom || !target){
 				return false;
 			}
 			if(hasClass(target,classStr)){
 				return target;
 			}
-			if(!target){
-				return false;
-			}
+			
 			target = target.parentNode;
 		}
 	}
