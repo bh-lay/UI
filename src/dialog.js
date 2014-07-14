@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2014-7-7 23:42
+ * @modified 2014-7-14 20:53
  * 
  **/
 
@@ -155,6 +155,12 @@
 		utils.bind(window,'scroll',rebuild_fn);
 	});
 	
+	//简单的模版处理
+	function render(tpl,data){
+		return tpl.replace(/\{(\w+)\}/g,function(a,b){
+			return data[b] || '';
+		});
+	}
 	
 	//限制位置区域的方法
 	function fix_position(top,left,width,height){
@@ -222,13 +228,9 @@
 				cancel = param['cancel'];
 			}
 		}
-		var this_html = confirmBar_tpl.replace(/{(\w+)}/g,function(){
-			var key = arguments[1];
-			if(key == 'confirm'){
-				return btns[0]
-			}else if(key == 'cancel'){
-				return btns[1]
-			}
+		var this_html = render(confirmBar_tpl,{
+			'confirm' : btns[0],
+			'cancel' : btns[1]
 		});
 		dom.appendChild(utils.createDom(this_html)[0]);
 		
@@ -252,9 +254,13 @@
 			utils.fadeIn(private_maskDom,100);
 		}
 	}
+	
 	/**
 	 * 可定制关闭方法
-	 *  
+	 * 上下文要求
+	 *   关闭回调：this.closeFn
+	 *   是否有蒙层：this._mask
+	 *   dom对象：this.dom
 	 */
 	function CLOSEMETHOD(effect_define,time_define){
 		var default_effect = effect_define || null;
@@ -276,27 +282,29 @@
 			var DOM = this.dom;
 			if(!effect){
 				utils.removeNode(DOM);
-			}else{
-				if(effect == 'fade'){
-					utils.fadeOut(DOM,time,function(){
-						utils.removeNode(DOM);
-					});
-				}else if(effect == 'slide'){
-					utils.slideUp(DOM,time,function(){
-						utils.removeNode(DOM);
-					});
-				}else if(effect == 'zoomOut'){
-					utils.zoomOut(DOM,time,function(){
-						utils.removeNode(DOM);
-					});
-				}
+			}else if(effect == 'fade'){
+				utils.fadeOut(DOM,time,function(){
+					utils.removeNode(DOM);
+				});
+			}else if(effect == 'slide'){
+				utils.slideUp(DOM,time,function(){
+					utils.removeNode(DOM);
+				});
+			}else if(effect == 'zoomOut'){
+				utils.zoomOut(DOM,time,function(){
+					utils.removeNode(DOM);
+				});
 			}
 		}
 	}
 	
-	//入场
+	/**
+	 * 开场动画
+	 *   创建一个dom用来完成动画
+	 *   动画结束，设置dom为结束样式
+	 **/
 	var animDom = utils.createDom('<div style="position:absolute;background:#fff;"></div>')[0];
-	function opening(DOM,cssEnd,fromDom,time,tween,fn){
+	function openingAnimation(DOM,cssEnd,fromDom,time,tween,fn){
 		var normalHeight = cssEnd.height || utils.getStyle(DOM,'height');
 		utils.hide(DOM);
 		var cssStart = {
@@ -361,7 +369,7 @@
 		if(!param['title']){
 			utils.removeNode(caption_dom);
 		}else{
-			var title = param['title'] || '\u8BF7\u8F93\u5165\u6807\u9898';
+			var title = param['title'] || 'need title in parameter!';
 			
 			caption_dom.innerHTML = title;
 			//can drag is pop
@@ -407,7 +415,7 @@
 		var top = (param['top'] == +param['top']) ? param['top'] : fixSize.top;
 		var left = (param['left'] == +param['left']) ? param['left'] : fixSize.left;
 		
-		opening(this.dom,{
+		openingAnimation(this.dom,{
 			'width' : this_width,
 			'top' : top,
 			'left' : left
@@ -417,10 +425,7 @@
 			this_pop.close();
 		});
 		
-		if(this._mask){
-			showMask();
-		}
-		
+		this._mask && showMask();
 	}
 	//使用close方法
 	POP.prototype['close'] = CLOSEMETHOD('zoomOut',150);
@@ -442,26 +447,20 @@
 		var param = param || {};
 		var this_pop = this;
 
-		var this_text = param['text'] || '\u8BF7\u8F93\u5165\u786E\u8BA4\u4FE1\u606F！';
+		var this_text = param['text'] || 'need text in parameter!';
 		var callback = param['callback'] || null;
 		var this_html = confirm_tpl.replace(/{text}/,this_text);
 		this._mask = typeof(param['mask']) == 'boolean' ? param['mask'] : true;
 		this.dom = utils.createDom(this_html)[0];
 		this.closeFn = param['closeFn'] || null;
 		
-		//显示蒙层
-		if(this._mask){
-			showMask();
-		}
-		
 		add_confirm(this.dom,param,function(){
 			this_pop.close();
 		});
 		var newPosition = adaption(300,160);
-		// create pop
 		
 		private_fixedScreenTopDom.appendChild(this.dom);
-		opening(this.dom,{
+		openingAnimation(this.dom,{
 			'width' : 300,
 			'left' : newPosition.screenLeft,
 			'top' : newPosition.top - 100
@@ -470,7 +469,8 @@
 				'top' : newPosition.screenTop - 100
 			});
 		});
-
+		
+		this._mask && showMask();
 	}
 	CONFIRM.prototype['close'] = CLOSEMETHOD('fade');
 
@@ -481,22 +481,20 @@
 	function ASK(text,callback,param){
 		var this_pop = this;
 		var param = param || {};
-		var this_text = text || '\u8BF7\u8F93\u5165\u786E\u8BA4\u4FE1\u606F！';
+		var this_text = text || 'need text in parameter!';
 		var this_html = ask_tpl.replace(/{text}/,this_text);
 
 		this.dom = utils.createDom(this_html)[0];
 		this.inputDom = utils.findByClassName(this_pop.dom,'UI_ask_key')[0];
 		this.closeFn =  null;
 		this.callback = callback || null;
-
-		var this_html = confirmBar_tpl.replace(/{(\w+)}/g,function(a,key){
-			if(key == 'confirm'){
-				return '确定';
-			}else if(key == 'cancel'){
-				return '取消';
-			}
+		
+		var confirm_html = render(confirmBar_tpl,{
+			'confirm' : '确定',
+			'cancel' : '取消'
 		});
-		this.dom.appendChild(utils.createDom(this_html)[0]);
+		
+		this.dom.appendChild(utils.createDom(confirm_html)[0]);
 		
 		//确定
 		utils.bind(this.dom,'click','.UI_pop_confirm_ok',function(){
@@ -520,7 +518,7 @@
 
 		private_fixedScreenTopDom.appendChild(this.dom);
 		
-		opening(this.dom,{
+		openingAnimation(this.dom,{
 			'width' : 300,
 			'left' : newPosition.screenLeft,
 			'top' : private_scrollTop + private_winH/2 - 100
@@ -542,12 +540,12 @@
 	 * prompt
 	 * 
 	 **/
-	function prompt(txt,time){
+	function prompt(text,time){
 		var this_prompt = this;
-		var txt = txt || '\u8BF7\u8F93\u5165\u5185\u5BB9';
+		var text = text || 'need text in arguments!';
 		this.dom = utils.createDom(prompt_tpl)[0];
 
-		this.tips(txt,time);
+		this.tips(text,time);
 		
 		var newPosition = adaption(260,100);
 		// create pop
@@ -568,12 +566,11 @@
 		if(txt){
 			utils.findByClassName(this.dom,'UI_cnt')[0].innerHTML = txt;
 		}
-		if(time == 0){
-			return
+		if(time != 0){
+			setTimeout(function(){
+				this_prompt.close();
+			},(time || 1500));
 		}
-		setTimeout(function(){
-			this_prompt.close();
-		},(time || 1500));
 	};
 
 	/**
@@ -661,7 +658,7 @@
 		//记录body的scrollY设置
 		this._bodyOverflowY = utils.getStyle(document.body,'overflowY');
 		
-		opening(this.dom,{
+		openingAnimation(this.dom,{
 			'width' : private_docW,
 			'top' : private_scrollTop,
 			'left' : 0
@@ -685,7 +682,7 @@
 		utils.css(this.cntDom,{
 			'overflowY' : 'hidden'
 		});
-		utils.zoomOut(this.cntDom,400, function(){
+		utils.zoomOut(this.dom,400, function(){
 			utils.removeNode(me.dom);
 		});
 	};
@@ -717,12 +714,9 @@
 			list_html += '<a class="UI_select_btn" href="javascript:void(0)">' + list[i][0] + '</a>';
 			fns.push(list[i][1]);
 		}
-		var this_html = select_tpl.replace(/\{(\w+)\}/g,function(a,b){
-			if(b == 'list'){
-				return list_html;
-			}else if(b == 'caption'){
-				return caption_html;
-			}
+		var this_html = render(select_tpl,{
+			'list' : list_html,
+			'caption' : caption_html
 		});
 		
 		this.dom = utils.createDom(this_html)[0];
@@ -759,9 +753,8 @@
 		}
 		
 		//显示蒙层
-		if(this._mask){
-			showMask();
-		}
+		this._mask && showMask();
+		
 		var btns = utils.findByClassName(this.dom,'UI_select_btn');
 		for(var i=0,total=btns.length;i<total;i++){
 			(function(index){
@@ -782,10 +775,9 @@
 		},
 		'config' : {
 			'gap' : function(name,value){
-				if(name && name.match(/(top|right|bottom|left)/)){
-					if(parseInt(value)){
-						private_CONFIG.gap[name] = value;
-					}
+				//name符合top/right/bottom/left,且value值为数字类型（兼容字符类型）
+				if(name && typeof(private_CONFIG.gap[name]) == 'number' && value && value == +value){
+					private_CONFIG.gap[name] = parseInt(value);
 				}
 			},
 			'zIndex' : function(num){
@@ -1425,6 +1417,23 @@
 				DOM.style['display'] = 'none';
 				fn && fn.call(DOM);
 			});
+		},
+		'render' : function (str, data){
+			if(!str || !data){
+				return '';
+			}
+			return (new Function("obj",
+				"var p=[];" +
+				"with(obj){p.push('" +
+				str
+				.replace(/[\r\t\n]/g, " ")
+				.split("<%").join("\t")
+				.replace(/((^|%>)[^\t]*)'/g, "$1\r")
+				.replace(/\t=(.*?)%>/g, "',$1,'")
+				.split("\t").join("');")
+				.split("%>").join("p.push('")
+				.split("\r").join("\\'")
+			+ "');}return p.join('');"))(data);
 		}
     }
 });
