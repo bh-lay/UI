@@ -72,12 +72,16 @@ define(function (window,document) {
 	function each(arr,fn){
 		//检测输入的值
 		if(typeof(arr) == 'object' && typeof(fn) == 'function'){
-			if(typeof(arr.length) != undefined){
-				for(var i=0,total=arr.length;i<total;i++){
+			var Length = arr.length;
+			if(Length && Length == +Length){
+				for(var i=0;i<Length;i++){
 					fn.call(this,i,arr[i]);
 				}
 			}else{
 				for(var i in arr){
+					if (!arr.hasOwnProperty(i)){
+						continue;
+					}
 					fn.call(this,i,arr[i]);
 				}
 			}
