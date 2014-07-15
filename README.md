@@ -1,4 +1,4 @@
-响应式用户交互组件库UI（[demo](http://htmlpreview.github.io/?https://github.com/bh-lay/UI/blob/master/demo.html)）
+响应式用户交互组件库UI（[demo(稳定版)](http://bh-lay.com/demo/lab/UI/demo.html)、[demo（最新版）](http://htmlpreview.github.io/?https://github.com/bh-lay/UI/blob/master/demo.html)）
 ======
 
 #一、简介
