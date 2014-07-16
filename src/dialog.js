@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2014-7-15 23:55
+ * @modified 2014-7-16 21:51
  * 
  **/
 
@@ -280,7 +280,7 @@
 			}
 			
 			var DOM = this.dom;
-			if(!effect){
+			if(effect == 'none'){
 				utils.removeNode(DOM);
 			}else if(effect == 'fade'){
 				utils.fadeOut(DOM,time,function(){

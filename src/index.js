@@ -280,7 +280,7 @@
 			}
 			
 			var DOM = this.dom;
-			if(!effect){
+			if(effect == 'none'){
 				utils.removeNode(DOM);
 			}else if(effect == 'fade'){
 				utils.fadeOut(DOM,time,function(){
