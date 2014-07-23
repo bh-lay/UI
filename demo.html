@@ -40,32 +40,37 @@
 		background: #fff;
 		border-radius:4px;
 		overflow: hidden;
-		box-shadow: 1px 1px 3px rgba(0,0,0,0.4)
+		box-shadow: 1px 1px 3px rgba(0,0,0,0.7)
 	}
 	.demoItem h3{
-		line-height:25px;
+		line-height:30px;
 		margin:0px;
 		padding: 5px 0px;
 		text-align: center;
 		color: #eee;
-		font-size: 16px;
+		font-size: 17px;
 		font-weight: normal;
 		background: #444;
 	}
 	.btnList{
-		display: table;
 		width: 100%;
+		overflow: hidden;
 	}
 	.btnList a{
-		display: table-cell;
+		display: block;
 		height: 40px;
 		line-height: 40px;
 		text-align:center;
 		text-decoration:none;
-		color: #333;
+		border-top: 1px solid #ddd;
+		margin-top: -1px;
+		color: #666;
+		font-size: 14px;
+		transition: 0.3s;
 	}
 	.btnList a:hover{
 		background: #f4f4f4;
+		color: #222;
 	}
 	
 	</style>
@@ -79,10 +84,10 @@
 		<div class="demoItem">
 			<h3>弹框</h3>
 			<div class="btnList">
-				<a href="javascript:void(0)" onclick="showPop(this)" >内容</a>
-				<a href="javascript:void(0)" onclick="showTitlePop(this)">标题</a>
-				<a href="javascript:void(0)" onclick="showMaskPop(this)">蒙层</a>
-				<a href="javascript:void(0)" onclick="showConfirmPop(this)">标题 + 蒙层 + confirm</a>
+				<a href="javascript:void(0)" onclick="showPop(this)" >纯内容</a>
+				<a href="javascript:void(0)" onclick="showTitlePop(this)">内容 + 标题</a>
+				<a href="javascript:void(0)" onclick="showMaskPop(this)">内容 + 蒙层</a>
+				<a href="javascript:void(0)" onclick="showConfirmPop(this)">内容 + 标题 + 蒙层 + confirm</a>
 			</div>
 		</div>
 		<div class="demoItem">
@@ -102,8 +107,6 @@
 			<h3>对话框</h3>
 			<div class="btnList">
 				<a href="javascript:void(0)" onclick="showConfirm(this)" >确认</a>
-			</div>
-			<div class="btnList">
 				<a href="javascript:void(0)" onclick="showAsk(this)" >询问</a>
 			</div>
 		</div>
@@ -111,8 +114,6 @@
 			<h3>浮层</h3>
 			<div class="btnList">
 				<a href="javascript:void(0)" onclick="showPlane(this)" >屌丝层</a>
-			</div>
-			<div class="btnList">
 				<a href="javascript:void(0)" onclick="showCover(this)" >全屏</a>
 			</div>
 		</div>
