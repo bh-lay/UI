@@ -5,27 +5,117 @@
 	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
 	<title>UI_demo</title>
 	<style type="text/css">
-	body{background:#aaa;margin:0px;padding:80px 20px 50px;height:550px}
-	.cnt{max-width:400px;margin:auto;font-family:"Microsoft Yahei";}
-	input{width:100%;height:40px;display:block;margin:0px 0px 20px;padding:0px;font-family:inherit;}
-	h1{font-weight:normal;font-size: 28px;}
-	p{font-size:14px;color:#777;}
-	b{font-size:18px;color:#333;font-weight:normal;}
-	i{color:#333;padding:0px 5px;}
+	body{background:#eee;margin:0px;padding:0px 0px 50px;height:550px;font-family:"Microsoft Yahei";}
+	
+	.cpt {
+		padding: 50px 0px 20px;
+		margin-bottom: 30px;
+		text-align: center;
+		background: #333;
+		border-bottom: 1px solid #fff;
+		box-shadow:0px 0px 20px #fff;
+	}
+	.cpt h1{
+		margin:0px;
+		font-weight:normal;
+		font-size: 28px;
+		letter-spacing: 5px;
+		color:#fff;
+	}
+	.cpt p{font-size:14px;color:#666;}
+	.cpt b{
+		padding: 0px 5px;
+		font-size:18px;
+		color:#eee;
+		font-weight:normal;
+	}
+	.cpt i{
+		color:#ccc;
+		padding:0px 5px;
+	}
+	
+	.cnt{max-width:440px;margin:auto;}
+	.demoItem{
+		margin: 0px 0px 20px;
+		background: #fff;
+		border-radius:4px;
+		overflow: hidden;
+		box-shadow: 1px 1px 3px rgba(0,0,0,0.4)
+	}
+	.demoItem h3{
+		line-height:25px;
+		margin:0px;
+		padding: 5px 0px;
+		text-align: center;
+		color: #eee;
+		font-size: 16px;
+		font-weight: normal;
+		background: #444;
+	}
+	.btnList{
+		display: table;
+		width: 100%;
+	}
+	.btnList a{
+		display: table-cell;
+		height: 40px;
+		line-height: 40px;
+		text-align:center;
+		text-decoration:none;
+		color: #333;
+	}
+	.btnList a:hover{
+		background: #f4f4f4;
+	}
+	
 	</style>
 </head>
 <body>
-	<div class="cnt">
+	<div class="cpt">
 		<h1>响应式用户交互组件库</h1>
-		<p>当前为<b>等待资源响应状态</b><i>正在检测尺寸</i>（分界线460px）</p>
-		<input type="button" onclick="showPop(this)" value="弹框"/>
-		<input type="button" onclick="showConfirmPop(this)" value="带对话的弹框"/>
-		<input type="button" onclick="showSelect(this)" value="选择列表(样式响应)"/>
-		<input type="button" onclick="showConfirm(this)" value="确认框"/>
-		<input type="button" onclick="showAsk(this)" value="问我点啥吧"/>
-		<input type="button" onclick="showMessage()" value="提示信息"/>
-		<input type="button" onclick="showPlane(this)" value="屌丝层"/>
-		<input type="button" onclick="showCover(this)" value="全屏浮层"/>
+		<p>当前为<b>等待资源响应状态</b><i>正在检测尺寸</i>（分界线640px）</p>
+	</div>
+	<div class="cnt">
+		<div class="demoItem">
+			<h3>弹框</h3>
+			<div class="btnList">
+				<a href="javascript:void(0)" onclick="showPop(this)" >内容</a>
+				<a href="javascript:void(0)" onclick="showTitlePop(this)">标题</a>
+				<a href="javascript:void(0)" onclick="showMaskPop(this)">蒙层</a>
+				<a href="javascript:void(0)" onclick="showConfirmPop(this)">标题 + 蒙层 + confirm</a>
+			</div>
+		</div>
+		<div class="demoItem">
+			<h3>选择列表,（响应式）</h3>
+			<div class="btnList">
+				<a href="javascript:void(0)" onclick="showSelect(this)" >侬想组啥？</a>
+			</div>
+		</div>
+		<div class="demoItem">
+			<h3>提示信息</h3>
+			<div class="btnList">
+				<a href="javascript:void(0)" onclick="UI.prompt('我快死了')" >默认</a>
+				<a href="javascript:void(0)" onclick="showMessage(this)" >一直显示</a>
+			</div>
+		</div>
+		<div class="demoItem">
+			<h3>对话框</h3>
+			<div class="btnList">
+				<a href="javascript:void(0)" onclick="showConfirm(this)" >确认</a>
+			</div>
+			<div class="btnList">
+				<a href="javascript:void(0)" onclick="showAsk(this)" >询问</a>
+			</div>
+		</div>
+		<div class="demoItem">
+			<h3>浮层</h3>
+			<div class="btnList">
+				<a href="javascript:void(0)" onclick="showPlane(this)" >屌丝层</a>
+			</div>
+			<div class="btnList">
+				<a href="javascript:void(0)" onclick="showCover(this)" >全屏</a>
+			</div>
+		</div>
 	</div>
 	<!--
 	<script type="text/javascript" src="src/dialog.min.js"></script>
@@ -38,11 +128,29 @@
 			  'html' : '<div style="height:340px;background:url(http://asset.bh-lay.com/images/cover/newSkin.jpg) no-repeat center"></div>'
 			});
 		}
+		
+		function showTitlePop(elem){
+			var pop = UI.pop({
+			  'from' : elem,
+			  'title' : '给你看个帅哥',
+			  'html' : '<div style="height:340px;background:url(http://asset.bh-lay.com/images/cover/newSkin.jpg) no-repeat center"></div>'
+			});
+		}
+		
+		function showMaskPop(elem){
+			var pop = UI.pop({
+			  'from' : elem,
+			  'mask' : true,
+			  'html' : '<div style="height:340px;background:url(http://asset.bh-lay.com/images/cover/newSkin.jpg) no-repeat center"></div>'
+			});
+		}
+		
 		function showConfirmPop(elem){
 			UI.pop({
 			  'title' : '这哥们儿帅么',
-			  'html' : '<div style="height:200px;background:url(http://asset.bh-lay.com/images/cover/newSkin.jpg) no-repeat center"></div>',
+			  'html' : '<div style="height:340px;background:url(http://asset.bh-lay.com/images/cover/newSkin.jpg) no-repeat center"></div>',
 			  'from' : elem,
+			  'mask' : true,
 			  'confirm' : {
 			    'btns' : ['好帅哦','真丑'],
 			    'callback' : function(){
@@ -65,8 +173,17 @@
 			  }
 			});
 		}
-		function showMessage(){
-			UI.prompt('我快死了');
+		
+		var active_prompt = null;
+		function showMessage(elem){
+			if(active_prompt){
+				elem.innerHTML = '一直显示';
+				active_prompt.close();
+				active_prompt = null;
+			}else{
+				elem.innerHTML = '关掉吧';
+				active_prompt = UI.prompt('我快死了',0);
+			}
 		}
 		var active_select = null;
 		function showSelect(elem){
@@ -106,7 +223,7 @@
 				'width' : UI._utils.outerWidth(elem) + 20,
 				'top' : offset.top - 150,
 				'left' : offset.left - 10,
-				'html' : '<div style="height:150px;line-height:150px;text-align:center;color:#333;background:#eee;box-shadow: 0px 0px 10px #000;">我最可怜，点一下外面就没了</div>',
+				'html' : '<div style="height:150px;line-height:150px;text-align:center;color:#333;background:#fff;box-shadow: 0px 0px 10px #000;">我最可怜，点一下外面就没了</div>',
 				'closeFn' : function(){
 					active_plane = null;
 				}
@@ -119,8 +236,13 @@
 				'html' : '<div style="color:#333;text-align:center;padding:100px 0px;">关闭按钮好搓啊，给个建议呗！<br/><br/><br/><br/><br/><br/>关闭按钮好搓啊，给个建议呗！<br/><br/><br/><br/><br/><br/>关闭按钮好搓啊，给个建议呗！<br/><br/><br/><br/><br/><br/>关闭按钮好搓啊，给个建议呗！<br/><br/><br/><br/><br/><br/>关闭按钮好搓啊，给个建议呗！<br/><br/><br/><br/><br/><br/>关闭按钮好搓啊，给个建议呗！<br/><br/><br/><br/><br/><br/>关闭按钮好搓啊，给个建议呗！<br/><br/><br/><br/><br/><br/>关闭按钮好搓啊，给个建议呗！</div>'
 			});
 		}
+		
+		var active_ask = null;			
 		function showAsk(elem){
-			UI.ask('你今年多大了？',function(year){
+			if(active_ask) {
+				return
+			}
+			active_ask = UI.ask('你今年多大了？',function(year){
 				if(year == +year){
 					if(year > 30){
 						UI.prompt('都' + year + '岁了啊，这么老啊！');
@@ -136,6 +258,9 @@
 			},{
 			  'from' : elem,
 			});
+			active_ask.closeFn = function(){
+				active_ask = null;
+			};
 		}
 		
 		var bodyDom;
@@ -149,7 +274,7 @@
 			var numDom = document.getElementsByTagName('i')[0];
 			var deviceDom = document.getElementsByTagName('b')[0];
 			numDom.innerHTML = width + 'px';
-			if(width > 460){
+			if(width > 640){
 				deviceDom.innerHTML = 'WEB端';
 			}else{
 				deviceDom.innerHTML = '手机端';

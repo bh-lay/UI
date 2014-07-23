@@ -251,7 +251,7 @@
 	function showMask(){
 		private_maskCount++
 		if(private_maskCount==1){
-			utils.fadeIn(private_maskDom,100);
+			utils.fadeIn(private_maskDom,400);
 		}
 	}
 	
@@ -275,7 +275,7 @@
 			if(this._mask){
 				private_maskCount--
 				if(private_maskCount==0){
-					utils.fadeOut(private_maskDom,80);
+					utils.fadeOut(private_maskDom,400);
 				}
 			}
 			
@@ -723,7 +723,7 @@
 		this._mask = true;
 		this.closeFn = param.closeFn || null;
 		
-		if(private_docW > 460){
+		if(private_docW > 640){
 			this._mask = false;
 			new PLANE({
 				'top' : param.top || 100,
