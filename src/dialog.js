@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2014-7-24 16:15
+ * @modified 2014-7-24 18:36
  * 
  **/
 
@@ -58,6 +58,7 @@
 		private_fixedScreenBottomDom = utils.findByClassName(private_allCnt,'UI_fixedScreenBottom_cnt')[0],
 		private_cssDom = null,
 		private_head = document.head || document.getElementsByTagName('head')[0],
+		private_body = document.body,
 		private_docW,
 		private_winH,
 		private_docH,
@@ -75,19 +76,19 @@
 		'zIndex' : 499
 	};
 	
-	var bodyDom;
+	var docDom;
 	if (document.compatMode == "BackCompat") {
-		bodyDom = document.body;
+		docDom = private_body;
 	}else{
 		//document.compatMode == \"CSS1Compat\" 
-		bodyDom = document.documentElement;
+		docDom = document.documentElement;
 	}
 	function refreshSize(){
 		//重新计算窗口尺寸
-		private_scrollTop = document.documentElement.scrollTop == 0 ? document.body.scrollTop : document.documentElement.scrollTop;
+		private_scrollTop = document.documentElement.scrollTop == 0 ? private_body.scrollTop : document.documentElement.scrollTop;
 		private_winH = window.innerHeight || document.documentElement.clientHeight;
-		private_docH = bodyDom.scrollHeight;
-		private_docW = bodyDom.clientWidth;
+		private_docH = docDom.scrollHeight;
+		private_docW = docDom.clientWidth;
 		
 		//向css环境写入动态css
 		private_cssDom && utils.removeNode(private_cssDom);
@@ -107,7 +108,7 @@
 		private_head.appendChild(styleSheet);
 		
 		//插入弹框基础dom
-		document.body.appendChild(private_allCnt);
+		private_body.appendChild(private_allCnt);
 		
 		//释放掉无用的内存
 		popCSS = null;
@@ -246,15 +247,43 @@
 	}
 	
 	/**
+	 * 模糊效果
+	 */
+	function setRootElementsStyle(cssObj){
+		var doms = private_body.childNodes;
+		for(var i=0,total=doms.length;i<total;i++){
+			if(doms[i] != private_allCnt && doms[i].nodeType ==1 && doms[i].tagName != 'SCRIPT' && doms[i].tagName != 'LINK' && doms[i].tagName != 'STYLE'){
+				utils.css(doms[i],cssObj);
+			}
+		}
+	}
+	var blur = removeBlur = null;
+	if(utils.supports('-webkit-filter')){
+		blur = function (){
+			setRootElementsStyle({
+				'-webkit-filter' : 'blur(5px)',
+				'transition' : '0.1s'
+			});
+		};
+		removeBlur = function (){
+			setRootElementsStyle({
+				'-webkit-filter' : 'blur(0)',
+				'transition' : '0.5s'
+			});
+		};
+	}
+	
+	
+	/**
 	 * 显示蒙层 
 	 */
 	function showMask(){
 		private_maskCount++
 		if(private_maskCount==1){
 			utils.fadeIn(private_maskDom,400);
+			blur && blur();
 		}
 	}
-	
 	/**
 	 * 可定制关闭方法
 	 * 上下文要求
@@ -276,6 +305,7 @@
 				private_maskCount--
 				if(private_maskCount==0){
 					utils.fadeOut(private_maskDom,400);
+					removeBlur && removeBlur();
 				}
 			}
 			
@@ -305,7 +335,10 @@
 	 **/
 	var animDom = utils.createDom('<div style="position:absolute;background:#fff;"></div>')[0];
 	function openingAnimation(DOM,cssEnd,fromDom,time,tween,fn){
-		var normalHeight = cssEnd.height || utils.getStyle(DOM,'height');
+		utils.css(DOM,{
+			'width' : cssEnd.width
+		});
+		var normalHeight = cssEnd.height || utils.outerHeight(DOM);
 		utils.hide(DOM);
 		var cssStart = {
 			'width' : cssEnd.width,
@@ -320,8 +353,8 @@
 			var offset = utils.offset(fromDom);
 			cssStart.top = offset.top;
 			cssStart.left = offset.left;
-			cssStart.height = utils.getStyle(fromDom,'height');
-			cssStart.width = utils.getStyle(fromDom,'width');
+			cssStart.height = utils.outerHeight(fromDom);
+			cssStart.width = utils.outerWidth(fromDom);
 			cssStart.opacity = 0.5;
 		}
 		//放置于初始位置
@@ -656,14 +689,14 @@
 				
 		private_fixedScreenTopDom.appendChild(this.dom);
 		//记录body的scrollY设置
-		this._bodyOverflowY = utils.getStyle(document.body,'overflowY');
+		this._bodyOverflowY = utils.getStyle(private_body,'overflowY');
 		
 		openingAnimation(this.dom,{
 			'width' : private_docW,
 			'top' : private_scrollTop,
 			'left' : 0
 		},param.from,200,'QuadEaseIn',function(){
-			utils.css(document.body,{
+			utils.css(private_body,{
 				'overflowY' : 'hidden'
 			});
 			utils.css(me.dom,{
@@ -676,7 +709,7 @@
 	COVER.prototype['close'] = function(){
 		var me = this;
 		
-		utils.css(document.body,{
+		utils.css(private_body,{
 			'overflowY' : me._bodyOverflowY
 		});
 		utils.css(this.cntDom,{
@@ -819,23 +852,21 @@
 	
 	//判断是否支持css属性
 	var supports = (function() {
-		var div = document.createElement('div'),
-			vendors = 'Khtml,Ms,O,Moz,Webkit'.split(' '),
+		var styles = document.createElement('div')['style'],
+			vendors = 'Webkit Khtml Ms O Moz'.split(/\s/),
 			len = vendors.length;
 		
 		return function(prop) {
-			if ( prop in div.style ){
-				return true;
+			if ( prop in styles ){
+				return prop;
 			}
 
 			prop = prop.replace(/^[a-z]/, function(val) {
 				return val.toUpperCase();
 			});
-	
 			for(var i = 0; i<len; i++){
-				if ( vendors[len] + prop in div.style ) {
-					break 
-					return true;
+				if ( vendors[i] + prop in styles ) {
+					return ('-' + vendors[i] + '-' + prop).toLowerCase();
 				}
 			}
 			return false;

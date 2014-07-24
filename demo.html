@@ -5,11 +5,13 @@
 	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
 	<title>UI_demo</title>
 	<style type="text/css">
-	body{
+	html,body{
 		background:#eee;
 		margin:0px;
 		padding:0px;
 		height:100%;
+		position:relative;
+		overflow: hidden;
 		font-family:"Microsoft Yahei";
 	}
 	#wrapper{
@@ -18,7 +20,7 @@
 		left:0px;
 		width: 100%;
 		height: 100%;
-		overflow:auto;
+		overflow:scroll;
 	}
 	#loading_mask{
 		position: absolute;
@@ -134,7 +136,8 @@
 			<h3>提示信息</h3>
 			<div class="btnList">
 				<a href="javascript:void(0)" onclick="UI.prompt('我快死了')" >默认（3s关闭）</a>
-				<a href="javascript:void(0)" onclick="showMessage(this)" >一直显示</a>
+				<a href="javascript:void(0)" onclick="UI.prompt('我快死了',500)" >指定时间（0.5s关闭）</a>
+				<a href="javascript:void(0)" onclick="showMessage(this)" >一直显示（别点）</a>
 			</div>
 		</div>
 		<div class="demoItem">
@@ -218,11 +221,11 @@
 		var active_prompt = null;
 		function showMessage(elem){
 			if(active_prompt){
-				elem.innerHTML = '一直显示';
+				elem.innerHTML = '一直显示（别点）';
 				active_prompt.close();
 				active_prompt = null;
 			}else{
-				elem.innerHTML = '关掉吧';
+				elem.innerHTML = '想关掉它，点我啊';
 				active_prompt = UI.prompt('我快死了',0);
 			}
 		}
@@ -262,7 +265,7 @@
 			var offset = UI._utils.offset(elem);
 			active_plane = UI.plane({
 				'width' : UI._utils.outerWidth(elem) - 20,
-				'top' : offset.top - 150,
+				'top' : offset.top - 140,
 				'left' : offset.left + 10,
 				'html' : '<div style="height:150px;line-height:150px;text-align:center;color:#333;background:#fff;box-shadow: 0px 0px 10px #000;">我最可怜，点一下外面就没了</div>',
 				'closeFn' : function(){
@@ -326,8 +329,19 @@
 			UI._utils.bind(window,'resize',countSize);
 			var loadingDom = document.getElementById('loading_mask');
 			setTimeout(function(){
-				UI._utils.fadeOut(loadingDom,500);
-			},100);
+				UI._utils.fadeOut(loadingDom,500,function(){
+					if(UI._utils.supports('-webkit-filter')){
+						UI.pop({
+							'html' : ['<div style="text-align:center">',
+								'<h3>太棒了，您的浏览器简直帅到爆了！</h3>',
+								'<p>您所体验的效果超过了所有IE鬼！</p>',
+							'</div>'].join(''),
+							'mask' : true
+						});
+					}
+				});
+			},200);
+			
 		});
 	</script>
 </body>

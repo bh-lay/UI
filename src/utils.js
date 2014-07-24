@@ -6,23 +6,21 @@ define(function (window,document) {
 	
 	//判断是否支持css属性
 	var supports = (function() {
-		var div = document.createElement('div'),
-			vendors = 'Khtml,Ms,O,Moz,Webkit'.split(' '),
+		var styles = document.createElement('div')['style'],
+			vendors = 'Webkit Khtml Ms O Moz'.split(/\s/),
 			len = vendors.length;
 		
 		return function(prop) {
-			if ( prop in div.style ){
-				return true;
+			if ( prop in styles ){
+				return prop;
 			}
 
 			prop = prop.replace(/^[a-z]/, function(val) {
 				return val.toUpperCase();
 			});
-	
 			for(var i = 0; i<len; i++){
-				if ( vendors[len] + prop in div.style ) {
-					break 
-					return true;
+				if ( vendors[i] + prop in styles ) {
+					return ('-' + vendors[i] + '-' + prop).toLowerCase();
 				}
 			}
 			return false;

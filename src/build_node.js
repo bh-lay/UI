@@ -77,6 +77,15 @@ function write(src,str){
 //
 //
 
-var newContent = checkMainFiles('index.js');
-write('dialog.js',newContent);
-console.log('successful!\n');
+	
+fs.watch('./',function(type,file){
+	if(file == 'dialog.js'){
+		return;
+	}
+	console.log('\n\n' + file + ' changed' + new Date());
+	var newContent = checkMainFiles('index.js');
+	write('dialog.js',newContent);
+	console.log('successful!\n');
+});
+
+
