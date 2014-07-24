@@ -261,14 +261,12 @@
 	if(utils.supports('-webkit-filter')){
 		blur = function (){
 			setRootElementsStyle({
-				'-webkit-filter' : 'blur(5px)',
-				'transition' : '0.1s'
+				'-webkit-filter' : 'blur(2px)'
 			});
 		};
 		removeBlur = function (){
 			setRootElementsStyle({
-				'-webkit-filter' : 'blur(0)',
-				'transition' : '0.5s'
+				'-webkit-filter' : 'blur(0)'
 			});
 		};
 	}
@@ -490,7 +488,7 @@
 		add_confirm(this.dom,param,function(){
 			this_pop.close();
 		});
-		var newPosition = adaption(300,160);
+		var newPosition = adaption(300,utils.outerHeight(this.dom));
 		
 		private_fixedScreenTopDom.appendChild(this.dom);
 		openingAnimation(this.dom,{
