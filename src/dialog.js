@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2014-7-23 17:55
+ * @modified 2014-7-24 16:15
  * 
  **/
 
@@ -626,8 +626,8 @@
 		utils.css(this.dom,{
 			'width' : param['width'] || 240,
 			'height' :param['height'] || null,
-			'top' : param['top'] || 300,
-			'left' : param['left'] || 800
+			'top' : param['top'] == +param['top'] ? param['top'] : 300,
+			'left' : param['left'] == +param['left'] ? param['left'] : 800
 		});
 		private_mainDom.appendChild(this.dom);
 	}

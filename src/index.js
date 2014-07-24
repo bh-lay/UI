@@ -626,8 +626,8 @@
 		utils.css(this.dom,{
 			'width' : param['width'] || 240,
 			'height' :param['height'] || null,
-			'top' : param['top'] || 300,
-			'left' : param['left'] || 800
+			'top' : param['top'] == +param['top'] ? param['top'] : 300,
+			'left' : param['left'] == +param['left'] ? param['left'] : 800
 		});
 		private_mainDom.appendChild(this.dom);
 	}

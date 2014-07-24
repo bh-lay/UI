@@ -5,8 +5,41 @@
 	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
 	<title>UI_demo</title>
 	<style type="text/css">
-	body{background:#eee;margin:0px;padding:0px 0px 50px;height:550px;font-family:"Microsoft Yahei";}
-	
+	body{
+		background:#eee;
+		margin:0px;
+		padding:0px;
+		height:100%;
+		font-family:"Microsoft Yahei";
+	}
+	#wrapper{
+		position: relative;
+		top:0px;
+		left:0px;
+		width: 100%;
+		height: 100%;
+		overflow:auto;
+	}
+	#loading_mask{
+		position: absolute;
+		top:0px;
+		left:0px;
+		width: 100%;
+		height: 100%;
+		background: #333;
+	}
+	.loading_mask_txt{
+		position: absolute;
+		top:50%;
+		left:0px;
+		width: 100%;
+		height: 40px;
+		margin-top: -20px;
+		text-align: center;
+		letter-spacing: 5px;
+		color: #ccc;
+		font-size: 24px;
+	}
 	.cpt {
 		padding: 50px 0px 20px;
 		margin-bottom: 30px;
@@ -34,9 +67,9 @@
 		padding:0px 5px;
 	}
 	
-	.cnt{max-width:440px;margin:auto;}
+	.cnt{max-width:460px;margin:auto;}
 	.demoItem{
-		margin: 0px 0px 20px;
+		margin: 0px 10px 20px;
 		background: #fff;
 		border-radius:4px;
 		overflow: hidden;
@@ -76,9 +109,10 @@
 	</style>
 </head>
 <body>
+<div id="wrapper">
 	<div class="cpt">
 		<h1>响应式用户交互组件库</h1>
-		<p>当前为<b>等待资源响应状态</b><i>正在检测尺寸</i>（分界线640px）</p>
+		<p>当前为<b>等待响应状态</b><i>正在检测尺寸</i>（分界线640px）</p>
 	</div>
 	<div class="cnt">
 		<div class="demoItem">
@@ -116,6 +150,12 @@
 				<a href="javascript:void(0)" onclick="showPlane(this)" >屌丝层</a>
 				<a href="javascript:void(0)" onclick="showCover(this)" >全屏</a>
 			</div>
+		</div>
+	</div>
+</div>
+	<div id="loading_mask">
+		<div class="loading_mask_txt">
+			正在加载……
 		</div>
 	</div>
 	<!--
@@ -215,15 +255,15 @@
 		}
 		var active_plane = null;
 		function showPlane(elem){
-			var offset = UI._utils.offset(elem);
 			if(active_plane){
 				active_plane.close();
 				return
 			}
+			var offset = UI._utils.offset(elem);
 			active_plane = UI.plane({
-				'width' : UI._utils.outerWidth(elem) + 20,
+				'width' : UI._utils.outerWidth(elem) - 20,
 				'top' : offset.top - 150,
-				'left' : offset.left - 10,
+				'left' : offset.left + 10,
 				'html' : '<div style="height:150px;line-height:150px;text-align:center;color:#333;background:#fff;box-shadow: 0px 0px 10px #000;">我最可怜，点一下外面就没了</div>',
 				'closeFn' : function(){
 					active_plane = null;
@@ -284,7 +324,10 @@
 		UI._utils.ready(function(){
 			countSize();
 			UI._utils.bind(window,'resize',countSize);
-			UI.prompt('游戏开始了！');
+			var loadingDom = document.getElementById('loading_mask');
+			setTimeout(function(){
+				UI._utils.fadeOut(loadingDom,500);
+			},100);
 		});
 	</script>
 </body>
