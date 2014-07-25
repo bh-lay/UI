@@ -101,6 +101,11 @@
 		private_head.appendChild(private_cssDom);
 	}
 	
+	//检测是否为数字
+	function isNum(ipt){
+		return (ipt !== '') && (ipt == +ipt) ? true : false;
+	}
+	
 	//初始化组件基础功能
 	utils.ready(function(){
 		//插入css样式表
@@ -156,13 +161,6 @@
 		utils.bind(window,'scroll',rebuild_fn);
 	});
 	
-	//简单的模版处理
-	function render(tpl,data){
-		return tpl.replace(/\{(\w+)\}/g,function(a,b){
-			return data[b] || '';
-		});
-	}
-	
 	//限制位置区域的方法
 	function fix_position(top,left,width,height){
 		var gap = private_CONFIG.gap;
@@ -197,7 +195,7 @@
 		
 		var gap = private_CONFIG.gap;
 		var screenTop = (private_winH - height)/2;
-		if(screenTop<gap.top){
+		if(screenTop < gap.top){
 			screenTop = gap.top;
 		}
 		
@@ -218,10 +216,9 @@
 		if(typeof(param) == "function"){
 			callback = param;
 		}else if(typeof(param) == "object"){
-			if(param['btns']){
-				btns[0] = param['btns'][0];
-				btns[1] = param['btns'][1];
-			}
+			var paramBtns = param['btns'] || [];
+			btns[0] = paramBtns[0] || btns[0];
+			btns[1] = paramBtns[1] || btns[1];
 			if(typeof(param['callback']) == "function"){
 				callback = param['callback'];
 			}
@@ -229,7 +226,7 @@
 				cancel = param['cancel'];
 			}
 		}
-		var this_html = render(confirmBar_tpl,{
+		var this_html = utils.render(confirmBar_tpl,{
 			'confirm' : btns[0],
 			'cancel' : btns[1]
 		});
@@ -251,11 +248,11 @@
 	 */
 	function setRootElementsStyle(cssObj){
 		var doms = private_body.childNodes;
-		for(var i=0,total=doms.length;i<total;i++){
-			if(doms[i] != private_allCnt && doms[i].nodeType ==1 && doms[i].tagName != 'SCRIPT' && doms[i].tagName != 'LINK' && doms[i].tagName != 'STYLE'){
-				utils.css(doms[i],cssObj);
+		utils.each(doms,function(i,dom){
+			if(dom != private_allCnt && dom.nodeType ==1 && dom.tagName != 'SCRIPT' && dom.tagName != 'LINK' && dom.tagName != 'STYLE'){
+				utils.css(dom,cssObj);
 			}
-		}
+		});
 	}
 	var blur = removeBlur = null;
 	if(utils.supports('-webkit-filter')){
@@ -270,7 +267,6 @@
 			});
 		};
 	}
-	
 	
 	/**
 	 * 显示蒙层 
@@ -443,8 +439,8 @@
 		
 		//fix position get size
 		var fixSize = adaption(this_width,utils.outerHeight(this.dom));
-		var top = (param['top'] == +param['top']) ? param['top'] : fixSize.top;
-		var left = (param['left'] == +param['left']) ? param['left'] : fixSize.left;
+		var top = isNum(param['top']) ? param['top'] : fixSize.top;
+		var left = isNum(param['left']) ? param['left'] : fixSize.left;
 		
 		openingAnimation(this.dom,{
 			'width' : this_width,
@@ -477,10 +473,12 @@
 	function CONFIRM(param){
 		var param = param || {};
 		var this_pop = this;
-
+		
 		var this_text = param['text'] || 'need text in parameter!';
 		var callback = param['callback'] || null;
-		var this_html = confirm_tpl.replace(/{text}/,this_text);
+		var this_html = utils.render(confirm_tpl,{
+			'text' : this_text
+		});
 		this._mask = typeof(param['mask']) == 'boolean' ? param['mask'] : true;
 		this.dom = utils.createDom(this_html)[0];
 		this.closeFn = param['closeFn'] || null;
@@ -510,17 +508,19 @@
 	 * ASK 
 	 */
 	function ASK(text,callback,param){
-		var this_pop = this;
+		var me = this;
 		var param = param || {};
 		var this_text = text || 'need text in parameter!';
-		var this_html = ask_tpl.replace(/{text}/,this_text);
+		var this_html = utils.render(ask_tpl,{
+			'text' : this_text
+		});
 
 		this.dom = utils.createDom(this_html)[0];
-		this.inputDom = utils.findByClassName(this_pop.dom,'UI_ask_key')[0];
+		this.inputDom = utils.findByClassName(me.dom,'UI_ask_key')[0];
 		this.closeFn =  null;
 		this.callback = callback || null;
 		
-		var confirm_html = render(confirmBar_tpl,{
+		var confirm_html = utils.render(confirmBar_tpl,{
 			'confirm' : '确定',
 			'cancel' : '取消'
 		});
@@ -529,20 +529,13 @@
 		
 		//确定
 		utils.bind(this.dom,'click','.UI_pop_confirm_ok',function(){
-			var value = this_pop.inputDom.value;
-			if(this_pop.callback){
-				//根据执行结果判断是否要关闭弹框
-				var result = this_pop.callback(value);
-				if(result != false){
-					this_pop.close();
-				}
-			}else{
-				this_pop.close();
-			}
+			var value = me.inputDom.value;
+			//根据执行结果判断是否要关闭弹框
+			me.callback ? ((me.callback(value) != false) && me.close()) : me.close();
 		});
 		//取消
 		utils.bind(this.dom,'click','.UI_pop_confirm_cancel',function(){
-			this_pop.close();
+			me.close();
 		});
 
 		var newPosition = adaption(300,160);
@@ -554,7 +547,7 @@
 			'left' : newPosition.screenLeft,
 			'top' : private_scrollTop + private_winH/2 - 100
 		},param.from,100,'BackEaseOut',function(){
-			utils.css(this_pop.dom,{
+			utils.css(me.dom,{
 				'marginTop' : -100,
 				'top' : ''
 			});
@@ -611,9 +604,9 @@
 	private_activePlane = [];
 	
 	function closePlane(){
-		for(var i=0,total=private_activePlane.length;i<total;i++){
-			private_activePlane[i].close();
-		}
+		utils.each(private_activePlane,function(i,item){
+			item.close();
+		});
 		private_activePlane = [];
 	}
 	/**
@@ -657,8 +650,8 @@
 		utils.css(this.dom,{
 			'width' : param['width'] || 240,
 			'height' :param['height'] || null,
-			'top' : param['top'] == +param['top'] ? param['top'] : 300,
-			'left' : param['left'] == +param['left'] ? param['left'] : 800
+			'top' : isNum(param['top']) ? param['top'] : 300,
+			'left' : isNum(param['left']) ? param['left'] : 800
 		});
 		private_mainDom.appendChild(this.dom);
 	}
@@ -722,32 +715,20 @@
 	 * 选择功能
 	 */
 	function SELECT(list,param){
-		var this_sel = this;
+		var this_sel = this,
+			param = param || {},
+			list = list || [],
+			fns = [],
+			nameList = [];
 		
-		var list = list || [];
-		var param = param || {};
-		
-		var caption_html = '';
-		if(param.title){
-			caption_html += '<div class="UI_selectCpt">';
-			if(param.title){
-				caption_html += '<h3>' + param.title + '</h3>';
-			}
-			if(param.intro){
-				caption_html += '<p>' + param.intro + '</p>';
-			}
-			caption_html += '</div>';
-		}
-		
-		var fns = [];
-		var list_html = '';
-		for(var i=0,total=list.length;i<total;i++){
-			list_html += '<a class="UI_select_btn" href="javascript:void(0)">' + list[i][0] + '</a>';
-			fns.push(list[i][1]);
-		}
-		var this_html = render(select_tpl,{
-			'list' : list_html,
-			'caption' : caption_html
+		utils.each(list,function(i,item){
+			nameList.push(item[0]);
+			fns.push(item[1]);
+		});
+		var this_html = utils.render(select_tpl,{
+			'list' : nameList,
+			'title' : param.title || null,
+			'intro' : param.intro || null
 		});
 		
 		this.dom = utils.createDom(this_html)[0];
@@ -755,7 +736,6 @@
 		this.closeFn = param.closeFn || null;
 		
 		if(private_docW > 640){
-			this._mask = false;
 			new PLANE({
 				'top' : param.top || 100,
 				'left' : param.left || 100,
@@ -787,14 +767,12 @@
 		this._mask && showMask();
 		
 		var btns = utils.findByClassName(this.dom,'UI_select_btn');
-		for(var i=0,total=btns.length;i<total;i++){
-			(function(index){
-				utils.bind(btns[index],'click',function(){
-					fns[index] && fns[index]();
-					this_sel.close();
-				});
-			})(i);
-		}
+		utils.each(btns,function(index,btn){
+			utils.bind(btn,'click',function(){
+				fns[index] && fns[index]();
+				this_sel.close();
+			});
+		});
 	}
 	SELECT.prototype['close'] = CLOSEMETHOD('slide',200);
 	/**
@@ -807,7 +785,7 @@
 		'config' : {
 			'gap' : function(name,value){
 				//name符合top/right/bottom/left,且value值为数字类型（兼容字符类型）
-				if(name && typeof(private_CONFIG.gap[name]) == 'number' && value && value == +value){
+				if(name && typeof(private_CONFIG.gap[name]) == 'number' && isNum(value)){
 					private_CONFIG.gap[name] = parseInt(value);
 				}
 			},

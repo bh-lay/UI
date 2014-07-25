@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2014-7-25 0:22
+ * @modified 2014-7-25 22:57
  * 
  **/
 
@@ -29,13 +29,13 @@
 	var allCnt_tpl = '<div class="UI_lawyer"><div class="UI_mask"></div><div class="UI_main_cnt"></div><div class="UI_fixedScreenTop_cnt"></div><div class="UI_fixedScreenBottom_cnt"></div></div>';
 	var dragMask_tpl = '<div style="position:absolute;top:0px;left:0px;z-index:100000;cursor:default;"></div>';
 	var pop_tpl = '<div class="UI_pop"><div class="UI_pop_cpt"></div><div class="UI_pop_cnt"></div><a href="javascript:void(0)" class="UI_pop_close" title="\u5173\u95ED">×</a></div>';
-	var confirm_tpl = '<div class="UI_confirm"><div class="UI_confirm_text">{text}</div></div>';
-	var ask_tpl = '<div class="UI_ask"><div class="UI_ask_text">{text}</div><input class="UI_ask_key" type="text" name="UI_ask_key"/></div>';
-	var confirmBar_tpl = '<div class="UI_pop_confirm"><a href="javascript:void(0)" class="UI_pop_confirm_ok">{confirm}</a><a href="javascript:void(0)" class="UI_pop_confirm_cancel">{cancel}</a></div>';
+	var confirm_tpl = '<div class="UI_confirm"><div class="UI_confirm_text"><%=text %></div></div>';
+	var ask_tpl = '<div class="UI_ask"><div class="UI_ask_text"><%=text %></div><input class="UI_ask_key" type="text" name="UI_ask_key"/></div>';
+	var confirmBar_tpl = '<div class="UI_pop_confirm"><a href="javascript:void(0)" class="UI_pop_confirm_ok"><%=confirm %></a><a href="javascript:void(0)" class="UI_pop_confirm_cancel"><%=cancel %></a></div>';
 	var plane_tpl = '<div class="UI_plane"></div>';
 	var prompt_tpl = '<div class="UI_prompt"><div class="UI_cnt"></div></div>';
 	var cover_tpl = '<div class="UI_cover"><div class="UI_coverCnt"></div><a href="javascript:void(0)" class="UI_coverClose">〉</a></div>';
-	var select_tpl = '<div class="UI_select"><div class="UI_select_body"> {caption} <div class="UI_selectCnt">{list}</div></div><div class="UI_selectCancel"><a class="UI_select_btn" href="javascript:void(0)" data-index="-1">取消</a></div></div>';
+	var select_tpl = '<div class="UI_select"><div class="UI_select_body"><% if(title){ %><div class="UI_selectCpt"><h3><%=title %></h3><% if(intro){ %><p><%=intro %></p><% } %></div><% } %><div class="UI_selectCnt"><% for(var i=0,total=list.length;i<total;i++){ %><a class="UI_select_btn" href="javascript:void(0)"><%=list[i] %></a><% } %></div></div><div class="UI_selectCancel"><a class="UI_select_btn" href="javascript:void(0)" data-index="-1">取消</a></div></div>';
 	
 	var popCSS = '.UI_lawyer{position:absolute;top:0px;left:0px;z-index:4999;width:100%;height:0px;overflow:visible;font-family:"Microsoft Yahei"}.UI_lawyer a,.UI_lawyer a:hover{text-decoration:none;-webkit-tap-highlight-color:rgba(0,0,0,0);-webkit-tap-highlight-color:transparent;}.UI_lawyer a:active{outline:none;}.UI_mask{position:absolute;top:0px;left:0px;width:100%;background-color:#000;display:none;opacity:0.5;filter:alpha(opacity=50)}.UI_main_cnt{width:0px;height:0px;overflow:visible;}.UI_fixedScreenTop_cnt{position:absolute;z-index:4999;top:0px;left:0px;width:100%;height:0px;overflow:visible;}.UI_fixedScreenBottom_cnt{position:absolute;z-index:4999;left:0px;width:100%;height:0px;overflow:visible;}.UI_pop{width:200px;_border:1px solid #eee;position:absolute;top:400px;left:300px;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}.UI_pop_cpt{position:relative;height:36px;line-height:36px;overflow:hidden;border-bottom:1px solid #ebebeb;color:#777;font-size:16px;text-indent:15px;cursor:default;}.UI_pop_cnt{position:relative;min-height:100px;overflow:auto;width:100%;}.UI_pop_close{display:block;position:absolute;top:0px;right:0px;width:40px;height:36px;text-align:center;color:#ddd;font:bold 20px/36px "simsun";transition:0.1s;}.UI_pop_close:hover{color:#888;}.UI_pop_close:active{color:#222}.UI_confirm{_border:1px solid #eee;position:absolute;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}.UI_confirm_text{padding:30px 10px 20px;line-height:26px;text-align:center;font-size:20px;color:#333;}.UI_ask{_border:1px solid #eee;position:absolute;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}.UI_ask_text{padding:25px 10px 15px;line-height:26px;text-align:center;font-size:18px;color:#333;}.UI_ask input{display:block;margin:0px auto 15px;height:30px;padding:4px 4px;line-height:22px;box-sizing:border-box;width:90%;}.UI_pop_confirm{overflow:hidden;text-align:center;border-top:1px solid #ddd;}.UI_pop_confirm a{display:block;width:50%;height:36px;float:left;font-size:14px;line-height:36px;color:#03f;box-sizing:border-box;transition:0.15s;}.UI_pop_confirm_ok{border-right:1px solid #ddd;}@media(min-width:640px){.UI_pop_confirm a:hover{background:#eee}}.UI_plane{width:200px;position:absolute;top:400px;left:300px;}.UI_prompt{width:240px;position:absolute;left:50%;margin-left:-120px;box-sizing:content-box;background:#fff;_border:1px solid #fafafa;border-radius:4px;box-shadow:2px 2px 10px rgba(0,0,0,0.5);}.UI_cnt{padding:30px 10px;font-size:18px;color:#222;text-align:center;}.UI_cover{position:absolute;top:0px;left:0px;width:100%;height:100px;}.UI_coverCnt{position:relative;width:100%;height:100%;background:#fff;overflow:auto}.UI_coverClose{display:block;position:absolute;top:50%;left:0px;width:20px;height:60px;padding-left:5px;text-align:center;color:#ddd;font:30px/60px "simsun";background:#555;}.UI_coverClose:hover{background-color:#333;color:#fff;}.UI_select{position:absolute;width:100%;padding-bottom:10px;}.UI_select a{display:block;height:40px;line-height:40px;text-align:center;color:#03f;font-size:16px;}.UI_select_body{margin:0px 10px 10px;border-radius:8px;overflow:hidden;background:#fff;}.UI_selectCpt{padding:8px 0px;}.UI_selectCpt h3,.UI_selectCpt p{margin:0px;font-size:15px;line-height:18px;text-align:center;color:#aaa;font-weight:normal;}.UI_selectCpt p{font-size:12px;}.UI_selectCnt a{border-top:1px solid #eee;}.UI_selectCancel{margin:0px 10px;border-radius:8px;overflow:hidden;background:#fff;}.UI_main_cnt .UI_select{width:200px;padding:0px;border-radius:0px;box-shadow:2px 1px 5px rgba(0,0,0,0.8)}.UI_main_cnt .UI_select_body,.UI_main_cnt .UI_selectCancel{margin:0px;border-radius:0px;}.UI_main_cnt .UI_select a{height:30px;line-height:30px;font-size:14px;}.UI_main_cnt .UI_selectCancel{border-top:1px solid #eee;background:#eee}';
 	
@@ -101,6 +101,11 @@
 		private_head.appendChild(private_cssDom);
 	}
 	
+	//检测是否为数字
+	function isNum(ipt){
+		return (ipt !== '') && (ipt == +ipt) ? true : false;
+	}
+	
 	//初始化组件基础功能
 	utils.ready(function(){
 		//插入css样式表
@@ -156,13 +161,6 @@
 		utils.bind(window,'scroll',rebuild_fn);
 	});
 	
-	//简单的模版处理
-	function render(tpl,data){
-		return tpl.replace(/\{(\w+)\}/g,function(a,b){
-			return data[b] || '';
-		});
-	}
-	
 	//限制位置区域的方法
 	function fix_position(top,left,width,height){
 		var gap = private_CONFIG.gap;
@@ -197,7 +195,7 @@
 		
 		var gap = private_CONFIG.gap;
 		var screenTop = (private_winH - height)/2;
-		if(screenTop<gap.top){
+		if(screenTop < gap.top){
 			screenTop = gap.top;
 		}
 		
@@ -218,10 +216,9 @@
 		if(typeof(param) == "function"){
 			callback = param;
 		}else if(typeof(param) == "object"){
-			if(param['btns']){
-				btns[0] = param['btns'][0];
-				btns[1] = param['btns'][1];
-			}
+			var paramBtns = param['btns'] || [];
+			btns[0] = paramBtns[0] || btns[0];
+			btns[1] = paramBtns[1] || btns[1];
 			if(typeof(param['callback']) == "function"){
 				callback = param['callback'];
 			}
@@ -229,7 +226,7 @@
 				cancel = param['cancel'];
 			}
 		}
-		var this_html = render(confirmBar_tpl,{
+		var this_html = utils.render(confirmBar_tpl,{
 			'confirm' : btns[0],
 			'cancel' : btns[1]
 		});
@@ -251,11 +248,11 @@
 	 */
 	function setRootElementsStyle(cssObj){
 		var doms = private_body.childNodes;
-		for(var i=0,total=doms.length;i<total;i++){
-			if(doms[i] != private_allCnt && doms[i].nodeType ==1 && doms[i].tagName != 'SCRIPT' && doms[i].tagName != 'LINK' && doms[i].tagName != 'STYLE'){
-				utils.css(doms[i],cssObj);
+		utils.each(doms,function(i,dom){
+			if(dom != private_allCnt && dom.nodeType ==1 && dom.tagName != 'SCRIPT' && dom.tagName != 'LINK' && dom.tagName != 'STYLE'){
+				utils.css(dom,cssObj);
 			}
-		}
+		});
 	}
 	var blur = removeBlur = null;
 	if(utils.supports('-webkit-filter')){
@@ -270,7 +267,6 @@
 			});
 		};
 	}
-	
 	
 	/**
 	 * 显示蒙层 
@@ -443,8 +439,8 @@
 		
 		//fix position get size
 		var fixSize = adaption(this_width,utils.outerHeight(this.dom));
-		var top = (param['top'] == +param['top']) ? param['top'] : fixSize.top;
-		var left = (param['left'] == +param['left']) ? param['left'] : fixSize.left;
+		var top = isNum(param['top']) ? param['top'] : fixSize.top;
+		var left = isNum(param['left']) ? param['left'] : fixSize.left;
 		
 		openingAnimation(this.dom,{
 			'width' : this_width,
@@ -477,10 +473,12 @@
 	function CONFIRM(param){
 		var param = param || {};
 		var this_pop = this;
-
+		
 		var this_text = param['text'] || 'need text in parameter!';
 		var callback = param['callback'] || null;
-		var this_html = confirm_tpl.replace(/{text}/,this_text);
+		var this_html = utils.render(confirm_tpl,{
+			'text' : this_text
+		});
 		this._mask = typeof(param['mask']) == 'boolean' ? param['mask'] : true;
 		this.dom = utils.createDom(this_html)[0];
 		this.closeFn = param['closeFn'] || null;
@@ -510,17 +508,19 @@
 	 * ASK 
 	 */
 	function ASK(text,callback,param){
-		var this_pop = this;
+		var me = this;
 		var param = param || {};
 		var this_text = text || 'need text in parameter!';
-		var this_html = ask_tpl.replace(/{text}/,this_text);
+		var this_html = utils.render(ask_tpl,{
+			'text' : this_text
+		});
 
 		this.dom = utils.createDom(this_html)[0];
-		this.inputDom = utils.findByClassName(this_pop.dom,'UI_ask_key')[0];
+		this.inputDom = utils.findByClassName(me.dom,'UI_ask_key')[0];
 		this.closeFn =  null;
 		this.callback = callback || null;
 		
-		var confirm_html = render(confirmBar_tpl,{
+		var confirm_html = utils.render(confirmBar_tpl,{
 			'confirm' : '确定',
 			'cancel' : '取消'
 		});
@@ -529,20 +529,13 @@
 		
 		//确定
 		utils.bind(this.dom,'click','.UI_pop_confirm_ok',function(){
-			var value = this_pop.inputDom.value;
-			if(this_pop.callback){
-				//根据执行结果判断是否要关闭弹框
-				var result = this_pop.callback(value);
-				if(result != false){
-					this_pop.close();
-				}
-			}else{
-				this_pop.close();
-			}
+			var value = me.inputDom.value;
+			//根据执行结果判断是否要关闭弹框
+			me.callback ? ((me.callback(value) != false) && me.close()) : me.close();
 		});
 		//取消
 		utils.bind(this.dom,'click','.UI_pop_confirm_cancel',function(){
-			this_pop.close();
+			me.close();
 		});
 
 		var newPosition = adaption(300,160);
@@ -554,7 +547,7 @@
 			'left' : newPosition.screenLeft,
 			'top' : private_scrollTop + private_winH/2 - 100
 		},param.from,100,'BackEaseOut',function(){
-			utils.css(this_pop.dom,{
+			utils.css(me.dom,{
 				'marginTop' : -100,
 				'top' : ''
 			});
@@ -611,9 +604,9 @@
 	private_activePlane = [];
 	
 	function closePlane(){
-		for(var i=0,total=private_activePlane.length;i<total;i++){
-			private_activePlane[i].close();
-		}
+		utils.each(private_activePlane,function(i,item){
+			item.close();
+		});
 		private_activePlane = [];
 	}
 	/**
@@ -657,8 +650,8 @@
 		utils.css(this.dom,{
 			'width' : param['width'] || 240,
 			'height' :param['height'] || null,
-			'top' : param['top'] == +param['top'] ? param['top'] : 300,
-			'left' : param['left'] == +param['left'] ? param['left'] : 800
+			'top' : isNum(param['top']) ? param['top'] : 300,
+			'left' : isNum(param['left']) ? param['left'] : 800
 		});
 		private_mainDom.appendChild(this.dom);
 	}
@@ -722,32 +715,20 @@
 	 * 选择功能
 	 */
 	function SELECT(list,param){
-		var this_sel = this;
+		var this_sel = this,
+			param = param || {},
+			list = list || [],
+			fns = [],
+			nameList = [];
 		
-		var list = list || [];
-		var param = param || {};
-		
-		var caption_html = '';
-		if(param.title){
-			caption_html += '<div class="UI_selectCpt">';
-			if(param.title){
-				caption_html += '<h3>' + param.title + '</h3>';
-			}
-			if(param.intro){
-				caption_html += '<p>' + param.intro + '</p>';
-			}
-			caption_html += '</div>';
-		}
-		
-		var fns = [];
-		var list_html = '';
-		for(var i=0,total=list.length;i<total;i++){
-			list_html += '<a class="UI_select_btn" href="javascript:void(0)">' + list[i][0] + '</a>';
-			fns.push(list[i][1]);
-		}
-		var this_html = render(select_tpl,{
-			'list' : list_html,
-			'caption' : caption_html
+		utils.each(list,function(i,item){
+			nameList.push(item[0]);
+			fns.push(item[1]);
+		});
+		var this_html = utils.render(select_tpl,{
+			'list' : nameList,
+			'title' : param.title || null,
+			'intro' : param.intro || null
 		});
 		
 		this.dom = utils.createDom(this_html)[0];
@@ -755,7 +736,6 @@
 		this.closeFn = param.closeFn || null;
 		
 		if(private_docW > 640){
-			this._mask = false;
 			new PLANE({
 				'top' : param.top || 100,
 				'left' : param.left || 100,
@@ -787,14 +767,12 @@
 		this._mask && showMask();
 		
 		var btns = utils.findByClassName(this.dom,'UI_select_btn');
-		for(var i=0,total=btns.length;i<total;i++){
-			(function(index){
-				utils.bind(btns[index],'click',function(){
-					fns[index] && fns[index]();
-					this_sel.close();
-				});
-			})(i);
-		}
+		utils.each(btns,function(index,btn){
+			utils.bind(btn,'click',function(){
+				fns[index] && fns[index]();
+				this_sel.close();
+			});
+		});
 	}
 	SELECT.prototype['close'] = CLOSEMETHOD('slide',200);
 	/**
@@ -807,7 +785,7 @@
 		'config' : {
 			'gap' : function(name,value){
 				//name符合top/right/bottom/left,且value值为数字类型（兼容字符类型）
-				if(name && typeof(private_CONFIG.gap[name]) == 'number' && value && value == +value){
+				if(name && typeof(private_CONFIG.gap[name]) == 'number' && isNum(value)){
 					private_CONFIG.gap[name] = parseInt(value);
 				}
 			},
@@ -913,19 +891,20 @@
 	 */
 	function each(arr,fn){
 		//检测输入的值
-		if(typeof(arr) == 'object' && typeof(fn) == 'function'){
-			var Length = arr.length;
-			if(Length && Length == +Length){
-				for(var i=0;i<Length;i++){
-					fn.call(this,i,arr[i]);
+		if(typeof(arr) != 'object' || typeof(fn) != 'function'){
+			return;
+		}
+		var Length = arr.length;
+		if(Length != '' && Length == +Length){
+			for(var i=0;i<Length;i++){
+				fn.call(this,i,arr[i]);
+			}
+		}else{
+			for(var i in arr){
+				if (!arr.hasOwnProperty(i)){
+					continue;
 				}
-			}else{
-				for(var i in arr){
-					if (!arr.hasOwnProperty(i)){
-						continue;
-					}
-					fn.call(this,i,arr[i]);
-				}
+				fn.call(this,i,arr[i]);
 			}
 		}
 	}
@@ -1407,7 +1386,7 @@
 			}
 			var size;
 			
-			if ( typeof elem.getBoundingClientRect !== 'undefined' ) {
+			if ( typeof(elem.getBoundingClientRect) !== 'undefined' ) {
 				size = elem.getBoundingClientRect();
 			}
 			box.screen_top = size.top;

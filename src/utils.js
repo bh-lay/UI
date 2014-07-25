@@ -69,19 +69,20 @@ define(function (window,document) {
 	 */
 	function each(arr,fn){
 		//检测输入的值
-		if(typeof(arr) == 'object' && typeof(fn) == 'function'){
-			var Length = arr.length;
-			if(Length && Length == +Length){
-				for(var i=0;i<Length;i++){
-					fn.call(this,i,arr[i]);
+		if(typeof(arr) != 'object' || typeof(fn) != 'function'){
+			return;
+		}
+		var Length = arr.length;
+		if(Length != '' && Length == +Length){
+			for(var i=0;i<Length;i++){
+				fn.call(this,i,arr[i]);
+			}
+		}else{
+			for(var i in arr){
+				if (!arr.hasOwnProperty(i)){
+					continue;
 				}
-			}else{
-				for(var i in arr){
-					if (!arr.hasOwnProperty(i)){
-						continue;
-					}
-					fn.call(this,i,arr[i]);
-				}
+				fn.call(this,i,arr[i]);
 			}
 		}
 	}
@@ -563,7 +564,7 @@ define(function (window,document) {
 			}
 			var size;
 			
-			if ( typeof elem.getBoundingClientRect !== 'undefined' ) {
+			if ( typeof(elem.getBoundingClientRect) !== 'undefined' ) {
 				size = elem.getBoundingClientRect();
 			}
 			box.screen_top = size.top;
