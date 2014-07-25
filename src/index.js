@@ -296,7 +296,7 @@
 			//处理关闭回调、蒙层检测
 			this.closeFn && this.closeFn();
 			if(this._mask){
-				private_maskCount--
+				private_maskCount--;
 				if(private_maskCount==0){
 					utils.fadeOut(private_maskDom,400);
 					removeBlur && removeBlur();
@@ -434,8 +434,10 @@
 
 		//insert html
 		this.cntDom.innerHTML = this_html;
+		utils.css(this.dom,{
+			'width' : this_width
+		});
 		private_mainDom.appendChild(this.dom);
-		
 		
 		//fix position get size
 		var fixSize = adaption(this_width,utils.outerHeight(this.dom));
@@ -486,16 +488,21 @@
 		add_confirm(this.dom,param,function(){
 			this_pop.close();
 		});
-		var newPosition = adaption(300,utils.outerHeight(this.dom));
 		
 		private_fixedScreenTopDom.appendChild(this.dom);
+		utils.css(this.dom,{
+			'width' : 300
+		});
+		var height = utils.outerHeight(this.dom);
+		var newPosition = adaption(300,height);
+		
 		openingAnimation(this.dom,{
 			'width' : 300,
 			'left' : newPosition.screenLeft,
-			'top' : newPosition.top - 100
+			'top' : newPosition.top
 		},param.from,100,'BackEaseOut',function(){
 			utils.css(this_pop.dom,{
-				'top' : newPosition.screenTop - 100
+				'top' : newPosition.screenTop
 			});
 		});
 		
@@ -529,9 +536,8 @@
 		
 		//确定
 		utils.bind(this.dom,'click','.UI_pop_confirm_ok',function(){
-			var value = me.inputDom.value;
 			//根据执行结果判断是否要关闭弹框
-			me.callback ? ((me.callback(value) != false) && me.close()) : me.close();
+			me.callback ? ((me.callback(me.inputDom.value) != false) && me.close()) : me.close();
 		});
 		//取消
 		utils.bind(this.dom,'click','.UI_pop_confirm_cancel',function(){
@@ -555,8 +561,7 @@
 	}
 	ASK.prototype['close'] = CLOSEMETHOD('fade');
 	ASK.prototype['setValue'] = function(text){
-		var text = text ? text.toString() : '';
-		this.inputDom.value = text;
+		this.inputDom.value = text.toString();
 	};
 
 

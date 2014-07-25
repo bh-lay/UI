@@ -11,6 +11,8 @@ function getStyleSheet(src){
 	txt = txt.replace(/\s+/g,' ');
 	//过滤不必要的空格
 	txt = txt.replace(/\s*({|}|;|:)\s*/g,'$1');
+	//去除最后一个分号
+	txt = txt.replace(/;}/g,'}');
 	
 	return txt;
 }

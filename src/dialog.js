@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2014-7-25 23:1
+ * @modified 2014-7-25 23:45
  * 
  **/
 
@@ -37,7 +37,7 @@
 	var cover_tpl = '<div class="UI_cover"><div class="UI_coverCnt"></div><a href="javascript:void(0)" class="UI_coverClose">〉</a></div>';
 	var select_tpl = '<div class="UI_select"><div class="UI_select_body"><% if(title){ %><div class="UI_selectCpt"><h3><%=title %></h3><% if(intro){ %><p><%=intro %></p><% } %></div><% } %><div class="UI_selectCnt"><% for(var i=0,total=list.length;i<total;i++){ %><a class="UI_select_btn" href="javascript:void(0)"><%=list[i] %></a><% } %></div></div><div class="UI_selectCancel"><a class="UI_select_btn" href="javascript:void(0)" data-index="-1">取消</a></div></div>';
 	
-	var popCSS = '.UI_lawyer{position:absolute;top:0px;left:0px;z-index:4999;width:100%;height:0px;overflow:visible;font-family:"Microsoft Yahei"}.UI_lawyer a,.UI_lawyer a:hover{text-decoration:none;-webkit-tap-highlight-color:rgba(0,0,0,0);-webkit-tap-highlight-color:transparent;}.UI_lawyer a:active{outline:none;}.UI_mask{position:absolute;top:0px;left:0px;width:100%;background-color:#000;display:none;opacity:0.5;filter:alpha(opacity=50)}.UI_main_cnt{width:0px;height:0px;overflow:visible;}.UI_fixedScreenTop_cnt{position:absolute;z-index:4999;top:0px;left:0px;width:100%;height:0px;overflow:visible;}.UI_fixedScreenBottom_cnt{position:absolute;z-index:4999;left:0px;width:100%;height:0px;overflow:visible;}.UI_pop{width:200px;_border:1px solid #eee;position:absolute;top:400px;left:300px;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}.UI_pop_cpt{position:relative;height:36px;line-height:36px;overflow:hidden;border-bottom:1px solid #ebebeb;color:#777;font-size:16px;text-indent:15px;cursor:default;}.UI_pop_cnt{position:relative;min-height:100px;overflow:auto;width:100%;}.UI_pop_close{display:block;position:absolute;top:0px;right:0px;width:40px;height:36px;text-align:center;color:#ddd;font:bold 20px/36px "simsun";transition:0.1s;}.UI_pop_close:hover{color:#888;}.UI_pop_close:active{color:#222}.UI_confirm{_border:1px solid #eee;position:absolute;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}.UI_confirm_text{padding:30px 10px 20px;line-height:26px;text-align:center;font-size:20px;color:#333;}.UI_ask{_border:1px solid #eee;position:absolute;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6);}.UI_ask_text{padding:25px 10px 15px;line-height:26px;text-align:center;font-size:18px;color:#333;}.UI_ask input{display:block;margin:0px auto 15px;height:30px;padding:4px 4px;line-height:22px;box-sizing:border-box;width:90%;}.UI_pop_confirm{overflow:hidden;text-align:center;border-top:1px solid #ddd;}.UI_pop_confirm a{display:block;width:50%;height:36px;float:left;font-size:14px;line-height:36px;color:#03f;box-sizing:border-box;transition:0.15s;}.UI_pop_confirm_ok{border-right:1px solid #ddd;}@media(min-width:640px){.UI_pop_confirm a:hover{background:#eee}}.UI_plane{width:200px;position:absolute;top:400px;left:300px;}.UI_prompt{width:240px;position:absolute;left:50%;margin-left:-120px;box-sizing:content-box;background:#fff;_border:1px solid #fafafa;border-radius:4px;box-shadow:2px 2px 10px rgba(0,0,0,0.5);}.UI_cnt{padding:30px 10px;font-size:18px;color:#222;text-align:center;}.UI_cover{position:absolute;top:0px;left:0px;width:100%;height:100px;}.UI_coverCnt{position:relative;width:100%;height:100%;background:#fff;overflow:auto}.UI_coverClose{display:block;position:absolute;top:50%;left:0px;width:20px;height:60px;padding-left:5px;text-align:center;color:#ddd;font:30px/60px "simsun";background:#555;}.UI_coverClose:hover{background-color:#333;color:#fff;}.UI_select{position:absolute;width:100%;padding-bottom:10px;}.UI_select a{display:block;height:40px;line-height:40px;text-align:center;color:#03f;font-size:16px;}.UI_select_body{margin:0px 10px 10px;border-radius:8px;overflow:hidden;background:#fff;}.UI_selectCpt{padding:8px 0px;}.UI_selectCpt h3,.UI_selectCpt p{margin:0px;font-size:15px;line-height:18px;text-align:center;color:#aaa;font-weight:normal;}.UI_selectCpt p{font-size:12px;}.UI_selectCnt a{border-top:1px solid #eee;}.UI_selectCancel{margin:0px 10px;border-radius:8px;overflow:hidden;background:#fff;}.UI_main_cnt .UI_select{width:200px;padding:0px;border-radius:0px;box-shadow:2px 1px 5px rgba(0,0,0,0.8)}.UI_main_cnt .UI_select_body,.UI_main_cnt .UI_selectCancel{margin:0px;border-radius:0px;}.UI_main_cnt .UI_select a{height:30px;line-height:30px;font-size:14px;}.UI_main_cnt .UI_selectCancel{border-top:1px solid #eee;background:#eee}';
+	var popCSS = '.UI_lawyer{position:absolute;top:0px;left:0px;z-index:4999;width:100%;height:0px;overflow:visible;font-family:"Microsoft Yahei"}.UI_lawyer a,.UI_lawyer a:hover{text-decoration:none;-webkit-tap-highlight-color:rgba(0,0,0,0);-webkit-tap-highlight-color:transparent}.UI_lawyer a:active{outline:none}.UI_mask{position:absolute;top:0px;left:0px;width:100%;background-color:#000;display:none;opacity:0.5;filter:alpha(opacity=50)}.UI_main_cnt{width:0px;height:0px;overflow:visible}.UI_fixedScreenTop_cnt{position:absolute;z-index:4999;top:0px;left:0px;width:100%;height:0px;overflow:visible}.UI_fixedScreenBottom_cnt{position:absolute;z-index:4999;left:0px;width:100%;height:0px;overflow:visible}.UI_pop{width:200px;_border:1px solid #eee;position:absolute;top:400px;left:300px;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_pop_cpt{position:relative;height:36px;line-height:36px;overflow:hidden;border-bottom:1px solid #ebebeb;color:#777;font-size:16px;text-indent:15px;cursor:default}.UI_pop_cnt{position:relative;min-height:100px;overflow:auto;width:100%}.UI_pop_close{display:block;position:absolute;top:0px;right:0px;width:40px;height:36px;text-align:center;color:#ddd;font:bold 20px/36px "simsun";transition:0.1s}.UI_pop_close:hover{color:#888}.UI_pop_close:active{color:#222}.UI_confirm{_border:1px solid #eee;position:absolute;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_confirm_text{padding:30px 10px 20px;line-height:26px;text-align:center;font-size:20px;color:#333}.UI_ask{_border:1px solid #eee;position:absolute;background:#fff;border-radius:4px;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_ask_text{padding:25px 10px 15px;line-height:26px;text-align:center;font-size:18px;color:#333}.UI_ask input{display:block;margin:0px auto 15px;height:30px;padding:4px 4px;line-height:22px;box-sizing:border-box;width:90%}.UI_pop_confirm{overflow:hidden;text-align:center;border-top:1px solid #ddd}.UI_pop_confirm a{display:block;width:50%;height:36px;float:left;font-size:14px;line-height:36px;color:#03f;box-sizing:border-box;transition:0.15s}.UI_pop_confirm_ok{border-right:1px solid #ddd}@media(min-width:640px){.UI_pop_confirm a:hover{background:#eee}}.UI_plane{width:200px;position:absolute;top:400px;left:300px}.UI_prompt{width:240px;position:absolute;left:50%;margin-left:-120px;box-sizing:content-box;background:#fff;_border:1px solid #fafafa;border-radius:4px;box-shadow:2px 2px 10px rgba(0,0,0,0.5)}.UI_cnt{padding:30px 10px;font-size:18px;color:#222;text-align:center}.UI_cover{position:absolute;top:0px;left:0px;width:100%;height:100px}.UI_coverCnt{position:relative;width:100%;height:100%;background:#fff;overflow:auto}.UI_coverClose{display:block;position:absolute;top:50%;left:0px;width:20px;height:60px;padding-left:5px;text-align:center;color:#ddd;font:30px/60px "simsun";background:#555}.UI_coverClose:hover{background-color:#333;color:#fff}.UI_select{position:absolute;width:100%;padding-bottom:10px}.UI_select a{display:block;height:40px;line-height:40px;text-align:center;color:#03f;font-size:16px}.UI_select_body{margin:0px 10px 10px;border-radius:8px;overflow:hidden;background:#fff}.UI_selectCpt{padding:8px 0px}.UI_selectCpt h3,.UI_selectCpt p{margin:0px;font-size:15px;line-height:18px;text-align:center;color:#aaa;font-weight:normal}.UI_selectCpt p{font-size:12px}.UI_selectCnt a{border-top:1px solid #eee}.UI_selectCancel{margin:0px 10px;border-radius:8px;overflow:hidden;background:#fff}.UI_main_cnt .UI_select{width:200px;padding:0px;border-radius:0px;box-shadow:2px 1px 5px rgba(0,0,0,0.8)}.UI_main_cnt .UI_select_body,.UI_main_cnt .UI_selectCancel{margin:0px;border-radius:0px}.UI_main_cnt .UI_select a{height:30px;line-height:30px;font-size:14px}.UI_main_cnt .UI_selectCancel{border-top:1px solid #eee;background:#eee}';
 	
 	var isIE67 = false;
 	if(navigator.appName == "Microsoft Internet Explorer"){
@@ -296,7 +296,7 @@
 			//处理关闭回调、蒙层检测
 			this.closeFn && this.closeFn();
 			if(this._mask){
-				private_maskCount--
+				private_maskCount--;
 				if(private_maskCount==0){
 					utils.fadeOut(private_maskDom,400);
 					removeBlur && removeBlur();
@@ -434,8 +434,10 @@
 
 		//insert html
 		this.cntDom.innerHTML = this_html;
+		utils.css(this.dom,{
+			'width' : this_width
+		});
 		private_mainDom.appendChild(this.dom);
-		
 		
 		//fix position get size
 		var fixSize = adaption(this_width,utils.outerHeight(this.dom));
@@ -486,16 +488,21 @@
 		add_confirm(this.dom,param,function(){
 			this_pop.close();
 		});
-		var newPosition = adaption(300,utils.outerHeight(this.dom));
 		
 		private_fixedScreenTopDom.appendChild(this.dom);
+		utils.css(this.dom,{
+			'width' : 300
+		});
+		var height = utils.outerHeight(this.dom);
+		var newPosition = adaption(300,height);
+		
 		openingAnimation(this.dom,{
 			'width' : 300,
 			'left' : newPosition.screenLeft,
-			'top' : newPosition.top - 100
+			'top' : newPosition.top
 		},param.from,100,'BackEaseOut',function(){
 			utils.css(this_pop.dom,{
-				'top' : newPosition.screenTop - 100
+				'top' : newPosition.screenTop
 			});
 		});
 		
@@ -529,9 +536,8 @@
 		
 		//确定
 		utils.bind(this.dom,'click','.UI_pop_confirm_ok',function(){
-			var value = me.inputDom.value;
 			//根据执行结果判断是否要关闭弹框
-			me.callback ? ((me.callback(value) != false) && me.close()) : me.close();
+			me.callback ? ((me.callback(me.inputDom.value) != false) && me.close()) : me.close();
 		});
 		//取消
 		utils.bind(this.dom,'click','.UI_pop_confirm_cancel',function(){
@@ -555,8 +561,7 @@
 	}
 	ASK.prototype['close'] = CLOSEMETHOD('fade');
 	ASK.prototype['setValue'] = function(text){
-		var text = text ? text.toString() : '';
-		this.inputDom.value = text;
+		this.inputDom.value = text.toString();
 	};
 
 
