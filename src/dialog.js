@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2014-8-12 17:5
+ * @modified 2014-8-12 17:8
  * 
  **/
 
@@ -696,7 +696,7 @@
 		var param = param || {};
 		var me = this;
 		this.dom = utils.createDom(cover_tpl)[0];
-		this._from = param.from;
+		this._from = param.from || 'top';
 		this.cntDom = utils.findByClassName(this.dom,'UI_coverCnt')[0];
 		this.closeFn = param['closeFn'] || null;
 

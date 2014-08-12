@@ -696,7 +696,7 @@
 		var param = param || {};
 		var me = this;
 		this.dom = utils.createDom(cover_tpl)[0];
-		this._from = param.from;
+		this._from = param.from || 'top';
 		this.cntDom = utils.findByClassName(this.dom,'UI_coverCnt')[0];
 		this.closeFn = param['closeFn'] || null;
 
