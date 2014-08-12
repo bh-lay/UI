@@ -151,7 +151,12 @@
 			<h3>浮层</h3>
 			<div class="btnList">
 				<a href="javascript:void(0)" onclick="showPlane(this)" >屌丝层</a>
-				<a href="javascript:void(0)" onclick="showCover(this)" >全屏</a>
+				<a href="javascript:void(0)" onclick="showCover()" >全屏（默认）</a>
+				<a href="javascript:void(0)" onclick="showCover(this)" >全屏（放大）</a>
+				<a href="javascript:void(0)" onclick="showCover(this,'top')" >全屏（上）</a>
+				<a href="javascript:void(0)" onclick="showCover(this,'bottom')" >全屏（下）</a>
+				<a href="javascript:void(0)" onclick="showCover(this,'left')" >全屏（左）</a>
+				<a href="javascript:void(0)" onclick="showCover(this,'right')" >全屏（右）</a>
 			</div>
 		</div>
 	</div>
@@ -177,6 +182,7 @@
 			var pop = UI.pop({
 			  'from' : elem,
 			  'title' : '给你看个帅哥',
+			  'from' : 'bottom',
 			  'html' : '<div style="height:300px;background:url(http://asset.bh-lay.com/images/cover/newSkin.jpg) no-repeat center"></div>'
 			});
 		}
@@ -185,6 +191,7 @@
 			var pop = UI.pop({
 			  'from' : elem,
 			  'mask' : true,
+			  'from' : 'right',
 			  'html' : '<div style="height:340px;background:url(http://asset.bh-lay.com/images/cover/newSkin.jpg) no-repeat center"></div>'
 			});
 		}
@@ -274,11 +281,27 @@
 			});
 		}
 		
-		function showCover(elem){
-			UI.cover({
-				'from' : elem,
-				'html' : '<div style="color:#333;text-align:center;padding:100px 0px;">关闭按钮好搓啊，给个建议呗！<br/><br/><br/><br/><br/><br/>关闭按钮好搓啊，给个建议呗！<br/><br/><br/><br/><br/><br/>关闭按钮好搓啊，给个建议呗！<br/><br/><br/><br/><br/><br/>关闭按钮好搓啊，给个建议呗！<br/><br/><br/><br/><br/><br/>关闭按钮好搓啊，给个建议呗！<br/><br/><br/><br/><br/><br/>关闭按钮好搓啊，给个建议呗！<br/><br/><br/><br/><br/><br/>关闭按钮好搓啊，给个建议呗！<br/><br/><br/><br/><br/><br/>关闭按钮好搓啊，给个建议呗！</div>'
-			});
+		function showCover(elem,from){
+			var param = {
+				'from' : from || elem,
+				'html' : '<div style="color:#333;text-align:center;padding:100px 0px;"><br/><br/><br/><br/><br/><br/><br/><br/>关闭按钮好搓啊，给个建议呗！</div>'
+			};
+			if(from == 'left'){
+				param.left = 0;
+				param.width = 400;
+			}else if(from == 'right'){
+				param.right = 0;
+				param.width = 400;
+			}else if(from == 'top'){
+				param.top = 0;
+				param.height = 400;
+			}else if(from == 'bottom'){
+				param.bottom = 0;
+				param.height = 400;
+			}
+			
+			
+			UI.cover(param);
 		}
 		
 		var active_ask = null;			
@@ -287,13 +310,13 @@
 				return
 			}
 			active_ask = UI.ask('你今年多大了？',function(year){
-				if(year == +year){
+				if(year && year == +year){
 					if(year > 30){
 						UI.prompt('都' + year + '岁了啊，这么老啊！');
 					}else if(year > 17){
-						UI.prompt('干柴烈火的年纪哦！');
+						UI.prompt(year + '岁呀,干柴烈火的年纪哦！');
 					}else{
-						UI.prompt('回家玩儿去！');
+						UI.prompt('才' + year + '岁啊,回家玩儿去！');
 					}
 				}else{
 					UI.prompt('写个数字会死啊!');

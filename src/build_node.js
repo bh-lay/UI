@@ -78,9 +78,7 @@ function write(src,str){
 //var txt = getJS('utils.js');
 //
 //
-
-	
-fs.watch('./',function(type,file){
+function mainFn(type,file){
 	if(file == 'dialog.js'){
 		return;
 	}
@@ -88,6 +86,9 @@ fs.watch('./',function(type,file){
 	var newContent = checkMainFiles('index.js');
 	write('dialog.js',newContent);
 	console.log('successful!\n');
-});
+}
+	
+fs.watch('./',mainFn);
+fs.watch('./template/',mainFn);
 
 

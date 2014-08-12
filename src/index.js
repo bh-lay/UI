@@ -64,7 +64,8 @@
 		private_docH,
 		private_scrollTop,
 		private_isSupportTouch = "ontouchend" in document ? true : false,
-		private_maskCount = 0;
+		private_maskCount = 0,
+		private_animation_range = 240;
 
 	var private_CONFIG = {
 		'gap' : {
@@ -278,49 +279,7 @@
 			blur && blur();
 		}
 	}
-	/**
-	 * 可定制关闭方法
-	 * 上下文要求
-	 *   关闭回调：this.closeFn
-	 *   是否有蒙层：this._mask
-	 *   dom对象：this.dom
-	 */
-	function CLOSEMETHOD(effect_define,time_define){
-		var default_effect = effect_define || null;
-		var default_time = time_define;
-		
-		return function(effect,time){
-			effect = effect || default_effect;
-			time = parseInt(time || default_time) || 80;
-			
-			//处理关闭回调、蒙层检测
-			this.closeFn && this.closeFn();
-			if(this._mask){
-				private_maskCount--;
-				if(private_maskCount==0){
-					utils.fadeOut(private_maskDom,400);
-					removeBlur && removeBlur();
-				}
-			}
-			
-			var DOM = this.dom;
-			if(effect == 'none'){
-				utils.removeNode(DOM);
-			}else if(effect == 'fade'){
-				utils.fadeOut(DOM,time,function(){
-					utils.removeNode(DOM);
-				});
-			}else if(effect == 'slide'){
-				utils.slideUp(DOM,time,function(){
-					utils.removeNode(DOM);
-				});
-			}else if(effect == 'zoomOut'){
-				utils.zoomOut(DOM,time,function(){
-					utils.removeNode(DOM);
-				});
-			}
-		}
-	}
+	
 	
 	/**
 	 * 开场动画
@@ -328,7 +287,8 @@
 	 *   动画结束，设置dom为结束样式
 	 **/
 	var animDom = utils.createDom('<div style="position:absolute;background:#fff;"></div>')[0];
-	function openingAnimation(DOM,cssEnd,fromDom,time,tween,fn){
+	function openingAnimation(DOM,cssEnd,from,time,tween,fn){
+		var fromMark = from;
 		utils.css(DOM,{
 			'width' : cssEnd.width
 		});
@@ -338,18 +298,29 @@
 			'width' : cssEnd.width,
 			'height' : cssEnd.height,
 			'left' : cssEnd.left,
-			'top' : (cssEnd.top ? cssEnd.top - 100 : null),
 			'opacity' : 0
 		};
-		if(fromDom){
+		if(isNum(cssEnd.top)){
+			cssStart.top = cssEnd.top;
+		}
+		
+		if(typeof(fromMark) == 'object'){
 			tween = 'SineEaseIn';
 			time = 200;
-			var offset = utils.offset(fromDom);
+			var offset = utils.offset(fromMark);
 			cssStart.top = offset.top;
 			cssStart.left = offset.left;
-			cssStart.height = utils.outerHeight(fromDom);
-			cssStart.width = utils.outerWidth(fromDom);
+			cssStart.height = utils.outerHeight(fromMark);
+			cssStart.width = utils.outerWidth(fromMark);
 			cssStart.opacity = 0.5;
+		}else if(fromMark == 'left'){
+			cssStart.left = cssStart.left - private_animation_range;
+		}else if(fromMark == 'right'){
+			cssStart.left = cssStart.left + private_animation_range;
+		}else if(fromMark == 'bottom'){
+			cssStart.top = cssStart.top + private_animation_range;
+		}else{
+			cssStart.top = cssStart.top - private_animation_range;
 		}
 		//放置于初始位置
 		private_mainDom.appendChild(animDom);
@@ -368,6 +339,55 @@
 			fn && fn();
 		});
 	}
+	
+	/**
+	 * 结束动画
+	 */
+	function closeAnimation(time_define,fn){
+		return function(time){
+			var me = this;
+			var time = isNum(time) ? time : parseInt(time_define) || 80;
+			var from = me._from;
+			
+			//处理关闭回调、蒙层检测
+			me.closeFn && me.closeFn();
+			if(me._mask){
+				private_maskCount--;
+				if(private_maskCount == 0){
+					utils.fadeOut(private_maskDom,400);
+					removeBlur && removeBlur();
+				}
+			}
+			
+			var DOM = me.dom;
+			var cssEnd = {
+				'opacity' : 0
+			};
+			if(from && from.tagName && from.parentNode){
+				utils.zoomOut(DOM,time,function(){
+					utils.removeNode(DOM);
+				});
+			}else if(typeof(from) == 'string'){
+				if(from == 'top'){
+					cssEnd.top = utils.getStyle(DOM,'top') - private_animation_range;
+				}else if(from == 'left'){
+					cssEnd.left = utils.getStyle(DOM,'left') - private_animation_range;
+				}else if(from == 'bottom'){
+					cssEnd.top = utils.getStyle(DOM,'top') + private_animation_range;
+				}else if(from == 'right'){
+					cssEnd.left = utils.getStyle(DOM,'left') + private_animation_range;
+				}
+				//动画开始
+				utils.animation(DOM,cssEnd,time,'SineEaseIn',function(){
+					utils.removeNode(DOM);
+					fn && fn.call(me);
+				});
+			}else{
+				utils.removeNode(DOM);
+			}
+		}
+	}
+	
 	/**
 	 * 弹框
 	 * pop 
@@ -380,7 +400,8 @@
 		this.cntDom = utils.findByClassName(this.dom,'UI_pop_cnt')[0];
 		this.closeFn = param['closeFn'] || null;
 		this._mask = param['mask'] || false;
-
+		this._from = param['from'] || 'top';
+		
 		var this_html = param['html'] || '';
 		var this_width = param['width'] || Math.min(600,private_docW-20);
 
@@ -448,7 +469,7 @@
 			'width' : this_width,
 			'top' : top,
 			'left' : left
-		},param.from,200,'QuadEaseIn');
+		},this._from,200,'QuadEaseIn');
 		
 		utils.bind(this.dom,'click','.UI_pop_close',function(){
 			this_pop.close();
@@ -457,7 +478,7 @@
 		this._mask && showMask();
 	}
 	//使用close方法
-	POP.prototype['close'] = CLOSEMETHOD('zoomOut',150);
+	POP.prototype['close'] = closeAnimation(200);
 	POP.prototype['adapt'] = function(){
 		var width = utils.outerWidth(this.dom);
 		var height = utils.outerHeight(this.dom);
@@ -482,6 +503,7 @@
 			'text' : this_text
 		});
 		this._mask = typeof(param['mask']) == 'boolean' ? param['mask'] : true;
+		this._from = param.from;
 		this.dom = utils.createDom(this_html)[0];
 		this.closeFn = param['closeFn'] || null;
 		
@@ -500,7 +522,7 @@
 			'width' : 300,
 			'left' : newPosition.screenLeft,
 			'top' : newPosition.top
-		},param.from,100,'BackEaseOut',function(){
+		},this._from,100,'BackEaseOut',function(){
 			utils.css(this_pop.dom,{
 				'top' : newPosition.screenTop
 			});
@@ -508,7 +530,7 @@
 		
 		this._mask && showMask();
 	}
-	CONFIRM.prototype['close'] = CLOSEMETHOD('fade');
+	CONFIRM.prototype['close'] = closeAnimation(200);
 
 
 	/**
@@ -523,6 +545,7 @@
 		});
 
 		this.dom = utils.createDom(this_html)[0];
+		this._from = param._from || 'top';
 		this.inputDom = utils.findByClassName(me.dom,'UI_ask_key')[0];
 		this.closeFn =  null;
 		this.callback = callback || null;
@@ -552,14 +575,15 @@
 			'width' : 300,
 			'left' : newPosition.screenLeft,
 			'top' : private_scrollTop + private_winH/2 - 100
-		},param.from,100,'BackEaseOut',function(){
+		},this._from,100,'BackEaseOut',function(){
 			utils.css(me.dom,{
 				'marginTop' : -100,
 				'top' : ''
 			});
+			me.inputDom.focus();
 		});
 	}
-	ASK.prototype['close'] = CLOSEMETHOD('fade');
+	ASK.prototype['close'] = closeAnimation(200);
 	ASK.prototype['setValue'] = function(text){
 		this.inputDom.value = text.toString();
 	};
@@ -573,7 +597,7 @@
 		var this_prompt = this;
 		var text = text || 'need text in arguments!';
 		this.dom = utils.createDom(prompt_tpl)[0];
-
+		this._from = 'top';
 		this.tips(text,time);
 		
 		var newPosition = adaption(260,100);
@@ -589,7 +613,7 @@
 		},140,'BackEaseOut');
 		
 	}
-	prompt.prototype['close'] = CLOSEMETHOD('zoomOut',150);
+	prompt.prototype['close'] = closeAnimation(80);
 	prompt.prototype['tips'] = function(txt,time){
 		var this_prompt = this;
 		if(txt){
@@ -648,6 +672,7 @@
 		this.closeFn = param['closeFn'] || null;
 
 		this.dom = utils.createDom(plane_tpl)[0];
+		this._from = null;
 
 		//insert html
 		this.dom.innerHTML = this_html;
@@ -660,7 +685,7 @@
 		});
 		private_mainDom.appendChild(this.dom);
 	}
-	PLANE.prototype['close'] = CLOSEMETHOD('fade',200);
+	PLANE.prototype['close'] = closeAnimation(200);
 
 
 	/***
@@ -671,6 +696,7 @@
 		var param = param || {};
 		var me = this;
 		this.dom = utils.createDom(cover_tpl)[0];
+		this._from = param.from;
 		this.cntDom = utils.findByClassName(this.dom,'UI_coverCnt')[0];
 		this.closeFn = param['closeFn'] || null;
 
@@ -686,35 +712,49 @@
 		private_fixedScreenTopDom.appendChild(this.dom);
 		//记录body的scrollY设置
 		this._bodyOverflowY = utils.getStyle(private_body,'overflowY');
-		
-		openingAnimation(this.dom,{
+		var cssObj = {
 			'width' : private_docW,
-			'top' : private_scrollTop,
-			'left' : 0
-		},param.from,200,'QuadEaseIn',function(){
+			'top' : private_scrollTop
+		};
+		if(isNum(param.width)){
+			cssObj.width = param.width;
+		}
+		if(isNum(param.height)){
+			cssObj.height = param.height;
+		}
+		//水平定位
+		if(isNum(param.right)){
+			cssObj.left = private_docW - cssObj.width - param.right;
+		}else if(isNum(param.left)){
+			cssObj.left = param.left;
+		}else{
+			cssObj.left = (private_docW - cssObj.width)/2
+		}
+		//垂直定位
+		if(isNum(param.bottom)){
+			cssObj.top = private_docH - (cssObj.height || private_docH) - param.bottom;
+		}else if(isNum(param.top)){
+			cssObj.top = param.top;
+		}else{
+			cssObj.top = (private_docH - (cssObj.height || private_docH))/2
+		}
+		
+		openingAnimation(this.dom,cssObj,this._from,200,'QuadEaseIn',function(){
 			utils.css(private_body,{
 				'overflowY' : 'hidden'
 			});
 			utils.css(me.dom,{
-				'width' : '',
-				'top' : 0
+				'width' : param.width ? param.width : '100%'
 			});
 		});
 	}
 	//使用close方法
-	COVER.prototype['close'] = function(){
+	COVER.prototype['close'] = closeAnimation(200,function(){
 		var me = this;
-		
 		utils.css(private_body,{
 			'overflowY' : me._bodyOverflowY
 		});
-		utils.css(this.cntDom,{
-			'overflowY' : 'hidden'
-		});
-		utils.zoomOut(this.dom,400, function(){
-			utils.removeNode(me.dom);
-		});
-	};
+	});
 
 	/**
 	 * 选择功能
@@ -779,7 +819,23 @@
 			});
 		});
 	}
-	SELECT.prototype['close'] = CLOSEMETHOD('slide',200);
+	SELECT.prototype['close'] = function(effect,time){
+		
+		//处理关闭回调、蒙层检测
+		this.closeFn && this.closeFn();
+		if(this._mask){
+			private_maskCount--;
+			if(private_maskCount==0){
+				utils.fadeOut(private_maskDom,400);
+				removeBlur && removeBlur();
+			}
+		}
+		
+		var DOM = this.dom;
+		utils.slideUp(DOM,200,function(){
+			utils.removeNode(DOM);
+		});
+	};
 	/**
 	 *  抛出对外接口
 	 */
