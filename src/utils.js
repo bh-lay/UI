@@ -132,7 +132,6 @@ define(function (window,document) {
 	 * dom设置样式
 	 */
 	function setStyle(elem,prop,value){
-	
 		if(typeof(value) != 'string' && (value != +value)){
 			return
 		}
@@ -311,7 +310,7 @@ define(function (window,document) {
 		setCss(DOM,{
 			'-webkit-transform' : 'scale(0.5)',
 			'-webkit-transition' : time + 'ms',
-			'opacity' : 0,
+			'opacity' : 0
 		});
 		
 		var delay;
@@ -321,7 +320,7 @@ define(function (window,document) {
 				setCss(DOM,{
 					'-webkit-transform' : 'scale(1)',
 					'-webkit-transition' : transt,
-					'opacity' : op,
+					'opacity' : op
 				});
 				fn && fn.call(DOM);
 			},20);
@@ -491,10 +490,6 @@ define(function (window,document) {
 		'bind' : bind,
 		'unbind' : removeHandler,
 		'drag' : drag,
-		//隐藏dom
-		'hide' : function (elem){
-			elem.style['display'] = 'none';
-		},
 		'animation' : function (a,b,c,d,e) {
 			return new anim(a,b,c,d,e);
 		},

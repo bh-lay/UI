@@ -188,7 +188,6 @@
 .UI_cover {
 	position : absolute;
 	top : 0px;
-	left : 0px;
 	width : 100%;
 	height : 100px;
 }
@@ -211,6 +210,7 @@
 	font : 18px/30px "simsun";
 	background : #eee;
 	border-radius : 15px;
+	border: 1px solid #aaa;
 }
 .UI_coverClose:hover {
 	background-color : #333;
