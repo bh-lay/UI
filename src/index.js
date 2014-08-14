@@ -287,15 +287,26 @@
 	 *   动画结束，设置dom为结束样式
 	 **/
 	function openAnimation(DOM,from,time,tween,fn){
+		if(!from){
+			//不需要动画
+			return
+		}
+		
 		var offset = utils.offset(DOM);
+		
+		//动画第一帧css
 		var cssStart,
-			cssEnd = {
+			//动画需要改变的css
+			cssAnim = {},
+			//目标对象的源css
+			cssOrignal = {
 				width : utils.outerWidth(DOM),
 				height : utils.outerHeight(DOM),
 				top : offset.top,
-				left : offset.left,
-				opacity : 1
+				left : offset.left
 			};
+		
+		//参数是dom对象
 		if(from && from.tagName && from.parentNode){
 			tween = 'SineEaseIn';
 			time = 200;
@@ -304,41 +315,45 @@
 				top : offset_from.top,
 				left : offset_from.left,
 				width : utils.outerWidth(from),
-				height : utils.outerHeight(from),
-				opacity : 0
-			}
-		//FIXME
+				height : utils.outerHeight(from)
+			};
+			cssAnim = utils.clone(cssOrignal,{});
+		//参数是字符串
 		}else if(typeof(from) == 'string'){
-			//拷贝结束动画
-			cssStart = utils.clone(cssEnd,{});
-			cssStart.opacity = 0;
-			
+			//拷贝最终位置
+			cssStart = utils.clone(cssOrignal,{});
 			if(from == 'left'){
-				cssStart.left = cssStart.left - private_animation_range;
+				cssStart.left = cssOrignal.left - private_animation_range;
+				cssAnim.left = cssOrignal.left;
 			}else if(from == 'right'){
-				cssStart.left = cssStart.left + private_animation_range;
+				cssStart.left = cssOrignal.left + private_animation_range;
+				cssAnim.left = cssOrignal.left;
 			}else if(from == 'bottom'){
-				cssStart.top = cssStart.top + private_animation_range;
+				cssStart.top = cssOrignal.top + private_animation_range;
+				cssAnim.top = cssOrignal.top;
 			}else{
-				cssStart.top = cssStart.top - private_animation_range;
+				cssStart.top = cssOrignal.top - private_animation_range;
+				cssAnim.top = cssOrignal.top;
 			}
-		}else{
-			//不需要动画
-			return
+			
 		}
 		
 		//创建一个dom用来完成动画
 		var animDom = utils.createDom('<div style="position:absolute;background:#fff;"></div>')[0];
 		//隐藏真实dom
 		utils.css(DOM,{
-			display : 'none'
+			'display' : 'none'
 		});
 		
 		//放置于初始位置
-		private_mainDom.appendChild(animDom);
+		cssStart.opacity = 0;
 		utils.css(animDom,cssStart);
+		private_mainDom.appendChild(animDom);
+		
 		//动画开始
-		utils.animation(animDom,cssEnd,time,tween,function(){
+		cssAnim.opacity = 1;
+		utils.animation(animDom,cssAnim,time,tween,function(){
+			//删除动画dom
 			utils.removeNode(animDom);
 			//显示真实dom
 			utils.css(DOM,{
