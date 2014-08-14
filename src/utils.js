@@ -289,12 +289,11 @@ define(function (window,document) {
 			'-webkit-transform' : 'translate3d(0, 0, 0)',
 			'-webkit-transition' : durtime + 'ms'
 		});
-		
 		var delay;
 		function endFn(){
 			clearTimeout(delay);
 			delay = setTimeout(function(){
-				removeEventListener("webkitTransitionEnd",endFn, true);
+				elem.removeEventListener("webkitTransitionEnd",endFn, true);
 				//还原transition值
 				setCss(elem,{
 					'-webkit-transition' : transition_start
