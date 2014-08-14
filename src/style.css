@@ -264,7 +264,7 @@
 	width : 200px;
 	padding : 0px;
 	border-radius : 0px;
-	box-shadow : 2px 1px 5px rgba(0,0,0,0.8)
+	box-shadow : 2px 1px 5px rgba(0,0,0,0.8);
 }
 .UI_main_cnt .UI_select_body,
 .UI_main_cnt .UI_selectCancel {
@@ -273,11 +273,10 @@
 }
 
 .UI_main_cnt .UI_select a{
-	height : 30px;
-	line-height : 30px;
+	height : 34px;
+	line-height : 34px;
 	font-size : 14px;
 }
 .UI_main_cnt .UI_selectCancel{
-	border-top : 1px solid #eee;
-	background : #eee
+	display : none;
 }

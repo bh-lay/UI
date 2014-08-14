@@ -6,7 +6,7 @@ define(function (window,document) {
 	
 	//判断是否支持css属性
 	var supports = (function() {
-		var styles = document.createElement('div')['style'],
+		var styles = document.createElement('div').style,
 			vendors = 'Webkit Khtml Ms O Moz'.split(/\s/),
 			len = vendors.length;
 		
@@ -63,6 +63,24 @@ define(function (window,document) {
 	function TypeOf(obj) {
 		return Object.prototype.toString.call(obj).match(/\s(\w+)/)[1];
 	}
+	
+	/**
+	 * 对象拷贝
+	 *
+	 */
+	function clone(fromObj,toObj){   
+		for(var i in fromObj){   
+			if(typeof fromObj[i] == "object"){   
+				toObj[i] = fromObj[i].constructor==Array ? [] : {};
+				
+				clone(fromObj[i],toObj[i]);   
+				continue;   
+			}   
+			toObj[i] = fromObj[i];
+		}
+		return toObj;
+	}
+	
 	/**
  	 * 遍历数组或对象
 	 * 
@@ -137,7 +155,7 @@ define(function (window,document) {
 		}
 		prop = prop.toString();
 		if (prop == "opacity") {
-			elem.style['filter'] = 'alpha(opacity=' + (value * 100)+ ')';
+			elem.style.filter = 'alpha(opacity=' + (value * 100)+ ')';
 			value = value;
 		} else if (value == +value && value != ''){
 			value = value + "px";
@@ -198,11 +216,10 @@ define(function (window,document) {
     })();
 	
 	/**
-	 * 动画类
-	 *
+	 * JS动画类
+	 * 内部类，不检测参数
 	 */
-    function anim(elem,cssObj,durtime) {
-		var args = arguments;
+    function JS_anim(elem,cssObj,durtime,animType,onEnd) {
         this.elem = elem;
 		
 		var cssParse = parseCSS_forAnim(this.elem, cssObj);
@@ -214,24 +231,12 @@ define(function (window,document) {
 		//属性目标值Array
 		this.cssEnd = cssParse[2];
 		this.durtime = durtime;
-		this.animType = "Linear";
-		this.onEnd = null;
-		if (args.length < 3) {
-			throw new Error("missing arguments [dom,cssObj,durtime]");
-		} else {
-			if (TypeOf(args[3]) == "Function") {
-				this.onEnd = args[3];
-			}else if (typeof (args[3]) == "string") {
-				this.animType = args[3];
-			}
-			
-			if (TypeOf(args[4]) == "Function") {
-				this.onEnd = args[4];
-			}
-		}
+		this.animType = animType || "Linear";
+		this.onEnd = onEnd;
+		
 		this.startAnim();
     }
-    anim.prototype['startAnim'] = function () {
+    JS_anim.prototype.startAnim = function () {
 		var me = this;
 		//全部时间 | 开始时间
 		var time_all = this.durtime;
@@ -273,7 +278,60 @@ define(function (window,document) {
 		requestAnimationFrame(showFrame);
 	};
 	
-	
+	/**
+	 * css3动画
+	 * 内部类，不检测参数
+	 */
+	function css_anim(elem,cssObj,durtime,animType,onEnd){
+		//记录初始transition值
+		var transition_start = getStyle(elem,'-webkit-transition');
+		var cssSet = clone(cssObj,{
+			'-webkit-transform' : 'translate3d(0, 0, 0)',
+			'-webkit-transition' : durtime + 'ms'
+		});
+		
+		var delay;
+		function endFn(){
+			clearTimeout(delay);
+			delay = setTimeout(function(){
+				removeEventListener("webkitTransitionEnd",endFn, true);
+				//还原transition值
+				setCss(elem,{
+					'-webkit-transition' : transition_start
+				});
+				onEnd && onEnd.call(elem);
+			},30);
+		}
+		elem.addEventListener("webkitTransitionEnd",endFn, true);
+		
+		setCss(elem,cssSet);
+	}
+	/**
+	 * 兼容css3、js动画
+	 */
+	function animation(elem,cssObj,durtime,a,b) {
+        var animType = "Linear",
+			onEnd = null;
+		
+		if (arguments.length < 3) {
+			throw new Error("missing arguments [dom,cssObj,durtime]");
+		} else {
+			if (TypeOf(a) == "Function") {
+				onEnd = a;
+			}else if (typeof (a) == "string") {
+				animType = a;
+			}
+			
+			if (TypeOf(b) == "Function") {
+				onEnd = b;
+			}
+		}
+		if(private_css3){
+			return css_anim(elem,cssObj,durtime,animType,onEnd);
+		}else{
+			return new JS_anim(elem,cssObj,durtime,animType,onEnd);
+		}
+	}
 	var outerWidth,
 		outerHeight;
 	var testDom = document.createElement('div');
@@ -287,12 +345,12 @@ define(function (window,document) {
 	}
 	if(testDom.getBoundingClientRect !== 'undefined'){
 		outerWidth = function(elem){
-			var output = elem.getBoundingClientRect()['width'] || 0;
+			var output = elem.getBoundingClientRect().width || 0;
 			
 			return typeof(output) != 'undefined' ? output : count_outerWidth(elem);
 		};
 		outerHeight = function(elem){
-			var output = elem.getBoundingClientRect()['height'] || 0;
+			var output = elem.getBoundingClientRect().height || 0;
 			
 			return typeof(output) != 'undefined' ? output : count_outerHeight(elem);
 		};
@@ -305,43 +363,35 @@ define(function (window,document) {
 	//缩小，淡出
 	var zoomOut = private_css3 ? function(DOM,time,fn){
 		var op = getStyle(DOM,'opacity');
-		var transt = getStyle(DOM,'-webkit-transition');
 		
-		setCss(DOM,{
+		css_anim(DOM,{
 			'-webkit-transform' : 'scale(0.5)',
-			'-webkit-transition' : time + 'ms',
-			'opacity' : 0
+			opacity : 0
+		},time,null,function(){
+			setCss(DOM,{
+				'-webkit-transform' : 'scale(1)',
+				opacity : op
+			});
+			fn && fn.call(DOM);
 		});
-		
-		var delay;
-		DOM.addEventListener("webkitTransitionEnd", function(){
-			clearTimeout(delay);
-			delay = setTimeout(function(){
-				setCss(DOM,{
-					'-webkit-transform' : 'scale(1)',
-					'-webkit-transition' : transt,
-					'opacity' : op
-				});
-				fn && fn.call(DOM);
-			},20);
-		}, true);
+
 	} : function (DOM,time,fn){
 		var op = getStyle(DOM,'opacity');
-		DOM.style['overflow'] = 'hidden';
+		DOM.style.overflow = 'hidden';
 		var width = getStyle(DOM,'width');
 		var height = outerHeight(DOM);
 		var left = getStyle(DOM,'left') || 0;
 		var top = getStyle(DOM,'top') || 0;
 		
-		new anim(DOM,{
-			'width' : width/2,
-			'height' : height/2,
-			'left' : (left + width/4),
-			'top' : (top + height/4),
-			'opacity' : 0
+		animation(DOM,{
+			width : width/2,
+			height : height/2,
+			left : (left + width/4),
+			top : (top + height/4),
+			opacity : 0
 		},time,function(){
-			DOM.style['opacity'] = op;
-			DOM.style['display'] = 'none';
+			DOM.style.opacity = op;
+			DOM.style.display = 'none';
 			fn && fn.call(DOM);
 		});
 	};
@@ -443,9 +493,9 @@ define(function (window,document) {
 	//通用拖动方法
 	function drag(handle_dom,dom,param){
 		var param = param || {};
-		var onStart = param['start'] || null;
-		var onMove = param['move'] || null;
-		var onEnd = param['end'] || null;
+		var onStart = param.start || null;
+		var onMove = param.move || null;
+		var onEnd = param.end || null;
 		
 		var X, Y,L,T,W,H;
 		bindHandler(handle_dom,'mousedown',function (e){
@@ -477,36 +527,35 @@ define(function (window,document) {
 	}
 	
     return {
-		'TypeOf' : TypeOf,
-		'each' : each,
-		'css' : setCss,
-		'supports' : supports,
-		'zoomOut' : zoomOut,
-		'hasClass' : hasClass,
-		'getStyle' : getStyle,
-		'outerWidth' : outerWidth,
-		'outerHeight' : outerHeight,
-		'ready' : ready,
-		'bind' : bind,
-		'unbind' : removeHandler,
-		'drag' : drag,
-		'animation' : function (a,b,c,d,e) {
-			return new anim(a,b,c,d,e);
-		},
+		TypeOf : TypeOf,
+		each : each,
+		css : setCss,
+		supports : supports,
+		zoomOut : zoomOut,
+		hasClass : hasClass,
+		getStyle : getStyle,
+		outerWidth : outerWidth,
+		outerHeight : outerHeight,
+		ready : ready,
+		bind : bind,
+		clone : clone,
+		unbind : removeHandler,
+		drag : drag,
+		animation : animation,
 		//创建dom
-		'createDom' : function (html){
+		createDom : function (html){
 			var a = document.createElement('div');
 			a.innerHTML = html;
 			return a.childNodes;
 		},
 		//移除dom节点
-		'removeNode' : function (elem){  
+		removeNode : function (elem){  
 			if(elem && elem.parentNode && elem.tagName != 'BODY'){  
 				elem.parentNode.removeChild(elem);  
 			}  
 		},
 		//创建style标签
-		'createStyleSheet' : function (cssStr,attr){
+		createStyleSheet : function (cssStr,attr){
 			var styleTag = document.createElement('style');
 			
 			attr = attr || {};
@@ -526,7 +575,7 @@ define(function (window,document) {
 			return styleTag;
 		},
 		//根据class查找元素
-		'findByClassName' : (function(){
+		findByClassName : (function(){
 			if(typeof(document.getElementsByClassName) !== 'undefined'){
 				//支持gEbCN
 				return function (dom,classStr){
@@ -550,16 +599,16 @@ define(function (window,document) {
 			}
 		})(),
 		 //读取dom在页面中的位置
-		'offset' : function (elem){
+		offset : function (elem){
 			var box = {
-				'top' : 0,
-				'left' : 0,
-				'screen_top' : 0,
-				'screen_left' : 0
-			}
-			var size;
+				top : 0,
+				left : 0,
+				screen_top : 0,
+				screen_left : 0
+			},
+			size;
 			
-			if ( typeof(elem.getBoundingClientRect) !== 'undefined' ) {
+			if (typeof(elem.getBoundingClientRect) !== 'undefined' ) {
 				size = elem.getBoundingClientRect();
 			}
 			box.screen_top = size.top;
@@ -570,40 +619,40 @@ define(function (window,document) {
 			return box;
 		},
 		//滑出
-		'slideUp' : function (DOM,time,fn){
-			DOM.style['overflow'] = 'hidden';
+		slideUp : function (DOM,time,fn){
+			DOM.style.overflow = 'hidden';
 			//FIXME padding
-			new anim(DOM,{
-				'height' : 0,
-				'padding' : 0
+			animation(DOM,{
+				height : 0,
+				padding : 0
 			}, time,function(){
-				DOM.style['display'] = 'none';
+				DOM.style.display = 'none';
 				fn && fn.call(DOM);
 			});
 		},
 		//淡入
-		'fadeIn' : function (DOM,time,fn){
+		fadeIn : function (DOM,time,fn){
 			var op = getStyle(DOM,'opacity');
-			DOM.style['opacity'] = 0;
-			DOM.style['display'] = 'block';
-			new anim(DOM,{
+			DOM.style.opacity = 0;
+			DOM.style.display = 'block';
+			animation(DOM,{
 				'opacity' : op
 			}, time, function(){
 				fn && fn.call(DOM);
 			});
 		},
 		//淡出
-		'fadeOut' : function (DOM,time,fn){
+		fadeOut : function (DOM,time,fn){
 			var op = getStyle(DOM,'opacity');
-			new anim(DOM,{
+			animation(DOM,{
 				'opacity' : 0
 			}, time,function(){
-				DOM.style['opacity'] = op;
-				DOM.style['display'] = 'none';
+				DOM.style.opacity = op;
+				DOM.style.display = 'none';
 				fn && fn.call(DOM);
 			});
 		},
-		'render' : function (str, data){
+		render : function (str, data){
 			if(!str || !data){
 				return '';
 			}

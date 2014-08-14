@@ -68,13 +68,13 @@
 		private_animation_range = 240;
 
 	var private_CONFIG = {
-		'gap' : {
-			'top' : 0,
-			'left' : 0,
-			'bottom' : 0,
-			'right' : 0
+		gap : {
+			top : 0,
+			left : 0,
+			bottom : 0,
+			right : 0
 		},
-		'zIndex' : 499
+		zIndex : 499
 	};
 	
 	var docDom;
@@ -106,18 +106,7 @@
 	function isNum(ipt){
 		return (ipt !== '') && (ipt == +ipt) ? true : false;
 	}
-	function clone(fromObj,toObj){   
-		for(var i in fromObj){   
-			if(typeof fromObj[i] == "object"){   
-				toObj[i] = fromObj[i].constructor==Array ? [] : {};
-				
-				clone(fromObj[i],toObj[i]);   
-				continue;   
-			}   
-			toObj[i] = fromObj[i];
-		}
-		return toObj;
-	}
+	
 	//初始化组件基础功能
 //	utils.ready(function(){
 		//插入css样式表
@@ -138,32 +127,32 @@
 		var rebuild_fn = null;
 		if(isIE67){
 			utils.css(private_fixedScreenTopDom,{
-				'top' : private_scrollTop
+				top : private_scrollTop
 			});
 			utils.css(private_fixedScreenBottomDom,{
-				'top' : private_scrollTop + private_winH
+				top : private_scrollTop + private_winH
 			});
 			
 			rebuild_fn = function(){
 				refreshSize();
 				utils.css(private_fixedScreenTopDom,{
-					'top' : private_scrollTop
+					top : private_scrollTop
 				});
 				utils.css(private_fixedScreenBottomDom,{
-					'top' : private_scrollTop + private_winH
+					top : private_scrollTop + private_winH
 				});
 				utils.css(private_maskDom,{
-					'top' : private_scrollTop
+					top : private_scrollTop
 				});
 			};
 		}else{
 			utils.css(private_fixedScreenTopDom,{
-				'position' : 'fixed',
-				'top' : 0
+				position : 'fixed',
+				top : 0
 			});
 			utils.css(private_fixedScreenBottomDom,{
-				'position' : 'fixed',
-				'bottom' : 0
+				position : 'fixed',
+				bottom : 0
 			});
 			rebuild_fn = refreshSize;
 		}
@@ -196,8 +185,8 @@
 		}
 		
 		return {
-			'top' : top,
-			'left' : left
+			top : top,
+			left : left
 		}
 	}
 	//计算自适应页面位置的方法
@@ -213,10 +202,10 @@
 		
 		var newPosition = fix_position(top,left,width,height);
 		return {
-			'top' : newPosition.top,
-			'left' : newPosition.left,
-			'screenTop' : screenTop,
-			'screenLeft' : newPosition.left
+			top : newPosition.top,
+			left : newPosition.left,
+			screenTop : screenTop,
+			screenLeft : newPosition.left
 		}
 	}
 	
@@ -228,19 +217,19 @@
 		if(typeof(param) == "function"){
 			callback = param;
 		}else if(typeof(param) == "object"){
-			var paramBtns = param['btns'] || [];
+			var paramBtns = param.btns || [];
 			btns[0] = paramBtns[0] || btns[0];
 			btns[1] = paramBtns[1] || btns[1];
-			if(typeof(param['callback']) == "function"){
-				callback = param['callback'];
+			if(typeof(param.callback) == "function"){
+				callback = param.callback;
 			}
-			if(typeof(param['cancel']) == "function"){
-				cancel = param['cancel'];
+			if(typeof(param.cancel) == "function"){
+				cancel = param.cancel;
 			}
 		}
 		var this_html = utils.render(confirmBar_tpl,{
-			'confirm' : btns[0],
-			'cancel' : btns[1]
+			confirm : btns[0],
+			cancel : btns[1]
 		});
 		dom.appendChild(utils.createDom(this_html)[0]);
 		
@@ -270,7 +259,7 @@
 	if(utils.supports('-webkit-filter')){
 		blur = function (){
 			setRootElementsStyle({
-				'-webkit-filter' : 'blur(2px)'
+				'-webkit-filter' : 'blur(1px)'
 			});
 		};
 		removeBlur = function (){
@@ -297,9 +286,7 @@
 	 *   创建一个dom用来完成动画
 	 *   动画结束，设置dom为结束样式
 	 **/
-	var animDom = utils.createDom('<div style="position:absolute;background:#fff;"></div>')[0];
 	function openAnimation(DOM,from,time,tween,fn){
-		var fromMark = from;
 		var offset = utils.offset(DOM);
 		var cssStart,
 			cssEnd = {
@@ -309,36 +296,44 @@
 				left : offset.left,
 				opacity : 1
 			};
-		if(typeof(fromMark) == 'object'){
+		if(from && from.tagName && from.parentNode){
 			tween = 'SineEaseIn';
 			time = 200;
-			var offset_from = utils.offset(fromMark);
+			var offset_from = utils.offset(from);
 			cssStart = {
 				top : offset_from.top,
 				left : offset_from.left,
-				width : utils.outerWidth(fromMark),
-				height : utils.outerHeight(fromMark),
-				opacity : 0.5
+				width : utils.outerWidth(from),
+				height : utils.outerHeight(from),
+				opacity : 0
 			}
-		}else{
+		//FIXME
+		}else if(typeof(from) == 'string'){
 			//拷贝结束动画
-			cssStart = clone(cssEnd,{});
+			cssStart = utils.clone(cssEnd,{});
 			cssStart.opacity = 0;
 			
-			if(fromMark == 'left'){
+			if(from == 'left'){
 				cssStart.left = cssStart.left - private_animation_range;
-			}else if(fromMark == 'right'){
+			}else if(from == 'right'){
 				cssStart.left = cssStart.left + private_animation_range;
-			}else if(fromMark == 'bottom'){
+			}else if(from == 'bottom'){
 				cssStart.top = cssStart.top + private_animation_range;
 			}else{
 				cssStart.top = cssStart.top - private_animation_range;
 			}
+		}else{
+			//不需要动画
+			return
 		}
+		
+		//创建一个dom用来完成动画
+		var animDom = utils.createDom('<div style="position:absolute;background:#fff;"></div>')[0];
 		//隐藏真实dom
 		utils.css(DOM,{
 			display : 'none'
 		});
+		
 		//放置于初始位置
 		private_mainDom.appendChild(animDom);
 		utils.css(animDom,cssStart);
@@ -379,6 +374,7 @@
 			if(from && from.tagName && from.parentNode){
 				utils.zoomOut(DOM,time,function(){
 					utils.removeNode(DOM);
+					fn && fn.call(me);
 				});
 			}else if(typeof(from) == 'string'){
 				if(from == 'top'){
@@ -402,6 +398,7 @@
 				});
 			}else{
 				utils.removeNode(DOM);
+				fn && fn.call(me);
 			}
 		}
 	}
@@ -416,54 +413,54 @@
 		
 		this.dom = utils.createDom(pop_tpl)[0];
 		this.cntDom = utils.findByClassName(this.dom,'UI_pop_cnt')[0];
-		this.closeFn = param['closeFn'] || null;
-		this._mask = param['mask'] || false;
-		this._from = param['from'] || 'top';
+		this.closeFn = param.closeFn || null;
+		this._mask = param.mask || false;
+		this._from = param.from || 'top';
 		
-		var this_html = param['html'] || '';
-		var this_width = param['width'] || Math.min(600,private_docW-20);
+		var this_html = param.html || '';
+		var this_width = param.width || Math.min(600,private_docW-20);
 
 
 		//当有确认参数时
-		if(param['confirm']){
-			add_confirm(this.dom,param['confirm'],function(){
+		if(param.confirm){
+			add_confirm(this.dom,param.confirm,function(){
 				this_pop.close();
 			});
 		}
 		//处理title参数
 		var caption_dom = utils.findByClassName(this.dom,'UI_pop_cpt')[0];
-		if(!param['title']){
+		if(!param.title){
 			utils.removeNode(caption_dom);
 		}else{
-			var title = param['title'] || 'need title in parameter!';
+			var title = param.title || 'need title in parameter!';
 			
 			caption_dom.innerHTML = title;
 			//can drag is pop
 			var dragMask = null;
 			utils.drag(caption_dom,this.dom,{
-				'start' : function(){
+				start : function(){
 					//更新窗口尺寸
 					refreshSize();
 					
 					dragMask = utils.createDom(dragMask_tpl)[0];
 					utils.css(dragMask,{
-						'width' : private_docW,
-						'height' : private_winH,
-						'cursor' : utils.getStyle(caption_dom,'cursor')
+						width : private_docW,
+						height : private_winH,
+						cursor : utils.getStyle(caption_dom,'cursor')
 					});
 					private_fixedScreenTopDom.appendChild(dragMask);
 				},
-				'move' : function(mx,my,l_start,t_start,w_start,h_start){
+				move : function(mx,my,l_start,t_start,w_start,h_start){
 					var left = mx + l_start;
 					var top = my + t_start;
 					
 					var newSize = fix_position(top,left,w_start,h_start);
 					utils.css(this_pop.dom,{
-						'left' : newSize.left,
-						'top' : newSize.top
+						left : newSize.left,
+						top : newSize.top
 					});
 				},
-				'end' : function (){
+				end : function (){
 					dragMask && utils.removeNode(dragMask);
 					dragMask = null;
 				}
@@ -476,17 +473,17 @@
 		
 		//设置宽度，为计算位置尺寸做准备
 		utils.css(this.dom,{
-			'width' : this_width
+			width : this_width
 		});
 		private_mainDom.appendChild(this.dom);
 		
 		//校正位置
 		var fixSize = adaption(this_width,utils.outerHeight(this.dom));
-		var top = isNum(param['top']) ? param['top'] : fixSize.top;
-		var left = isNum(param['left']) ? param['left'] : fixSize.left;
+		var top = isNum(param.top) ? param.top : fixSize.top;
+		var left = isNum(param.left) ? param.left : fixSize.left;
 		utils.css(this.dom,{
-			'top' : top,
-			'left' : left
+			top : top,
+			left : left
 		});
 		//开场动画
 		openAnimation(this.dom,this._from,200,'QuadEaseIn');
@@ -498,15 +495,15 @@
 		this._mask && showMask();
 	}
 	//使用close方法
-	POP.prototype['close'] = closeAnimation(200);
-	POP.prototype['adapt'] = function(){
+	POP.prototype.close = closeAnimation(200);
+	POP.prototype.adapt = function(){
 		var width = utils.outerWidth(this.dom);
 		var height = utils.outerHeight(this.dom);
 		
 		var fixSize = adaption(width,height);
 		utils.animation(this.dom,{
-			'top' : fixSize.top,
-			'left' : fixSize.left
+			top : fixSize.top,
+			left : fixSize.left
 		}, 100);
 	};
 
@@ -517,36 +514,36 @@
 		var param = param || {};
 		var this_pop = this;
 		
-		var this_text = param['text'] || 'need text in parameter!';
-		var callback = param['callback'] || null;
+		var this_text = param.text || 'need text in parameter!';
+		var callback = param.callback || null;
 		var this_html = utils.render(confirm_tpl,{
-			'text' : this_text
+			text : this_text
 		});
 		this.dom = utils.createDom(this_html)[0];
-		this.closeFn = param['closeFn'] || null;
-		this._mask = typeof(param['mask']) == 'boolean' ? param['mask'] : true;
-		this._from = param.from;
+		this.closeFn = param.closeFn || null;
+		this._mask = typeof(param.mask) == 'boolean' ? param.mask : true;
+		this._from = param.from || null;
 		this._mask && showMask();
 		
 		add_confirm(this.dom,param,function(){
 			this_pop.close();
 		});
 		utils.css(this.dom,{
-			'width' : 300
+			width : 300
 		});
 		private_fixedScreenTopDom.appendChild(this.dom);
 		
 		var height = utils.outerHeight(this.dom);
 		var newPosition = adaption(300,height);
 		utils.css(this.dom,{
-			'left' : newPosition.screenLeft,
-			'top' : newPosition.screenTop
+			left : newPosition.screenLeft,
+			top : newPosition.screenTop
 		});
 		
 		openAnimation(this.dom,this._from,100,'BackEaseOut');
 		
 	}
-	CONFIRM.prototype['close'] = closeAnimation(200);
+	CONFIRM.prototype.close = closeAnimation(200);
 
 
 	/**
@@ -557,7 +554,7 @@
 		var param = param || {};
 		var this_text = text || 'need text in parameter!';
 		var this_html = utils.render(ask_tpl,{
-			'text' : this_text
+			text : this_text
 		});
 
 		this.dom = utils.createDom(this_html)[0];
@@ -596,8 +593,8 @@
 			me.inputDom.focus();
 		});
 	}
-	ASK.prototype['close'] = closeAnimation(200);
-	ASK.prototype['setValue'] = function(text){
+	ASK.prototype.close = closeAnimation(200);
+	ASK.prototype.setValue = function(text){
 		this.inputDom.value = text.toString();
 	};
 
@@ -616,18 +613,18 @@
 		var newPosition = adaption(260,100);
 		// create pop
 		utils.css(this.dom,{
-			'top' : 0,
-			'opacity' : 0
+			top : 100,
+			opacity : 0
 		});
 		private_fixedScreenTopDom.appendChild(this.dom);
 		utils.animation(this.dom,{
-			'top' : newPosition.screenTop,
-			'opacity' : 1
+			top : newPosition.screenTop,
+			opacity : 1
 		},140,'BackEaseOut');
 		
 	}
-	prompt.prototype['close'] = closeAnimation(80);
-	prompt.prototype['tips'] = function(txt,time){
+	prompt.prototype.close = closeAnimation(80);
+	prompt.prototype.tips = function(txt,time){
 		var this_prompt = this;
 		if(txt){
 			utils.findByClassName(this.dom,'UI_cnt')[0].innerHTML = txt;
@@ -681,24 +678,27 @@
 
 		var param = param || {};
 
-		var this_html = param['html'] || '';
-		this.closeFn = param['closeFn'] || null;
+		var this_html = param.html || '';
+		this.closeFn = param.closeFn || null;
 
 		this.dom = utils.createDom(plane_tpl)[0];
-		this._from = null;
+		this._from = param.from || null;
 
 		//insert html
 		this.dom.innerHTML = this_html;
 		
 		utils.css(this.dom,{
-			'width' : param['width'] || 240,
-			'height' :param['height'] || null,
-			'top' : isNum(param['top']) ? param['top'] : 300,
-			'left' : isNum(param['left']) ? param['left'] : 800
+			width : param.width || 240,
+			height :param.height || null,
+			top : isNum(param.top) ? param.top : 300,
+			left : isNum(param.left) ? param.left : 800
 		});
+		
 		private_mainDom.appendChild(this.dom);
+		
+		openAnimation(this.dom,this._from,100,'BackEaseOut');
 	}
-	PLANE.prototype['close'] = closeAnimation(200);
+	PLANE.prototype.close = closeAnimation(200);
 
 
 	/***
@@ -709,13 +709,13 @@
 		var param = param || {};
 		var me = this;
 		this.dom = utils.createDom(cover_tpl)[0];
-		this._mask = typeof(param['mask']) == 'boolean' ? param['mask'] : false;
+		this._mask = typeof(param.mask) == 'boolean' ? param.mask : false;
 		this._from = param.from || 'top';
 		
 		this.cntDom = utils.findByClassName(this.dom,'UI_coverCnt')[0];
-		this.closeFn = param['closeFn'] || null;
+		this.closeFn = param.closeFn || null;
 
-		var this_html = param['html'] || '';
+		var this_html = param.html || '';
 		
 		//关闭事件
 		utils.bind(this.dom,'click','.UI_coverClose',function(){
@@ -763,10 +763,10 @@
 		this.cntDom.innerHTML = this_html;
 	}
 	//使用close方法
-	COVER.prototype['close'] = closeAnimation(200,function(){
+	COVER.prototype.close = closeAnimation(200,function(){
 		var me = this;
 		utils.css(private_body,{
-			'overflowY' : me._bodyOverflowY
+			overflowY : me._bodyOverflowY
 		});
 	});
 
@@ -785,40 +785,41 @@
 			fns.push(item[1]);
 		});
 		var this_html = utils.render(select_tpl,{
-			'list' : nameList,
-			'title' : param.title || null,
-			'intro' : param.intro || null
+			list : nameList,
+			title : param.title || null,
+			intro : param.intro || null
 		});
 		
 		this.dom = utils.createDom(this_html)[0];
-		this._mask = true;
 		this.closeFn = param.closeFn || null;
 		
 		if(private_docW > 640){
+			this._mask = false;
 			new PLANE({
-				'top' : param.top || 100,
-				'left' : param.left || 100,
-				'width' : param.width || 200,
-				'height' : 0,
-				'closeFn' : function(){
+				top : param.top || 100,
+				left : param.left || 100,
+				width : param.width || 200,
+				height : 0,
+				closeFn : function(){
 					this_sel.close();
 				}
 			}).dom.appendChild(this.dom);
 			utils.css(this.dom,{
-				'position' : 'relative',
-				'width' : '100%'
+				position : 'relative',
+				width : '100%'
 			});
 		} else {
+			this._mask = true;
 			utils.css(this.dom,{
-				'bottom' : -100,
-				'opacity' : 0
+				bottom : -100,
+				opacity : 0
 			});
 			
 			private_fixedScreenBottomDom.appendChild(this.dom);
 			
 			utils.animation(this.dom, {
-				'bottom' : 0,
-				'opacity' : 1
+				bottom : 0,
+				opacity : 1
 			}, 300, 'ElasticEaseOut');
 		}
 		
@@ -833,7 +834,7 @@
 			});
 		});
 	}
-	SELECT.prototype['close'] = function(effect,time){
+	SELECT.prototype.close = function(effect,time){
 		
 		//处理关闭回调、蒙层检测
 		this.closeFn && this.closeFn();
@@ -854,48 +855,48 @@
 	 *  抛出对外接口
 	 */
 	return {
-		'pop' : function(){
+		pop : function(){
 			return new POP(arguments[0]);
 		},
-		'config' : {
-			'gap' : function(name,value){
+		config : {
+			gap : function(name,value){
 				//name符合top/right/bottom/left,且value值为数字类型（兼容字符类型）
 				if(name && typeof(private_CONFIG.gap[name]) == 'number' && isNum(value)){
 					private_CONFIG.gap[name] = parseInt(value);
 				}
 			},
-			'zIndex' : function(num){
+			zIndex : function(num){
 				var num = parseInt(num);
 				if(num > 0){
 					private_CONFIG.zIndex = num;
 					utils.css(private_allCnt,{
-						'zIndex':num
+						zIndex : num
 					});
 					utils.css(private_fixedScreenBottomDom,{
-						'zIndex':num
+						zIndex : num
 					});
 					utils.css(private_fixedScreenTopDom,{
-						'zIndex':num
+						zIndex : num
 					});
 				}
 			}
 		},
-		'confirm' : function(){
+		confirm : function(){
 			return new CONFIRM(arguments[0]);
 		},
-		'ask' : function(text,callback,param){
+		ask : function(text,callback,param){
 			return new ASK(text,callback,param);
 		},
-		'prompt' : function(txt,time){
+		prompt : function(txt,time){
 			return new prompt(txt,time);
 		},
-		'plane' : function(){
+		plane : function(){
 			return new PLANE(arguments[0]);
 		},
-		'cover' : function(){
+		cover : function(){
 			return new COVER(arguments[0]);
 		},
-		'select' : function(){
+		select : function(){
 			return new SELECT(arguments[0],arguments[1]);
 		}
 	};

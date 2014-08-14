@@ -14,6 +14,9 @@
 		overflow: hidden;
 		font-family:"Microsoft Yahei";
 	}
+	a{
+		text-decoration:none;
+	}
 	#wrapper{
 		position: relative;
 		top:0px;
@@ -22,6 +25,7 @@
 		height: 100%;
 		overflow:scroll;
 	}
+	
 	#loading_mask{
 		position: absolute;
 		top:0px;
@@ -96,7 +100,6 @@
 		height: 40px;
 		line-height: 40px;
 		text-align:center;
-		text-decoration:none;
 		border-top: 1px solid #ddd;
 		margin-top: -1px;
 		color: #666;
@@ -108,6 +111,76 @@
 		color: #222;
 	}
 	
+	
+	/****/
+	.btnConf{
+		padding: 10px;
+		text-align: center;
+	}
+	.btnConf a{
+		display: inline-block;
+		font-size: 14px;
+		color : #aaa;
+		margin-right: 10px;
+		padding: 0px 10px;
+		line-height: 24px;
+	}
+	.btnConf a span{
+		color: #fff;
+		font-weight: bold;
+		margin-right: 10px;
+	}
+	.btnConf a.isSelected{
+		color: #333;
+		background: #ccc;
+	}
+	.btnConf a.isSelected span{
+		color: #000;
+	}
+	
+	#from_selected{
+		position: absolute;
+		top: 50%;
+		right: 20px;
+		width: 120px;
+		height: 120px;
+	}
+	#from_selected a{
+		display: block;
+		position : absolute;
+		width: 33%;
+		height: 33%;
+		text-align: center;
+		line-height: 40px;
+		font-size: 20px;
+		color:#fff;
+		background: #888;
+	}
+	#from_selected a.isSelected{
+		background: #333;
+		color:#fff;
+	}
+	.from-top{
+		top: 0;
+		left: 33%;
+	}
+	.from-bottom{
+		top: 66%;
+		left: 33%;
+	}
+	.from-left{
+		top: 33%;
+		left: 0;
+	}
+	.from-right{
+		left: 66%;
+		top: 33%;
+	}
+	#from_selected .from-dom{
+		top: 33%;
+		left: 33%;
+		font-size: 30px;
+	}
 	</style>
 </head>
 <body>
@@ -119,11 +192,13 @@
 	<div class="cnt">
 		<div class="demoItem">
 			<h3>弹框</h3>
+			<div class="btnConf">
+				<a href="javascript:void(0)" onclick="toggleParam(this,'title','标题出来了')" ><span>√</span>标题</a>
+				<a href="javascript:void(0)" onclick="toggleParam(this,'mask',true)"><span>√</span>蒙层</a>
+				<a href="javascript:void(0)" onclick="toggleParam(this,'confirm',true)"><span>√</span>confirm</a>
+			</div>
 			<div class="btnList">
-				<a href="javascript:void(0)" onclick="showPop(this)" >纯内容</a>
-				<a href="javascript:void(0)" onclick="showTitlePop(this)">内容 + 标题</a>
-				<a href="javascript:void(0)" onclick="showMaskPop(this)">内容 + 蒙层</a>
-				<a href="javascript:void(0)" onclick="showConfirmPop(this)">内容 + 标题 + 蒙层 + confirm</a>
+				<a href="javascript:void(0)" onclick="showPop(this)">显示</a>
 			</div>
 		</div>
 		<div class="demoItem">
@@ -151,15 +226,17 @@
 			<h3>浮层</h3>
 			<div class="btnList">
 				<a href="javascript:void(0)" onclick="showPlane(this)" >屌丝层</a>
-				<a href="javascript:void(0)" onclick="showCover()" >全屏（默认）</a>
-				<a href="javascript:void(0)" onclick="showCover(this)" >全屏（放大）</a>
-				<a href="javascript:void(0)" onclick="showCover(this,'top')" >全屏（上）</a>
-				<a href="javascript:void(0)" onclick="showCover(this,'bottom')" >全屏（下）</a>
-				<a href="javascript:void(0)" onclick="showCover(this,'left')" >全屏（左）</a>
-				<a href="javascript:void(0)" onclick="showCover(this,'right')" >全屏（右）</a>
+				<a href="javascript:void(0)" onclick="showCover(this)" >全屏</a>
 			</div>
 		</div>
 	</div>
+</div>
+<div id="from_selected">
+	<a href="javascript:void(0)" onclick="toggleFrom(this,'top')" class="from-top">﹀</a>
+	<a href="javascript:void(0)" onclick="toggleFrom(this,'bottom')" class="from-bottom">︿</a>
+	<a href="javascript:void(0)" onclick="toggleFrom(this,'left')" class="from-left">〉</a>
+	<a href="javascript:void(0)" onclick="toggleFrom(this,'right')" class="from-right">〈</a>
+	<a href="javascript:void(0)" onclick="toggleFrom(this,'dom')" class="from-dom">○</a>
 </div>
 	<div id="loading_mask">
 		<div class="loading_mask_txt">
@@ -169,56 +246,59 @@
 	<!--
 	<script type="text/javascript" src="src/dialog.min.js"></script>
 	-->
-	<script type="text/javascript" src="src/dialog.js"></script>
+	<script type="text/javascript" src="src/dialog.min.js"></script>
 	<script type="text/javascript">
-		function showPop(elem){
-			var pop = UI.pop({
-			  'from' : elem,
-			  'html' : '<div style="height:340px;background:url(http://asset.bh-lay.com/images/cover/newSkin.jpg) no-repeat center"></div>'
-			});
+        function hasClass(obj, cls) {
+            return obj.className.match(new RegExp('(\\s|^)' + cls + '(\\s|$)'));
+        }
+
+        function addClass(obj, cls) {
+            if (!this.hasClass(obj, cls)) obj.className += " " + cls;
+        }
+
+        function removeClass(obj, cls) {
+            if (hasClass(obj, cls)) {
+                var reg = new RegExp('(\\s|^)' + cls + '(\\s|$)');
+                obj.className = obj.className.replace(reg, ' ');
+            }
+        }
+		
+		
+		var global_from = null;
+		var param = {
+			'html' : '<div style="height:280px;background:url(http://layasset.qiniudn.com/images/cover/newSkin.jpg) no-repeat center"></div>'
+		};
+		function toggleParam(elem,type,value){
+			if(param[type]){
+				param[type] = null;
+				removeClass(elem,'isSelected');
+			}else{
+				addClass(elem,'isSelected');
+				param[type] = value;
+			}
 		}
 		
-		function showTitlePop(elem){
-			var pop = UI.pop({
-			  'from' : elem,
-			  'title' : '给你看个帅哥',
-			  'from' : 'bottom',
-			  'html' : '<div style="height:300px;background:url(http://asset.bh-lay.com/images/cover/newSkin.jpg) no-repeat center"></div>'
-			});
-		}
-		
-		function showMaskPop(elem){
-			var pop = UI.pop({
-			  'from' : elem,
-			  'mask' : true,
-			  'from' : 'right',
-			  'html' : '<div style="height:340px;background:url(http://asset.bh-lay.com/images/cover/newSkin.jpg) no-repeat center"></div>'
-			});
-		}
-		
-		function showConfirmPop(elem){
-			UI.pop({
-			  'title' : '这哥们儿帅么',
-			  'html' : '<div style="height:280px;background:url(http://asset.bh-lay.com/images/cover/newSkin.jpg) no-repeat center"></div>',
-			  'from' : elem,
-			  'mask' : true,
-			  'confirm' : {
-			    'btns' : ['好帅哦','真丑'],
-			    'callback' : function(){
-					UI.prompt('真有眼光！');
-			    },
-				'cancel' : function(){
-					UI.prompt('没眼光,去选(好帅哦)！',1800);
-					return false;
+		function toggleFrom(elem,from){
+			global_from = from;
+			UI._utils.each(elem.parentNode.getElementsByTagName('a'),function(i,dom){
+				if(hasClass(dom,'from-'+from)){
+					addClass(dom,'isSelected');
+				}else{
+					removeClass(dom,'isSelected');
 				}
-			  }
 			});
+		//	UI._utils.findByClassName(elem.parentNode,'')
+		}
+		
+		function showPop(elem){
+			param.from = global_from == "dom" ? elem : global_from;
+			UI.pop(param);
 		}
 		function showConfirm(elem){
 			UI.confirm({
 			  'text' : '请我吃饭吧！',
 			  'btns' : ['好的呀','不愿意'],
-			  'from' : elem,
+			  'from' : global_from == "dom" ? elem : global_from,
 			  'callback' : function(){
 			    UI.prompt('你是好人！');
 			  }
@@ -274,6 +354,7 @@
 				'width' : UI._utils.outerWidth(elem) - 20,
 				'top' : offset.top - 140,
 				'left' : offset.left + 10,
+				'from' : global_from == "dom" ? elem : global_from,
 				'html' : '<div style="height:150px;line-height:150px;text-align:center;color:#333;background:#fff;box-shadow: 0px 0px 10px #000;">我最可怜，点一下外面就没了</div>',
 				'closeFn' : function(){
 					active_plane = null;
@@ -281,9 +362,10 @@
 			});
 		}
 		
-		function showCover(elem,from){
+		function showCover(elem){
+			var from = global_from == "dom" ? elem : global_from;
 			var param = {
-				'from' : from || elem,
+				'from' : from,
 				'html' : '<div style="color:#333;text-align:center;padding:100px 0px;"><br/><br/><br/><br/><br/><br/><br/><br/>关闭按钮好搓啊，给个建议呗！</div>'
 			};
 			if(from == 'left'){
@@ -330,6 +412,9 @@
 			};
 		}
 		
+		
+		
+		
 		var bodyDom;
 		if (document.compatMode == "BackCompat") {
 			bodyDom = document.body;
@@ -351,8 +436,10 @@
 			countSize();
 			UI._utils.bind(window,'resize',countSize);
 			var loadingDom = document.getElementById('loading_mask');
+			
 			setTimeout(function(){
 				UI._utils.fadeOut(loadingDom,500,function(){
+					return
 					if(UI._utils.supports('-webkit-filter')){
 						UI.pop({
 							'html' : ['<div style="text-align:center">',
