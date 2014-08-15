@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2014-8-15 17:37
+ * @modified 2014-8-15 18:29
  * 
  **/
 
@@ -394,7 +394,11 @@
 			cssAnim[countResult[0]] = countResult[1];
 		}
 		//拷贝dom用来完成动画
-		var animDom = utils.createDom(DOM.outerHTML)[0];
+		var html = DOM.outerHTML;
+		//FIXME 过滤iframe正则随便写的
+		html = html.replace(/<iframe.+>\s*<\/iframe>/ig,'');
+		var animDom = utils.createDom(html)[0];
+		
 		//隐藏真实dom
 		setCSS(DOM,{
 			'display' : 'none'
