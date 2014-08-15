@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2014-8-15 18:32
+ * @modified 2014-8-15 18:35
  * 
  **/
 
@@ -1622,7 +1622,7 @@
 				}, time, function(){
 					fn && fn.call(DOM);
 				});
-			});
+			},10);
 		},
 		//淡出
 		fadeOut : function (DOM,time,fn){

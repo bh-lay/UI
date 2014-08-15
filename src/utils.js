@@ -669,7 +669,7 @@ define(function (window,document) {
 				}, time, function(){
 					fn && fn.call(DOM);
 				});
-			});
+			},10);
 		},
 		//淡出
 		fadeOut : function (DOM,time,fn){
