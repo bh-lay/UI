@@ -3,27 +3,94 @@
  * 包含dom查找，css样式，动画等
  */
 define(function (window,document) {
+	/**
+	 * 判断对象类型
+	 * String Number Array
+	 * Object Function 
+	 * HTMLDocument
+	 * Undefined Null 
+	 */
+	function TypeOf(obj) {
+		return Object.prototype.toString.call(obj).match(/\s(\w+)/)[1];
+	}
 	
-	//判断是否支持css属性
-	var supports = (function() {
-		var styles = document.createElement('div').style,
-			vendors = 'Webkit Khtml Ms O Moz'.split(/\s/),
-			len = vendors.length;
-		
-		return function(prop) {
-			if ( prop in styles ){
-				return prop;
-			}
-
-			prop = prop.replace(/^[a-z]/, function(val) {
-				return val.toUpperCase();
-			});
-			for(var i = 0; i<len; i++){
-				if ( vendors[i] + prop in styles ) {
-					return ('-' + vendors[i] + '-' + prop).toLowerCase();
+	/**
+	 * 检测是否为数字
+	 * 兼容字符类数字 '23'
+	 */
+	function isNum(ipt){
+		return (ipt !== '') && (ipt == +ipt) ? true : false;
+	}
+	
+	/**
+ 	 * 遍历数组或对象
+	 * 
+	 */
+	function each(arr,fn){
+		//检测输入的值
+		if(typeof(arr) != 'object' || typeof(fn) != 'function'){
+			return;
+		}
+		var Length = arr.length;
+		if( isNum(Length) ){
+			for(var i=0;i<Length;i++){
+				if(fn.call(this,i,arr[i]) === false){
+					break
 				}
 			}
-			return false;
+		}else{
+			for(var i in arr){
+				if (!arr.hasOwnProperty(i)){
+					continue;
+				}
+				if(fn.call(this,i,arr[i]) === false){
+					break
+				}
+			}
+		}
+	}
+	
+	/**
+	 * 对象拷贝
+	 *
+	 */
+	function clone(fromObj,toObj){
+		each(fromObj,function(i,item){
+			if(typeof item == "object"){   
+				toObj[i] = item.constructor==Array ? [] : {};
+				
+				clone(item,toObj[i]);
+			}else{
+				toObj[i] = item;
+			}
+		});
+		
+		return toObj;
+	}	
+	/**
+	 * 判断是否支持css属性
+	 * 兼容css3
+	 */
+	var supports = (function() {
+		var styles = document.createElement('div').style,
+			vendors = 'Webkit Khtml Ms O Moz'.split(/\s/);
+		
+		return function(prop) {
+			var returns = false;
+			if ( prop in styles ){
+				returns = prop;
+			}else{
+				prop = prop.replace(/^[a-z]/, function(val) {
+					return val.toUpperCase();
+				});
+				each(vendors,function(i,value){
+					if ( value + prop in styles ) {
+						returns = ('-' + value + '-' + prop).toLowerCase();
+						return false;
+					}
+				});
+			}
+			return returns;
 		};
 	})();
 	
@@ -53,69 +120,14 @@ define(function (window,document) {
 		}
     }
 	
-	/**
-	 * 判断对象类型
-	 * String Number Array
-	 * Object Function 
-	 * HTMLDocument
-	 * Undefined Null 
-	 */
-	function TypeOf(obj) {
-		return Object.prototype.toString.call(obj).match(/\s(\w+)/)[1];
-	}
-	
-	/**
-	 * 对象拷贝
-	 *
-	 */
-	function clone(fromObj,toObj){   
-		for(var i in fromObj){   
-			if(typeof fromObj[i] == "object"){   
-				toObj[i] = fromObj[i].constructor==Array ? [] : {};
-				
-				clone(fromObj[i],toObj[i]);   
-				continue;   
-			}   
-			toObj[i] = fromObj[i];
-		}
-		return toObj;
-	}
-	
-	/**
- 	 * 遍历数组或对象
-	 * 
-	 */
-	function each(arr,fn){
-		//检测输入的值
-		if(typeof(arr) != 'object' || typeof(fn) != 'function'){
-			return;
-		}
-		var Length = arr.length;
-		if(Length != '' && Length == +Length){
-			for(var i=0;i<Length;i++){
-				fn.call(this,i,arr[i]);
-			}
-		}else{
-			for(var i in arr){
-				if (!arr.hasOwnProperty(i)){
-					continue;
-				}
-				fn.call(this,i,arr[i]);
-			}
-		}
-	}
+
 	/**
 	 * 判断dom是否拥有某个class
 	 */
 	function hasClass(dom,classSingle){
-		var classStr = dom.className;
-		//dom有class 检测，无class，直接返回false
-		if(classStr && classStr.length){
-			return dom.className.match(new RegExp('(\\s|^)' + classSingle +'(\\s|$)'));
-		}else{
-			return false;
-		}
+		return dom.className && dom.className.match(new RegExp('(\\s|^)' + classSingle + '(\\s|$)')) || false;
 	}
+	
 	//获取样式
 	function getStyle(elem, prop) {
 		var value;
@@ -132,7 +144,7 @@ define(function (window,document) {
 		
 		if (/\px$/.test(value)){
 			value = parseInt(value);
-		} else if( value == +value){
+		} else if( isNum(value) ){
 			value = value = parseInt(value*10000)/10000;;
 		} else if(value == '' || value == 'medium'){
 			value = 0;
@@ -150,26 +162,21 @@ define(function (window,document) {
 	 * dom设置样式
 	 */
 	function setStyle(elem,prop,value){
-		if(typeof(value) != 'string' && (value != +value)){
-			return
-		}
 		prop = prop.toString();
 		if (prop == "opacity") {
 			elem.style.filter = 'alpha(opacity=' + (value * 100)+ ')';
 			value = value;
-		} else if (value == +value && value != ''){
+		} else if ( isNum(value) ){
 			value = value + "px";
 		}
 		elem.style[prop] = value;
 	}
 	//设置css
 	function setCss(dom,cssObj){
-		for (var pro in cssObj) {
-			if (!cssObj.hasOwnProperty(pro)){
-				continue;
-			}
-			setStyle(dom,pro,cssObj[pro]);
-		}
+		each(cssObj,function(key,value){
+			setStyle(dom,key,value);
+		});
+		
 	}
 	
 	/**
@@ -183,25 +190,20 @@ define(function (window,document) {
 		var props = [];
 		var cssOri = [];
 		var cssEnd = [];
-		for (var prop in cssObj) {
-			if (!cssObj.hasOwnProperty(prop)){
-				continue;
-			}
-			
-			var value = getStyle(elem, prop);
+		each(cssObj,function(key,end_value){
+			var value = getStyle(elem, key);
 			//格式化css属性值
 			if (/\px$/.test(value)){
 				value = parseInt(value);
 			}
 			
-			if(value !== '' && (value == +value)){
+			if( isNum(value) ){
 				value = parseInt(value*10000)/10000;
-				props.push(prop);
+				props.push(key);
 				cssOri.push(value);
-				cssEnd.push(cssObj[prop]);
+				cssEnd.push(end_value);
 			}
-			
-		}
+		});
 		return [props,cssOri,cssEnd];
 	}
 	
@@ -270,6 +272,7 @@ define(function (window,document) {
 				setStyle(me.elem,me.props[i],value);
 			}
 			
+			
 			if(is_end){
 				me.onEnd && me.onEnd.call(me, me.elem);
 			}
@@ -283,26 +286,50 @@ define(function (window,document) {
 	 * 内部类，不检测参数
 	 */
 	function css_anim(elem,cssObj,durtime,animType,onEnd){
+		
 		//记录初始transition值
 		var transition_start = getStyle(elem,'-webkit-transition');
 		var cssSet = clone(cssObj,{
 			'-webkit-transform' : 'translate3d(0, 0, 0)',
 			'-webkit-transition' : durtime + 'ms'
 		});
-		var delay;
+		/**
+		 * 动画结束回调
+		 */
+		var isEnd = false;
 		function endFn(){
+			isEnd = true;
+			elem.removeEventListener("webkitTransitionEnd",transitionFn, true);
+			//还原transition值
+			setCss(elem,{
+				'-webkit-transition' : transition_start
+			});
+			onEnd && onEnd.call(elem);
+			onEnd = null;
+		}
+		
+		/**
+		 * 高大上的webkitTransitionEnd
+		 *   动画过程中，在每一帧持续触发
+		 */
+		var delay;
+		function transitionFn(){
 			clearTimeout(delay);
 			delay = setTimeout(function(){
-				elem.removeEventListener("webkitTransitionEnd",endFn, true);
-				//还原transition值
-				setCss(elem,{
-					'-webkit-transition' : transition_start
-				});
-				onEnd && onEnd.call(elem);
-			},30);
+				!isEnd && endFn();
+			},40);
 		}
-		elem.addEventListener("webkitTransitionEnd",endFn, true);
+		elem.addEventListener("webkitTransitionEnd",transitionFn, true);
 		
+		/**
+		 * 加一份保险
+		 *   解决 css无变化时webkitTransitionEnd事件不会被触发的问题
+		 */
+		setTimeout(function(){
+			!isEnd && endFn();
+		},durtime + 80);
+		
+		//设置样式开始
 		setCss(elem,cssSet);
 	}
 	/**
@@ -356,66 +383,6 @@ define(function (window,document) {
 	}else{
 		outerWidth = count_outerWidth;
 		outerHeight = count_outerHeight;
-	}
-	
-	
-	//缩小，淡出
-	var zoomOut = private_css3 ? function(DOM,time,fn){
-		var op = getStyle(DOM,'opacity');
-		
-		css_anim(DOM,{
-			'-webkit-transform' : 'scale(0.5)',
-			opacity : 0
-		},time,null,function(){
-			setCss(DOM,{
-				'-webkit-transform' : 'scale(1)',
-				opacity : op
-			});
-			fn && fn.call(DOM);
-		});
-
-	} : function (DOM,time,fn){
-		var op = getStyle(DOM,'opacity');
-		DOM.style.overflow = 'hidden';
-		var width = getStyle(DOM,'width');
-		var height = outerHeight(DOM);
-		var left = getStyle(DOM,'left') || 0;
-		var top = getStyle(DOM,'top') || 0;
-		
-		animation(DOM,{
-			width : width/2,
-			height : height/2,
-			left : (left + width/4),
-			top : (top + height/4),
-			opacity : 0
-		},time,function(){
-			DOM.style.opacity = op;
-			DOM.style.display = 'none';
-			fn && fn.call(DOM);
-		});
-	};
-	
-	/**
-	 * 页面加载
-	 */
-	var readyFns = [];
-	function completed() {
-		removeHandler(document,"DOMContentLoaded", completed);
-		removeHandler(window,"load", completed);
-		for(var i =0,total=readyFns.length;i<total;i++){
-			readyFns[i]();
-		}
-		readyFns = null;
-	}
-	function ready(callback){
-		if ( document.readyState === "complete" ) {
-			callback && callback();
-		} else {
-			callback && readyFns.push(callback);
-			
-			bindHandler(document,'DOMContentLoaded',completed);
-			bindHandler(window,'load',completed);
-		}
 	}
 	
 	/**
@@ -489,58 +456,124 @@ define(function (window,document) {
 			bindHandler(elem,type,fn);
 		}
 	}
-	//通用拖动方法
-	function drag(handle_dom,dom,param){
-		var param = param || {};
-		var onStart = param.start || null;
-		var onMove = param.move || null;
-		var onEnd = param.end || null;
-		
-		var X, Y,L,T,W,H;
-		bindHandler(handle_dom,'mousedown',function (e){
-			e.preventDefault && e.preventDefault();
-			e.stopPropagation && e.stopPropagation();
-			X = e.clientX;
-			Y = e.clientY;
-			L = getStyle(dom,'left');
-			T = getStyle(dom,'top');
-			W = outerWidth(dom);
-			H = outerHeight(dom);
-			onStart && onStart.call(dom,X,Y);
-			bindHandler(document,'mousemove',move);
-			bindHandler(document,'mouseup',up);
-		});
-		
-		function move(e){
-			onMove && onMove.call(dom,(e.clientX - X),(e.clientY - Y),L,T,W,H);
-			//做了点儿猥琐的事情，你懂得
-			e.preventDefault && e.preventDefault();
-			e.stopPropagation && e.stopPropagation();
-			window.getSelection?window.getSelection().removeAllRanges():document.selection.empty();
-		}
-		function up(e) {
-			removeHandler(document,'mousemove',move);
-			removeHandler(document,'mouseup',up);
-			onEnd && onEnd.call(dom);
-		}
-	}
 	
     return {
 		TypeOf : TypeOf,
+		isNum : isNum,
 		each : each,
-		css : setCss,
-		supports : supports,
-		zoomOut : zoomOut,
-		hasClass : hasClass,
 		getStyle : getStyle,
+		css : setCss,
+		animation : animation,
+		supports : supports,
 		outerWidth : outerWidth,
 		outerHeight : outerHeight,
-		ready : ready,
 		bind : bind,
 		clone : clone,
 		unbind : removeHandler,
-		drag : drag,
-		animation : animation,
+		hasClass : hasClass,
+		'addClass' : function (dom, cls) {
+			if (!this.hasClass(dom, cls)) dom.className += " " + cls;
+		},
+		'removeClass' : function (dom, cls) {
+			if (hasClass(dom, cls)) {
+				var reg = new RegExp('(\\s|^)' + cls + '(\\s|$)');
+				dom.className = dom.className.replace(reg, ' ');
+			}
+		},
+		/**
+		 * 页面加载
+		 */
+		ready : (function(){
+			var readyFns = [];
+			function completed() {
+				removeHandler(document,"DOMContentLoaded", completed);
+				removeHandler(window,"load", completed);
+				each(readyFns,function(i,fn){
+					fn();
+				});
+				readyFns = null;
+			}
+			return function (callback){
+				if ( document.readyState === "complete" ) {
+					callback && callback();
+				} else {
+					callback && readyFns.push(callback);
+					
+					bindHandler(document,'DOMContentLoaded',completed);
+					bindHandler(window,'load',completed);
+				}
+			}
+		})(),
+		//缩小，淡出
+		zoomOut :  private_css3 ? function(DOM,time,fn){
+			var op = getStyle(DOM,'opacity');
+			
+			css_anim(DOM,{
+				'-webkit-transform' : 'scale(0.5)',
+				opacity : 0
+			},time,null,function(){
+				setCss(DOM,{
+					'-webkit-transform' : 'scale(1)',
+					opacity : op
+				});
+				fn && fn.call(DOM);
+			});
+
+		} : function (DOM,time,fn){
+			var op = getStyle(DOM,'opacity');
+			DOM.style.overflow = 'hidden';
+			var width = getStyle(DOM,'width');
+			var height = outerHeight(DOM);
+			var left = getStyle(DOM,'left') || 0;
+			var top = getStyle(DOM,'top') || 0;
+			
+			animation(DOM,{
+				width : width/2,
+				height : height/2,
+				left : (left + width/4),
+				top : (top + height/4),
+				opacity : 0
+			},time,function(){
+				DOM.style.opacity = op;
+				DOM.style.display = 'none';
+				fn && fn.call(DOM);
+			});
+		},
+		//通用拖动方法
+		drag : function drag(handle_dom,dom,param){
+			var param = param || {};
+			var onStart = param.start || null;
+			var onMove = param.move || null;
+			var onEnd = param.end || null;
+			
+			var X, Y,L,T,W,H;
+			bindHandler(handle_dom,'mousedown',function (e){
+				e.preventDefault && e.preventDefault();
+				e.stopPropagation && e.stopPropagation();
+				X = e.clientX;
+				Y = e.clientY;
+				L = getStyle(dom,'left');
+				T = getStyle(dom,'top');
+				W = outerWidth(dom);
+				H = outerHeight(dom);
+				onStart && onStart.call(dom,X,Y);
+				bindHandler(document,'mousemove',move);
+				bindHandler(document,'mouseup',up);
+			});
+			
+			function move(e){
+				onMove && onMove.call(dom,(e.clientX - X),(e.clientY - Y),L,T,W,H);
+				//做了点儿猥琐的事情，你懂得
+				e.preventDefault && e.preventDefault();
+				e.stopPropagation && e.stopPropagation();
+				window.getSelection?window.getSelection().removeAllRanges():document.selection.empty();
+			}
+			function up(e) {
+				removeHandler(document,'mousemove',move);
+				removeHandler(document,'mouseup',up);
+				onEnd && onEnd.call(dom);
+			}
+		},
 		//创建dom
 		createDom : function (html){
 			var a = document.createElement('div');
@@ -559,9 +592,10 @@ define(function (window,document) {
 			
 			attr = attr || {};
 			attr.type = "text/css";
-			for(var i in attr){
-				styleTag.setAttribute(i, attr[i]);
-			}
+			//设置标签属性
+			each(attr,function(i,value){
+				styleTag.setAttribute(i, value);
+			});
 			
 			// IE
 			if (styleTag.styleSheet) {
@@ -570,7 +604,8 @@ define(function (window,document) {
 				var tt1 = document.createTextNode(cssStr);
 				styleTag.appendChild(tt1);
 			}
-			
+			//插入页面中
+			(document.head || document.getElementsByTagName('head')[0]).appendChild(styleTag);
 			return styleTag;
 		},
 		//根据class查找元素
@@ -617,27 +652,23 @@ define(function (window,document) {
 			
 			return box;
 		},
-		//滑出
-		slideUp : function (DOM,time,fn){
-			DOM.style.overflow = 'hidden';
-			//FIXME padding
-			animation(DOM,{
-				height : 0,
-				padding : 0
-			}, time,function(){
-				DOM.style.display = 'none';
-				fn && fn.call(DOM);
-			});
-		},
 		//淡入
 		fadeIn : function (DOM,time,fn){
 			var op = getStyle(DOM,'opacity');
-			DOM.style.opacity = 0;
-			DOM.style.display = 'block';
-			animation(DOM,{
-				'opacity' : op
-			}, time, function(){
-				fn && fn.call(DOM);
+			setCss(DOM,{
+				'opacity' : 0,
+				'display' : 'block'
+			});
+			/**
+			 * 不知道为啥，设置完css直接执行动画，没效果
+			 *   可能是浏览器优化js逻辑
+			 */
+			setTimeout(function(){
+				animation(DOM,{
+					'opacity' : op
+				}, time, function(){
+					fn && fn.call(DOM);
+				});
 			});
 		},
 		//淡出

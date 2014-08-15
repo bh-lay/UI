@@ -176,6 +176,11 @@
 		left: 66%;
 		top: 33%;
 	}
+	#from_selected .from-none{
+		left: 66%;
+		top: 0;
+		background:#aaa;
+	}
 	#from_selected .from-dom{
 		top: 33%;
 		left: 33%;
@@ -210,8 +215,8 @@
 		<div class="demoItem">
 			<h3>提示信息</h3>
 			<div class="btnList">
-				<a href="javascript:void(0)" onclick="UI.prompt('我快死了')" >默认（3s关闭）</a>
-				<a href="javascript:void(0)" onclick="UI.prompt('我快死了',500)" >指定时间（0.5s关闭）</a>
+				<a href="javascript:void(0)" onclick="showPrompt(this,'我快死了')" >默认（3s关闭）</a>
+				<a href="javascript:void(0)" onclick="showPrompt(this,'我快死了',500)" >指定时间（0.5s关闭）</a>
 				<a href="javascript:void(0)" onclick="showMessage(this)" >一直显示（别点）</a>
 			</div>
 		</div>
@@ -232,11 +237,12 @@
 	</div>
 </div>
 <div id="from_selected">
-	<a href="javascript:void(0)" onclick="toggleFrom(this,'top')" class="from-top">﹀</a>
-	<a href="javascript:void(0)" onclick="toggleFrom(this,'bottom')" class="from-bottom">︿</a>
-	<a href="javascript:void(0)" onclick="toggleFrom(this,'left')" class="from-left">〉</a>
-	<a href="javascript:void(0)" onclick="toggleFrom(this,'right')" class="from-right">〈</a>
-	<a href="javascript:void(0)" onclick="toggleFrom(this,'dom')" class="from-dom">○</a>
+	<a href="javascript:void(0)" title="上" onclick="toggleFrom(this,'top')" class="from-top">﹀</a>
+	<a href="javascript:void(0)" title="下" onclick="toggleFrom(this,'bottom')" class="from-bottom">︿</a>
+	<a href="javascript:void(0)" title="左" onclick="toggleFrom(this,'left')" class="from-left">〉</a>
+	<a href="javascript:void(0)" title="右" onclick="toggleFrom(this,'right')" class="from-right">〈</a>
+	<a href="javascript:void(0)" title="缩放" onclick="toggleFrom(this,'dom')" class="from-dom">○</a>
+	<a href="javascript:void(0)" title="默认" onclick="toggleFrom(this,'none')" class="from-none">×</a>
 </div>
 	<div id="loading_mask">
 		<div class="loading_mask_txt">
@@ -248,21 +254,6 @@
 	-->
 	<script type="text/javascript" src="src/dialog.js"></script>
 	<script type="text/javascript">
-        function hasClass(obj, cls) {
-            return obj.className.match(new RegExp('(\\s|^)' + cls + '(\\s|$)'));
-        }
-
-        function addClass(obj, cls) {
-            if (!this.hasClass(obj, cls)) obj.className += " " + cls;
-        }
-
-        function removeClass(obj, cls) {
-            if (hasClass(obj, cls)) {
-                var reg = new RegExp('(\\s|^)' + cls + '(\\s|$)');
-                obj.className = obj.className.replace(reg, ' ');
-            }
-        }
-		
 		
 		var global_from = null;
 		var param = {
@@ -271,20 +262,24 @@
 		function toggleParam(elem,type,value){
 			if(param[type]){
 				param[type] = null;
-				removeClass(elem,'isSelected');
+				UI._utils.removeClass(elem,'isSelected');
 			}else{
-				addClass(elem,'isSelected');
+				UI._utils.addClass(elem,'isSelected');
 				param[type] = value;
 			}
 		}
 		
 		function toggleFrom(elem,from){
 			global_from = from;
+			if(from == 'none'){
+				global_from = null;
+			}
+			
 			UI._utils.each(elem.parentNode.getElementsByTagName('a'),function(i,dom){
-				if(hasClass(dom,'from-'+from)){
-					addClass(dom,'isSelected');
+				if(UI._utils.hasClass(dom,'from-'+from)){
+					UI._utils.addClass(dom,'isSelected');
 				}else{
-					removeClass(dom,'isSelected');
+					UI._utils.removeClass(dom,'isSelected');
 				}
 			});
 		//	UI._utils.findByClassName(elem.parentNode,'')
@@ -313,8 +308,15 @@
 				active_prompt = null;
 			}else{
 				elem.innerHTML = '想关掉它，点我啊';
-				active_prompt = UI.prompt('再点一下按钮，关掉我',0);
+				active_prompt = UI.prompt('再点一下按钮，关掉我',0,{
+					from : global_from == "dom" ? elem : global_from
+				});
 			}
+		}
+		function showPrompt(elem,title,time){
+			active_prompt = UI.prompt(title,time,{
+				from : global_from == "dom" ? elem : global_from
+			});
 		}
 		var active_select = null;
 		function showSelect(elem){
@@ -371,15 +373,19 @@
 			if(from == 'left'){
 				param.left = 0;
 				param.width = 400;
+				param.mask = true;
 			}else if(from == 'right'){
 				param.right = 0;
 				param.width = 400;
+				param.mask = true;
 			}else if(from == 'top'){
 				param.top = 0;
 				param.height = 400;
+				param.mask = true;
 			}else if(from == 'bottom'){
 				param.bottom = 0;
 				param.height = 400;
+				param.mask = true;
 			}
 			
 			
@@ -405,7 +411,7 @@
 					return false
 				}
 			},{
-			  'from' : elem
+			  'from' : global_from == "dom" ? elem : global_from
 			});
 			active_ask.closeFn = function(){
 				active_ask = null;

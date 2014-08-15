@@ -25,7 +25,7 @@
 	width : 100%;
 	background-color : #000;
 	display : none;
-	opacity : 0.5;
+	opacity : 0.6;
 	filter : alpha(opacity=50)
 }
 .UI_main_cnt {
@@ -50,15 +50,18 @@
 	height : 0px;
 	overflow : visible;
 }
+
+.UI-blur{
+	-webkit-transition : 0.08s;
+	-webkit-filter : blur(1px)
+}
 /**µ¯¿ò**/
 .UI_pop {
 	width : 200px;
-	_border : 1px solid #eee;
 	position : absolute;
 	top : 400px;
 	left : 300px;
 	background : #fff;
-	border-radius : 4px;
 	overflow : hidden;
 	box-shadow : 2px 3px 10px rgba(0,0,0,0.6);
 }
@@ -102,7 +105,6 @@
 	_border : 1px solid #eee;
 	position : absolute;
 	background : #fff;
-	border-radius : 4px;
 	overflow : hidden;
 	box-shadow : 2px 3px 10px rgba(0,0,0,0.6);
 }
@@ -117,7 +119,6 @@
 	_border : 1px solid #eee;
 	position : absolute;
 	background : #fff;
-	border-radius : 4px;
 	overflow : hidden;
 	box-shadow : 2px 3px 10px rgba(0,0,0,0.6);
 }
@@ -170,19 +171,16 @@
 }
 .UI_prompt {
 	width : 240px;
-	position : absolute;
-	left : 50%;
+	left: 50%;
 	margin-left : -120px;
-	box-sizing : content-box;
-	background : #fff;
-	_border : 1px solid #fafafa;
-	border-radius : 4px;
-	box-shadow : 2px 2px 10px rgba(0,0,0,0.5);
+	position : absolute;
 }
-.UI_cnt {
+.UI_prompt_cnt {
 	padding : 30px 10px;
+	background : #fff;
+	box-shadow : 2px 2px 10px rgba(0,0,0,0.5);
 	font-size : 18px;
-	color : #222;
+	color : #333;
 	text-align : center;
 }
 .UI_cover {
@@ -190,6 +188,7 @@
 	top : 0px;
 	width : 100%;
 	height : 100px;
+	max-width: 100%;
 }
 .UI_coverCnt {
 	position : relative;
