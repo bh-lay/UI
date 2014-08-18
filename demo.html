@@ -110,12 +110,17 @@
 		background: #f4f4f4;
 		color: #222;
 	}
+	.btnList a:active{
+		background: #ccc;
+		color: #222;
+	}
 	
 	
 	/****/
 	.btnConf{
-		padding: 10px;
+		padding: 10px 5px;
 		text-align: center;
+		background: #fff;
 	}
 	.btnConf a{
 		display: inline-block;
@@ -138,11 +143,14 @@
 		color: #000;
 	}
 	
-	#from_selected{
+	#config_panle{
 		position: absolute;
-		top: 50%;
+		top: 10%;
 		right: 20px;
 		width: 120px;
+	}
+	#from_selected{
+		position: relative;
 		height: 120px;
 	}
 	#from_selected a{
@@ -198,9 +206,8 @@
 		<div class="demoItem">
 			<h3>弹框</h3>
 			<div class="btnConf">
-				<a href="javascript:void(0)" onclick="toggleParam(this,'title','标题出来了')" ><span>√</span>标题</a>
-				<a href="javascript:void(0)" onclick="toggleParam(this,'mask',true)"><span>√</span>蒙层</a>
-				<a href="javascript:void(0)" onclick="toggleParam(this,'confirm',true)"><span>√</span>confirm</a>
+				<a href="javascript:void(0)" onclick="toggleParam(this,'title','标题出来了',null)" ><span>√</span>标题</a>
+				<a href="javascript:void(0)" onclick="toggleParam(this,'confirm',true,false)"><span>√</span>confirm</a>
 			</div>
 			<div class="btnList">
 				<a href="javascript:void(0)" onclick="showPop(this)">显示</a>
@@ -236,13 +243,20 @@
 		</div>
 	</div>
 </div>
-<div id="from_selected">
-	<a href="javascript:void(0)" title="上" onclick="toggleFrom(this,'top')" class="from-top">﹀</a>
-	<a href="javascript:void(0)" title="下" onclick="toggleFrom(this,'bottom')" class="from-bottom">︿</a>
-	<a href="javascript:void(0)" title="左" onclick="toggleFrom(this,'left')" class="from-left">〉</a>
-	<a href="javascript:void(0)" title="右" onclick="toggleFrom(this,'right')" class="from-right">〈</a>
-	<a href="javascript:void(0)" title="缩放" onclick="toggleFrom(this,'dom')" class="from-dom">○</a>
-	<a href="javascript:void(0)" title="默认" onclick="toggleFrom(this,'none')" class="from-none">×</a>
+<div id="config_panle">
+	<div class="btnConf">
+		<a href="javascript:void(0)" onclick="toggleParam(this,'mask',true,false)"><span>√</span>蒙层</a>
+		<a href="javascript:void(0)" onclick="toggleParam(this,'easyClose',true,false)"><span>√</span>简易关闭</a>
+	</div>
+	
+	<div id="from_selected">
+		<a href="javascript:void(0)" title="上" onclick="toggleFrom(this,'top')" class="from-top">﹀</a>
+		<a href="javascript:void(0)" title="下" onclick="toggleFrom(this,'bottom')" class="from-bottom">︿</a>
+		<a href="javascript:void(0)" title="左" onclick="toggleFrom(this,'left')" class="from-left">〉</a>
+		<a href="javascript:void(0)" title="右" onclick="toggleFrom(this,'right')" class="from-right">〈</a>
+		<a href="javascript:void(0)" title="缩放" onclick="toggleFrom(this,'dom')" class="from-dom">○</a>
+		<a href="javascript:void(0)" title="默认" onclick="toggleFrom(this,'none')" class="from-none">×</a>
+	</div>
 </div>
 	<div id="loading_mask">
 		<div class="loading_mask_txt">
@@ -254,14 +268,13 @@
 	-->
 	<script type="text/javascript" src="src/dialog.js"></script>
 	<script type="text/javascript">
-		
-		var global_from = null;
 		var param = {
-			'html' : '<div style="height:280px;background:url(http://layasset.qiniudn.com/images/cover/newSkin.jpg) no-repeat center"></div>'
+			'easyClose' : false,
+			'mask' : false
 		};
-		function toggleParam(elem,type,value){
+		function toggleParam(elem,type,value,defaultValue){
 			if(param[type]){
-				param[type] = null;
+				param[type] = defaultValue;
 				UI._utils.removeClass(elem,'isSelected');
 			}else{
 				UI._utils.addClass(elem,'isSelected');
@@ -270,9 +283,9 @@
 		}
 		
 		function toggleFrom(elem,from){
-			global_from = from;
+			param.from = from;
 			if(from == 'none'){
-				global_from = null;
+				param.from = null;
 			}
 			
 			UI._utils.each(elem.parentNode.getElementsByTagName('a'),function(i,dom){
@@ -282,21 +295,33 @@
 					UI._utils.removeClass(dom,'isSelected');
 				}
 			});
-		//	UI._utils.findByClassName(elem.parentNode,'')
 		}
 		
+		//弹框
 		function showPop(elem){
-			param.from = global_from == "dom" ? elem : global_from;
-			UI.pop(param);
+			UI.pop({
+				'title' : param.title,
+				'confirm' : param.confirm,
+				'width' : 600,
+				'easyClose' : param.easyClose,
+				'from' : param.from == "dom" ? elem : param.from,
+				'mask' : param.mask,
+				'html' : '<div style="height:280px;background:url(http://layasset.qiniudn.com/images/cover/newSkin.jpg) no-repeat center"></div>'
+			});
 		}
+		/**
+		 * 确认框
+		 */
 		function showConfirm(elem){
 			UI.confirm({
-			  'text' : '请我吃饭吧！',
-			  'btns' : ['好的呀','不愿意'],
-			  'from' : global_from == "dom" ? elem : global_from,
-			  'callback' : function(){
-			    UI.prompt('你是好人！');
-			  }
+				'text' : '请我吃饭吧！',
+				'btns' : ['好的呀','不愿意'],
+				'from' : param.from == "dom" ? elem : param.from,
+				'easyClose' : param.easyClose,
+				'mask' : param.mask,
+				'callback' : function(){
+					UI.prompt('你是好人！');
+				}
 			});
 		}
 		
@@ -309,13 +334,13 @@
 			}else{
 				elem.innerHTML = '想关掉它，点我啊';
 				active_prompt = UI.prompt('再点一下按钮，关掉我',0,{
-					from : global_from == "dom" ? elem : global_from
+					from : param.from == "dom" ? elem : param.from
 				});
 			}
 		}
 		function showPrompt(elem,title,time){
 			active_prompt = UI.prompt(title,time,{
-				from : global_from == "dom" ? elem : global_from
+				from : param.from == "dom" ? elem : param.from
 			});
 		}
 		var active_select = null;
@@ -340,6 +365,9 @@
 				'top' : offset.top + UI._utils.outerHeight(elem),
 				'width' : 300,
 				'left' : offset.left + 30,
+				'from' : param.from == "dom" ? elem : param.from,
+				'easyClose' : param.easyClose,
+				'mask' : param.mask,
 				'closeFn' : function(){
 					active_select = null;
 				}
@@ -356,8 +384,10 @@
 				'width' : UI._utils.outerWidth(elem) - 20,
 				'top' : offset.top - 140,
 				'left' : offset.left + 10,
-				'from' : global_from == "dom" ? elem : global_from,
-				'html' : '<div style="height:150px;line-height:150px;text-align:center;color:#333;background:#fff;box-shadow: 0px 0px 10px #000;">我最可怜，点一下外面就没了</div>',
+				'from' : param.from == "dom" ? elem : param.from,
+				'easyClose' : param.easyClose,
+				'mask' : param.mask,
+				'html' : '<div style="height:150px;line-height:150px;text-align:center;color:#333;background:#fff;box-shadow: 0px 0px 10px #000;">我最可怜，一丁点儿样式都没有</div>',
 				'closeFn' : function(){
 					active_plane = null;
 				}
@@ -365,31 +395,28 @@
 		}
 		
 		function showCover(elem){
-			var from = global_from == "dom" ? elem : global_from;
-			var param = {
+			var from = param.from == "dom" ? elem : param.from;
+			var param1 = {
 				'from' : from,
-				'html' : '<div style="color:#333;text-align:center;padding:100px 0px;"><br/><br/><br/><br/><br/><br/><br/><iframe src="http://baidu.com/a.jpg"></iframe><br/>关闭按钮好搓啊，给个建议呗！</div>'
+				'mask' : param.mask,
+				'easyClose' : param.easyClose,
+				'html' : '<table width="100%" height="100%"><tr><td style="text-align:center;vertical-align:middle;"><img src="http://layasset.qiniudn.com/labs/UI.jpg" /></td></tr></table>'
 			};
 			if(from == 'left'){
-				param.left = 0;
-				param.width = 400;
-				param.mask = true;
+				param1.left = 0;
+				param1.width = 400;
 			}else if(from == 'right'){
-				param.right = 0;
-				param.width = 400;
-				param.mask = true;
+				param1.right = 0;
+				param1.width = 400;
 			}else if(from == 'top'){
-				param.top = 0;
-				param.height = 400;
-				param.mask = true;
+				param1.top = 0;
+				param1.height = 400;
 			}else if(from == 'bottom'){
-				param.bottom = 0;
-				param.height = 400;
-				param.mask = true;
+				param1.bottom = 0;
+				param1.height = 400;
 			}
 			
-			
-			UI.cover(param);
+			UI.cover(param1);
 		}
 		
 		var active_ask = null;			
@@ -411,7 +438,9 @@
 					return false
 				}
 			},{
-			  'from' : global_from == "dom" ? elem : global_from
+				'easyClose' : param.easyClose,
+				'from' : param.from == "dom" ? elem : param.from,
+				'mask' : param.mask
 			});
 			active_ask.closeFn = function(){
 				active_ask = null;

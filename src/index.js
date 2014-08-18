@@ -249,6 +249,53 @@
 	}
 	
 	/**
+	 * 处理对象是否易于关闭的扩展
+	 *   点击自身以外的空间，按下esc键
+	 */
+	 //当前打开状态的对象
+	private_active = [];
+	
+	function closeActive(){
+		utils.each(private_active,function(i,item){
+			item.close();
+		});
+		private_active = [];
+	}
+	//检测body的mouseup事件
+	utils.bind(private_body,'mouseup',function checkClick(event) {
+		setTimeout(function(){
+			var target = event.srcElement || event.target;
+			while (!utils.hasClass(target,'UI_easyClose')) {
+				target = target.parentNode;
+				if(!target){
+					//close the active
+					closeActive();
+					break
+				}
+			}
+		});
+	});
+	//检测window的keydown事件（esc）
+	utils.bind(private_body,'keyup',function checkClick(event) {
+		if(event.keyCode == 27){
+			closeActive();
+		}
+	});
+	
+	//对象拓展
+	function easyCloseHandle(mark){
+		if(!mark){
+			return
+		}
+		var me = this;
+		utils.addClass(this.dom,'UI_easyClose');
+		setTimeout(function(){
+			private_active.push(me);
+		},20);
+	}
+	
+	
+	/**
 	 * 模糊效果
 	 */
 	function setRootElementsStyle(callback){
@@ -293,15 +340,14 @@
 		}
 	}
 	/**
-	 *
+	 * 关闭蒙层
 	 */
 	function closeMask(mark){
 		if(mark){
 			private_maskCount--;
 			if(private_maskCount == 0){
-				utils.fadeOut(private_maskDom,400,function(){
-					removeBlur && removeBlur();
-				});
+				removeBlur && removeBlur();
+				utils.fadeOut(private_maskDom,400);
 				
 			}
 		}
@@ -360,6 +406,7 @@
 	 **/
 	function openAnimation(DOM,from,time,animation_range,fn){
 		if(!from){
+			fn && fn();
 			//不需要动画
 			return
 		}
@@ -422,11 +469,19 @@
 	}
 	
 	/**
-	 * 结束动画
+	 * 处理对象关闭及结束动画
 	 */
 	function closeAnimation(time_define,animation_range,fn){
 		return function(time){
 			var me = this;
+			
+			//检测、记录自己是否“活着”
+			if(this.dead){
+				return;
+			}
+			this.dead = true;
+			
+			
 			var time = isNum(time) ? time : parseInt(time_define) || 80;
 			var from = me._from;
 			
@@ -480,9 +535,7 @@
 		this._mask = param.mask || false;
 		this._from = param.from || 'top';
 		
-		var this_html = param.html || '';
-		var this_width = param.width || Math.min(600,private_docW-20);
-
+		var easyClose = typeof(param.easyClose) == 'boolean' ? param.easyClose : true;
 
 		//当有确认参数时
 		if(param.confirm){
@@ -533,13 +586,13 @@
 		utils.bind(this.dom,'click','.UI_pop_close',function(){
 			me.close();
 		});
-		//插入内容
-		this.cntDom.innerHTML = this_html;
-		
-		
-		
 		
 		showMask(this._mask,function(){
+			var this_width = param.width || Math.min(600,private_docW-20);
+			
+			//插入内容
+			me.cntDom.innerHTML = param.html || '';
+			
 			//设置宽度，为计算位置尺寸做准备
 			setCSS(me.dom,{
 				width : this_width
@@ -555,16 +608,16 @@
 				left : left
 			});
 			//开场动画
-			openAnimation(me.dom,me._from,200);
+			openAnimation(me.dom,me._from,200,null,function(){
+				//处理是否易于关闭
+				easyCloseHandle.call(me,easyClose);
+			});
 		});
 	}
 	//使用close方法
 	POP.prototype.close = closeAnimation(500);
 	POP.prototype.adapt = function(){
-		var width = outerWidth(this.dom);
-		var height = outerHeight(this.dom);
-		
-		var fixSize = adaption(width,height);
+		var fixSize = adaption(outerWidth(this.dom),outerHeight(this.dom));
 		animation(this.dom,{
 			top : fixSize.top,
 			left : fixSize.left
@@ -578,16 +631,14 @@
 		var param = param || {};
 		var me = this;
 		
-		var this_text = param.text || 'need text in parameter!';
-		var callback = param.callback || null;
 		var this_html = utils.render(confirm_tpl,{
-			text : this_text
+			'text' : param.text || 'need text in parameter!'
 		});
 		this.dom = utils.createDom(this_html)[0];
 		this.closeFn = param.closeFn || null;
 		this._mask = typeof(param.mask) == 'boolean' ? param.mask : true;
 		this._from = param.from || 'top';
-		
+		var easyClose = typeof(param.easyClose) == 'boolean' ? param.easyClose : true;
 		
 		add_confirm(this.dom,param,function(){
 			me.close();
@@ -605,7 +656,10 @@
 				left : newPosition.screenLeft,
 				top : newPosition.screenTop
 			});
-			openAnimation(me.dom,me._from,100);
+			openAnimation(me.dom,me._from,100,null,function(){
+				//处理是否易于关闭
+				easyCloseHandle.call(me,easyClose);
+			});
 		});
 		
 		
@@ -621,9 +675,9 @@
 	function ASK(text,callback,param){
 		var me = this;
 		var param = param || {};
-		var this_text = text || 'need text in parameter!';
+		
 		var this_html = utils.render(ask_tpl,{
-			text : this_text
+			'text' : text || 'need text in parameter!'
 		});
 
 		this.dom = utils.createDom(this_html)[0];
@@ -631,6 +685,7 @@
 		this.inputDom = findByClassName(me.dom,'UI_ask_key')[0];
 		this.closeFn =  null;
 		this.callback = callback || null;
+		var easyClose = typeof(param.easyClose) == 'boolean' ? param.easyClose : true;
 		
 		var confirm_html = utils.render(confirmBar_tpl,{
 			confirm : '确定',
@@ -660,6 +715,8 @@
 		
 		openAnimation(this.dom,this._from,100,80,function(){
 			me.inputDom.focus();
+			//处理是否易于关闭
+			easyCloseHandle.call(me,easyClose);
 		});
 	}
 	ASK.prototype.close = closeAnimation(200);
@@ -675,7 +732,6 @@
 	function prompt(text,time,param){
 		var this_prompt = this,
 			param = param || {};
-		var text = text || 'need text in arguments!';
 		this.dom = utils.createDom(prompt_tpl)[0];
 		this._from = param.from || 'bottom';
 		this.tips(text,time);
@@ -705,64 +761,31 @@
 	/**
 	 *	PLANE 
 	 */
-	//the active plane
-	private_activePlane = [];
-	
-	function closePlane(){
-		utils.each(private_activePlane,function(i,item){
-			item.close();
-		});
-		private_activePlane = [];
-	}
-	/**
-	 * 简单的事件委托模型 
-	 */
-	function checkClick(event) {
-		setTimeout(function(){
-			var target = event.srcElement || event.target;
-			while (!utils.hasClass(target,'UI_plane')) {
-				target = target.parentNode;
-				if(!target){
-					//close the active plane
-					closePlane();
-					break
-				}
-			}
-		});
-	}
-
-	utils.bind(document,'mouseup',checkClick);
-	
-	
 	function PLANE(param){
-		var this_plane = this;
-		
-		setTimeout(function(){
-			private_activePlane.push(this_plane);
-		},20);
-		
-
+		var me = this;
 		var param = param || {};
-
-		var this_html = param.html || '';
+		
 		this.closeFn = param.closeFn || null;
 
 		this.dom = utils.createDom(plane_tpl)[0];
 		this._from = param.from || null;
-
+		
 		//insert html
-		this.dom.innerHTML = this_html;
+		this.dom.innerHTML = param.html || '';
 		
 		setCSS(this.dom,{
-			width : param.width || 240,
-			height :param.height || null,
-			top : isNum(param.top) ? param.top : 300,
-			left : isNum(param.left) ? param.left : 800
+			'width' : param.width || 240,
+			'height' :param.height || null,
+			'top' : isNum(param.top) ? param.top : 300,
+			'left' : isNum(param.left) ? param.left : 800
 		});
 		
 		private_mainDom.appendChild(this.dom);
 		
-		openAnimation(this.dom,this._from,100);
+		openAnimation(this.dom,this._from,100,null,function(){
+			//处理是否易于关闭
+			easyCloseHandle.call(me,true);
+		});
 	}
 	PLANE.prototype.close = closeAnimation(200);
 
@@ -780,11 +803,10 @@
 		
 		this.cntDom = findByClassName(this.dom,'UI_coverCnt')[0];
 		this.closeFn = param.closeFn || null;
-
-		var this_html = param.html || '';
+		
 		
 		//关闭事件
-		utils.bind(this.dom,'click','.UI_coverClose',function(){
+		utils.bind(this.dom,'click','.UI_close',function(){
 			me.close();
 		});
 
@@ -793,11 +815,8 @@
 		this._bodyOverflowY = getCSS(private_body,'overflowY');
 		var cssObj = {
 			width : isNum(param.width) ? Math.min(private_docW,param.width) : private_docW,
-			top : private_scrollTop
+			height : isNum(param.height) ? Math.min(private_winH,param.height) : private_winH,
 		};
-		if(isNum(param.height)){
-			cssObj.height = Math.min(private_winH,param.height);
-		}
 		//水平定位
 		if(isNum(param.right)){
 			cssObj.right = param.right;
@@ -809,11 +828,11 @@
 		}
 		//垂直定位
 		if(isNum(param.bottom)){
-			cssObj.top = private_winH - (cssObj.height || private_winH) - param.bottom;
+			cssObj.top = private_winH - cssObj.height - param.bottom;
 		}else if(isNum(param.top)){
 			cssObj.top = param.top;
 		}else{
-			cssObj.top = (private_docH - cssObj.heigh)/2
+			cssObj.top = (private_winH - cssObj.height)/2
 		}
 		//打开蒙层
 		showMask(this._mask,function(){
@@ -824,16 +843,19 @@
 				setCSS(private_body,{
 					'overflowY' : 'hidden'
 				});
+				
+				
+				//处理是否易于关闭
+				easyCloseHandle.call(me,true);
 			});
 		});
 		//insert html
-		this.cntDom.innerHTML = this_html;
+		this.cntDom.innerHTML = param.html || '';
 	}
 	//使用close方法
 	COVER.prototype.close = closeAnimation(400,500,function(){
-		var me = this;
 		setCSS(private_body,{
-			overflowY : me._bodyOverflowY
+			overflowY : this._bodyOverflowY
 		});
 	});
 
@@ -852,42 +874,15 @@
 			fns.push(item[1]);
 		});
 		var this_html = utils.render(select_tpl,{
-			list : nameList,
-			title : param.title || null,
-			intro : param.intro || null
+			'list' : nameList,
+			'title' : param.title || null,
+			'intro' : param.intro || null
 		});
 		
 		this.dom = utils.createDom(this_html)[0];
 		this.closeFn = param.closeFn || null;
-		this._from = param.from || null;
-		var cssObj;
-		if(private_docW > 640){
-			this._mask = false;
-			new PLANE({
-				top : param.top || 100,
-				left : param.left || 100,
-				width : param.width || 200,
-				height : 0,
-				closeFn : function(){
-					me.close();
-				}
-			}).dom.appendChild(this.dom);
-			setCSS(this.dom,{
-				position : 'relative',
-				width : '100%'
-			});
-			cssObj = {
-				position : 'relative',
-				width : '100%'
-			};
-		} else {
-			this._from = 'bottom';
-			this._mask = true;
-			private_fixedScreenBottomDom.appendChild(this.dom);
-			cssObj = {
-				'bottom' : 0
-			};
-		}
+		this._from = param.from || 'bottom';
+		this._mask = private_docW > 640 ? param.mask : true;
 		
 		//绑定事件
 		var btns = findByClassName(this.dom,'UI_select_btn');
@@ -900,8 +895,25 @@
 		
 		//显示蒙层
 		showMask(this._mask,function(){
+			var cssObj;
+			if(private_docW > 640){
+				cssObj = {
+					top : param.top || 100,
+					left : param.left || 100,
+					width : param.width || 200
+				};
+				private_mainDom.appendChild(me.dom);
+			} else {
+				me._from = 'bottom';
+				private_fixedScreenBottomDom.appendChild(me.dom);
+				cssObj = {
+					bottom : 0
+				};
+			}
 			setCSS(me.dom,cssObj);
-			openAnimation(me.dom,me._from,200,400);
+			openAnimation(me.dom,me._from,200,400,function(){
+				easyCloseHandle.call(me,true);
+			});
 		});
 		
 	}

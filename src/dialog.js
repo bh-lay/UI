@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2014-8-15 18:35
+ * @modified 2014-8-18 16:19
  * 
  **/
 
@@ -46,7 +46,7 @@
 	var confirmBar_tpl = '<div class="UI_pop_confirm"><a href="javascript:void(0)" class="UI_pop_confirm_ok"><%=confirm %></a><a href="javascript:void(0)" class="UI_pop_confirm_cancel"><%=cancel %></a></div>';
 	var plane_tpl = '<div class="UI_plane"></div>';
 	var prompt_tpl = '<div class="UI_prompt"><div class="UI_prompt_cnt"></div></div>';
-	var cover_tpl = '<div class="UI_cover"><div class="UI_coverCnt"></div><a href="javascript:void(0)" class="UI_coverClose">×</a></div>';
+	var cover_tpl = '<div class="UI_cover"><div class="UI_coverCnt"></div><a href="javascript:void(0)" class="UI_close UI_coverClose">×</a></div>';
 	var select_tpl = '<div class="UI_select"><div class="UI_select_body"><% if(title){ %><div class="UI_selectCpt"><h3><%=title %></h3><% if(intro){ %><p><%=intro %></p><% } %></div><% } %><div class="UI_selectCnt"><% for(var i=0,total=list.length;i<total;i++){ %><a class="UI_select_btn" href="javascript:void(0)"><%=list[i] %></a><% } %></div></div><div class="UI_selectCancel"><a class="UI_select_btn" href="javascript:void(0)" data-index="-1">取消</a></div></div>';
 	
 	var popCSS = '.UI_lawyer{position:absolute;top:0px;left:0px;z-index:4999;width:100%;height:0px;overflow:visible;font-family:"Microsoft Yahei"}.UI_lawyer a,.UI_lawyer a:hover{text-decoration:none;-webkit-tap-highlight-color:rgba(0,0,0,0);-webkit-tap-highlight-color:transparent}.UI_lawyer a:active{outline:none}.UI_mask{position:absolute;top:0px;left:0px;width:100%;background-color:#000;display:none;opacity:0.6;filter:alpha(opacity=50)}.UI_main_cnt{width:0px;height:0px;overflow:visible}.UI_fixedScreenTop_cnt{position:absolute;z-index:4999;top:0px;left:0px;width:100%;height:0px;overflow:visible}.UI_fixedScreenBottom_cnt{position:absolute;z-index:4999;left:0px;width:100%;height:0px;overflow:visible}.UI-blur{-webkit-transition:0.08s;-webkit-filter:blur(1px)}.UI_pop{width:200px;position:absolute;top:400px;left:300px;background:#fff;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_pop_cpt{position:relative;height:36px;line-height:36px;overflow:hidden;border-bottom:1px solid #ebebeb;color:#777;font-size:16px;text-indent:15px;cursor:default}.UI_pop_cnt{position:relative;min-height:100px;overflow:auto;width:100%}.UI_pop_close{display:block;position:absolute;top:0px;right:0px;width:40px;height:36px;text-align:center;color:#ddd;font:bold 20px/36px "simsun";transition:0.1s}.UI_pop_close:hover{color:#888}.UI_pop_close:active{color:#222}.UI_confirm{_border:1px solid #eee;position:absolute;background:#fff;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_confirm_text{padding:30px 10px 20px;line-height:26px;text-align:center;font-size:20px;color:#333}.UI_ask{_border:1px solid #eee;position:absolute;background:#fff;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_ask_text{padding:25px 10px 15px;line-height:26px;text-align:center;font-size:18px;color:#333}.UI_ask input{display:block;margin:0px auto 15px;height:30px;padding:4px 4px;line-height:22px;box-sizing:border-box;width:90%}.UI_pop_confirm{overflow:hidden;text-align:center;border-top:1px solid #ddd}.UI_pop_confirm a{display:block;width:50%;height:36px;float:left;font-size:14px;line-height:36px;color:#03f;box-sizing:border-box;transition:0.15s}.UI_pop_confirm_ok{border-right:1px solid #ddd}@media(min-width:640px){.UI_pop_confirm a:hover{background:#eee}}.UI_plane{width:200px;position:absolute;top:400px;left:300px}.UI_prompt{width:240px;left:50%;margin-left:-120px;position:absolute}.UI_prompt_cnt{padding:30px 10px;background:#fff;box-shadow:2px 2px 10px rgba(0,0,0,0.5);font-size:18px;color:#333;text-align:center}.UI_cover{position:absolute;top:0px;width:100%;height:100px;max-width:100%}.UI_coverCnt{position:relative;width:100%;height:100%;background:#fff;overflow:auto}.UI_coverClose{display:block;position:absolute;top:10px;right:20px;width:30px;height:30px;text-align:center;color:#aaa;font:18px/30px "simsun";background:#eee;border-radius:15px;border:1px solid #aaa}.UI_coverClose:hover{background-color:#333;color:#fff;transition:0.2s}.UI_select{position:absolute;width:100%;padding-bottom:10px}.UI_select a{display:block;height:40px;line-height:40px;text-align:center;color:#03f;font-size:16px}.UI_select_body{margin:0px 10px 10px;border-radius:8px;overflow:hidden;background:#fff}.UI_selectCpt{padding:8px 0px}.UI_selectCpt h3,.UI_selectCpt p{margin:0px;font-size:15px;line-height:18px;text-align:center;color:#aaa;font-weight:normal}.UI_selectCpt p{font-size:12px}.UI_selectCnt a{border-top:1px solid #eee}.UI_selectCancel{margin:0px 10px;border-radius:8px;overflow:hidden;background:#fff}.UI_main_cnt .UI_select{width:200px;padding:0px;border-radius:0px;box-shadow:2px 1px 5px rgba(0,0,0,0.8)}.UI_main_cnt .UI_select_body,.UI_main_cnt .UI_selectCancel{margin:0px;border-radius:0px}.UI_main_cnt .UI_select a{height:34px;line-height:34px;font-size:14px}.UI_main_cnt .UI_selectCancel{display:none}';
@@ -249,6 +249,53 @@
 	}
 	
 	/**
+	 * 处理对象是否易于关闭的扩展
+	 *   点击自身以外的空间，按下esc键
+	 */
+	 //当前打开状态的对象
+	private_active = [];
+	
+	function closeActive(){
+		utils.each(private_active,function(i,item){
+			item.close();
+		});
+		private_active = [];
+	}
+	//检测body的mouseup事件
+	utils.bind(private_body,'mouseup',function checkClick(event) {
+		setTimeout(function(){
+			var target = event.srcElement || event.target;
+			while (!utils.hasClass(target,'UI_easyClose')) {
+				target = target.parentNode;
+				if(!target){
+					//close the active
+					closeActive();
+					break
+				}
+			}
+		});
+	});
+	//检测window的keydown事件（esc）
+	utils.bind(private_body,'keyup',function checkClick(event) {
+		if(event.keyCode == 27){
+			closeActive();
+		}
+	});
+	
+	//对象拓展
+	function easyCloseHandle(mark){
+		if(!mark){
+			return
+		}
+		var me = this;
+		utils.addClass(this.dom,'UI_easyClose');
+		setTimeout(function(){
+			private_active.push(me);
+		},20);
+	}
+	
+	
+	/**
 	 * 模糊效果
 	 */
 	function setRootElementsStyle(callback){
@@ -293,15 +340,14 @@
 		}
 	}
 	/**
-	 *
+	 * 关闭蒙层
 	 */
 	function closeMask(mark){
 		if(mark){
 			private_maskCount--;
 			if(private_maskCount == 0){
-				utils.fadeOut(private_maskDom,400,function(){
-					removeBlur && removeBlur();
-				});
+				removeBlur && removeBlur();
+				utils.fadeOut(private_maskDom,400);
 				
 			}
 		}
@@ -360,6 +406,7 @@
 	 **/
 	function openAnimation(DOM,from,time,animation_range,fn){
 		if(!from){
+			fn && fn();
 			//不需要动画
 			return
 		}
@@ -422,11 +469,19 @@
 	}
 	
 	/**
-	 * 结束动画
+	 * 处理对象关闭及结束动画
 	 */
 	function closeAnimation(time_define,animation_range,fn){
 		return function(time){
 			var me = this;
+			
+			//检测、记录自己是否“活着”
+			if(this.dead){
+				return;
+			}
+			this.dead = true;
+			
+			
 			var time = isNum(time) ? time : parseInt(time_define) || 80;
 			var from = me._from;
 			
@@ -480,9 +535,7 @@
 		this._mask = param.mask || false;
 		this._from = param.from || 'top';
 		
-		var this_html = param.html || '';
-		var this_width = param.width || Math.min(600,private_docW-20);
-
+		var easyClose = typeof(param.easyClose) == 'boolean' ? param.easyClose : true;
 
 		//当有确认参数时
 		if(param.confirm){
@@ -533,13 +586,13 @@
 		utils.bind(this.dom,'click','.UI_pop_close',function(){
 			me.close();
 		});
-		//插入内容
-		this.cntDom.innerHTML = this_html;
-		
-		
-		
 		
 		showMask(this._mask,function(){
+			var this_width = param.width || Math.min(600,private_docW-20);
+			
+			//插入内容
+			me.cntDom.innerHTML = param.html || '';
+			
 			//设置宽度，为计算位置尺寸做准备
 			setCSS(me.dom,{
 				width : this_width
@@ -555,16 +608,16 @@
 				left : left
 			});
 			//开场动画
-			openAnimation(me.dom,me._from,200);
+			openAnimation(me.dom,me._from,200,null,function(){
+				//处理是否易于关闭
+				easyCloseHandle.call(me,easyClose);
+			});
 		});
 	}
 	//使用close方法
 	POP.prototype.close = closeAnimation(500);
 	POP.prototype.adapt = function(){
-		var width = outerWidth(this.dom);
-		var height = outerHeight(this.dom);
-		
-		var fixSize = adaption(width,height);
+		var fixSize = adaption(outerWidth(this.dom),outerHeight(this.dom));
 		animation(this.dom,{
 			top : fixSize.top,
 			left : fixSize.left
@@ -578,16 +631,14 @@
 		var param = param || {};
 		var me = this;
 		
-		var this_text = param.text || 'need text in parameter!';
-		var callback = param.callback || null;
 		var this_html = utils.render(confirm_tpl,{
-			text : this_text
+			'text' : param.text || 'need text in parameter!'
 		});
 		this.dom = utils.createDom(this_html)[0];
 		this.closeFn = param.closeFn || null;
 		this._mask = typeof(param.mask) == 'boolean' ? param.mask : true;
 		this._from = param.from || 'top';
-		
+		var easyClose = typeof(param.easyClose) == 'boolean' ? param.easyClose : true;
 		
 		add_confirm(this.dom,param,function(){
 			me.close();
@@ -605,7 +656,10 @@
 				left : newPosition.screenLeft,
 				top : newPosition.screenTop
 			});
-			openAnimation(me.dom,me._from,100);
+			openAnimation(me.dom,me._from,100,null,function(){
+				//处理是否易于关闭
+				easyCloseHandle.call(me,easyClose);
+			});
 		});
 		
 		
@@ -621,9 +675,9 @@
 	function ASK(text,callback,param){
 		var me = this;
 		var param = param || {};
-		var this_text = text || 'need text in parameter!';
+		
 		var this_html = utils.render(ask_tpl,{
-			text : this_text
+			'text' : text || 'need text in parameter!'
 		});
 
 		this.dom = utils.createDom(this_html)[0];
@@ -631,6 +685,7 @@
 		this.inputDom = findByClassName(me.dom,'UI_ask_key')[0];
 		this.closeFn =  null;
 		this.callback = callback || null;
+		var easyClose = typeof(param.easyClose) == 'boolean' ? param.easyClose : true;
 		
 		var confirm_html = utils.render(confirmBar_tpl,{
 			confirm : '确定',
@@ -660,6 +715,8 @@
 		
 		openAnimation(this.dom,this._from,100,80,function(){
 			me.inputDom.focus();
+			//处理是否易于关闭
+			easyCloseHandle.call(me,easyClose);
 		});
 	}
 	ASK.prototype.close = closeAnimation(200);
@@ -675,7 +732,6 @@
 	function prompt(text,time,param){
 		var this_prompt = this,
 			param = param || {};
-		var text = text || 'need text in arguments!';
 		this.dom = utils.createDom(prompt_tpl)[0];
 		this._from = param.from || 'bottom';
 		this.tips(text,time);
@@ -705,64 +761,31 @@
 	/**
 	 *	PLANE 
 	 */
-	//the active plane
-	private_activePlane = [];
-	
-	function closePlane(){
-		utils.each(private_activePlane,function(i,item){
-			item.close();
-		});
-		private_activePlane = [];
-	}
-	/**
-	 * 简单的事件委托模型 
-	 */
-	function checkClick(event) {
-		setTimeout(function(){
-			var target = event.srcElement || event.target;
-			while (!utils.hasClass(target,'UI_plane')) {
-				target = target.parentNode;
-				if(!target){
-					//close the active plane
-					closePlane();
-					break
-				}
-			}
-		});
-	}
-
-	utils.bind(document,'mouseup',checkClick);
-	
-	
 	function PLANE(param){
-		var this_plane = this;
-		
-		setTimeout(function(){
-			private_activePlane.push(this_plane);
-		},20);
-		
-
+		var me = this;
 		var param = param || {};
-
-		var this_html = param.html || '';
+		
 		this.closeFn = param.closeFn || null;
 
 		this.dom = utils.createDom(plane_tpl)[0];
 		this._from = param.from || null;
-
+		
 		//insert html
-		this.dom.innerHTML = this_html;
+		this.dom.innerHTML = param.html || '';
 		
 		setCSS(this.dom,{
-			width : param.width || 240,
-			height :param.height || null,
-			top : isNum(param.top) ? param.top : 300,
-			left : isNum(param.left) ? param.left : 800
+			'width' : param.width || 240,
+			'height' :param.height || null,
+			'top' : isNum(param.top) ? param.top : 300,
+			'left' : isNum(param.left) ? param.left : 800
 		});
 		
 		private_mainDom.appendChild(this.dom);
 		
-		openAnimation(this.dom,this._from,100);
+		openAnimation(this.dom,this._from,100,null,function(){
+			//处理是否易于关闭
+			easyCloseHandle.call(me,true);
+		});
 	}
 	PLANE.prototype.close = closeAnimation(200);
 
@@ -780,11 +803,10 @@
 		
 		this.cntDom = findByClassName(this.dom,'UI_coverCnt')[0];
 		this.closeFn = param.closeFn || null;
-
-		var this_html = param.html || '';
+		
 		
 		//关闭事件
-		utils.bind(this.dom,'click','.UI_coverClose',function(){
+		utils.bind(this.dom,'click','.UI_close',function(){
 			me.close();
 		});
 
@@ -793,11 +815,8 @@
 		this._bodyOverflowY = getCSS(private_body,'overflowY');
 		var cssObj = {
 			width : isNum(param.width) ? Math.min(private_docW,param.width) : private_docW,
-			top : private_scrollTop
+			height : isNum(param.height) ? Math.min(private_winH,param.height) : private_winH,
 		};
-		if(isNum(param.height)){
-			cssObj.height = Math.min(private_winH,param.height);
-		}
 		//水平定位
 		if(isNum(param.right)){
 			cssObj.right = param.right;
@@ -809,11 +828,11 @@
 		}
 		//垂直定位
 		if(isNum(param.bottom)){
-			cssObj.top = private_winH - (cssObj.height || private_winH) - param.bottom;
+			cssObj.top = private_winH - cssObj.height - param.bottom;
 		}else if(isNum(param.top)){
 			cssObj.top = param.top;
 		}else{
-			cssObj.top = (private_docH - cssObj.heigh)/2
+			cssObj.top = (private_winH - cssObj.height)/2
 		}
 		//打开蒙层
 		showMask(this._mask,function(){
@@ -824,16 +843,19 @@
 				setCSS(private_body,{
 					'overflowY' : 'hidden'
 				});
+				
+				
+				//处理是否易于关闭
+				easyCloseHandle.call(me,true);
 			});
 		});
 		//insert html
-		this.cntDom.innerHTML = this_html;
+		this.cntDom.innerHTML = param.html || '';
 	}
 	//使用close方法
 	COVER.prototype.close = closeAnimation(400,500,function(){
-		var me = this;
 		setCSS(private_body,{
-			overflowY : me._bodyOverflowY
+			overflowY : this._bodyOverflowY
 		});
 	});
 
@@ -852,42 +874,15 @@
 			fns.push(item[1]);
 		});
 		var this_html = utils.render(select_tpl,{
-			list : nameList,
-			title : param.title || null,
-			intro : param.intro || null
+			'list' : nameList,
+			'title' : param.title || null,
+			'intro' : param.intro || null
 		});
 		
 		this.dom = utils.createDom(this_html)[0];
 		this.closeFn = param.closeFn || null;
-		this._from = param.from || null;
-		var cssObj;
-		if(private_docW > 640){
-			this._mask = false;
-			new PLANE({
-				top : param.top || 100,
-				left : param.left || 100,
-				width : param.width || 200,
-				height : 0,
-				closeFn : function(){
-					me.close();
-				}
-			}).dom.appendChild(this.dom);
-			setCSS(this.dom,{
-				position : 'relative',
-				width : '100%'
-			});
-			cssObj = {
-				position : 'relative',
-				width : '100%'
-			};
-		} else {
-			this._from = 'bottom';
-			this._mask = true;
-			private_fixedScreenBottomDom.appendChild(this.dom);
-			cssObj = {
-				'bottom' : 0
-			};
-		}
+		this._from = param.from || 'bottom';
+		this._mask = private_docW > 640 ? param.mask : true;
 		
 		//绑定事件
 		var btns = findByClassName(this.dom,'UI_select_btn');
@@ -900,8 +895,25 @@
 		
 		//显示蒙层
 		showMask(this._mask,function(){
+			var cssObj;
+			if(private_docW > 640){
+				cssObj = {
+					top : param.top || 100,
+					left : param.left || 100,
+					width : param.width || 200
+				};
+				private_mainDom.appendChild(me.dom);
+			} else {
+				me._from = 'bottom';
+				private_fixedScreenBottomDom.appendChild(me.dom);
+				cssObj = {
+					bottom : 0
+				};
+			}
 			setCSS(me.dom,cssObj);
-			openAnimation(me.dom,me._from,200,400);
+			openAnimation(me.dom,me._from,200,400,function(){
+				easyCloseHandle.call(me,true);
+			});
 		});
 		
 	}
