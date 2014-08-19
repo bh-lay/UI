@@ -282,16 +282,19 @@
 		}
 	});
 	
-	//对象拓展
-	function easyCloseHandle(mark){
-		if(!mark){
-			return
+	/**
+	 * 对象易于关闭方法拓展
+	 *   mark 为当前参数
+	 *   default_value 为默认参数
+	 */
+	function easyCloseHandle(mark,default_value){
+		if(typeof(mark) == 'boolean' ? mark : default_value){
+			var me = this;
+			utils.addClass(this.dom,'UI_easyClose');
+			setTimeout(function(){
+				private_active.push(me);
+			},20);
 		}
-		var me = this;
-		utils.addClass(this.dom,'UI_easyClose');
-		setTimeout(function(){
-			private_active.push(me);
-		},20);
 	}
 	
 	
@@ -535,7 +538,6 @@
 		this._mask = param.mask || false;
 		this._from = param.from || 'top';
 		
-		var easyClose = typeof(param.easyClose) == 'boolean' ? param.easyClose : true;
 
 		//当有确认参数时
 		if(param.confirm){
@@ -588,7 +590,7 @@
 		});
 		
 		showMask(this._mask,function(){
-			var this_width = param.width || Math.min(600,private_docW-20);
+			var this_width = Math.min(param.width || 600,private_docW-20);
 			
 			//插入内容
 			me.cntDom.innerHTML = param.html || '';
@@ -610,7 +612,7 @@
 			//开场动画
 			openAnimation(me.dom,me._from,200,null,function(){
 				//处理是否易于关闭
-				easyCloseHandle.call(me,easyClose);
+				easyCloseHandle.call(me,param.easyClose,true);
 			});
 		});
 	}
@@ -638,27 +640,21 @@
 		this.closeFn = param.closeFn || null;
 		this._mask = typeof(param.mask) == 'boolean' ? param.mask : true;
 		this._from = param.from || 'top';
-		var easyClose = typeof(param.easyClose) == 'boolean' ? param.easyClose : true;
 		
 		add_confirm(this.dom,param,function(){
 			me.close();
 		});
-		setCSS(this.dom,{
-			width : 300
-		});
 		//显示蒙层
 		showMask(this._mask,function(){
 			private_fixedScreenTopDom.appendChild(me.dom);
-		
-			var height = outerHeight(me.dom);
-			var newPosition = adaption(300,height);
+			
+			var newPosition = adaption(300,outerHeight(me.dom));
 			setCSS(me.dom,{
-				left : newPosition.screenLeft,
 				top : newPosition.screenTop
 			});
 			openAnimation(me.dom,me._from,100,null,function(){
 				//处理是否易于关闭
-				easyCloseHandle.call(me,easyClose);
+				easyCloseHandle.call(me,param.easyClose,true);
 			});
 		});
 		
@@ -681,15 +677,14 @@
 		});
 
 		this.dom = utils.createDom(this_html)[0];
+		this._mask = typeof(param.mask) == 'boolean' ? param.mask : true;
 		this._from = param.from || 'top';
 		this.inputDom = findByClassName(me.dom,'UI_ask_key')[0];
 		this.closeFn =  null;
-		this.callback = callback || null;
-		var easyClose = typeof(param.easyClose) == 'boolean' ? param.easyClose : true;
 		
 		var confirm_html = utils.render(confirmBar_tpl,{
-			confirm : '确定',
-			cancel : '取消'
+			'confirm' : '确定',
+			'cancel' : '取消'
 		});
 		
 		this.dom.appendChild(utils.createDom(confirm_html)[0]);
@@ -697,27 +692,23 @@
 		//确定
 		utils.bind(this.dom,'click','.UI_pop_confirm_ok',function(){
 			//根据执行结果判断是否要关闭弹框
-			me.callback ? ((me.callback(me.inputDom.value) != false) && me.close()) : me.close();
+			callback ? ((callback(me.inputDom.value) != false) && me.close()) : me.close();
 		});
 		//取消
 		utils.bind(this.dom,'click','.UI_pop_confirm_cancel',function(){
 			me.close();
 		});
 
-		var newPosition = adaption(300,160);
-
-		private_fixedScreenTopDom.appendChild(this.dom);
-		setCSS(this.dom,{
-			width : 300,
-			left : newPosition.screenLeft,
-			marginTop : -100,
+		//显示蒙层
+		showMask(this._mask,function(){
+			private_fixedScreenTopDom.appendChild(me.dom);
+			openAnimation(me.dom,me._from,100,80,function(){
+				me.inputDom.focus();
+				//处理是否易于关闭
+				easyCloseHandle.call(me,param.easyClose,true);
+			});
 		});
 		
-		openAnimation(this.dom,this._from,100,80,function(){
-			me.inputDom.focus();
-			//处理是否易于关闭
-			easyCloseHandle.call(me,easyClose);
-		});
 	}
 	ASK.prototype.close = closeAnimation(200);
 	ASK.prototype.setValue = function(text){
@@ -815,7 +806,7 @@
 		this._bodyOverflowY = getCSS(private_body,'overflowY');
 		var cssObj = {
 			width : isNum(param.width) ? Math.min(private_docW,param.width) : private_docW,
-			height : isNum(param.height) ? Math.min(private_winH,param.height) : private_winH,
+			height : isNum(param.height) ? Math.min(private_winH,param.height) : private_winH
 		};
 		//水平定位
 		if(isNum(param.right)){
@@ -912,7 +903,7 @@
 			}
 			setCSS(me.dom,cssObj);
 			openAnimation(me.dom,me._from,200,400,function(){
-				easyCloseHandle.call(me,true);
+				easyCloseHandle.call(me,param.easyClose,true);
 			});
 		});
 		

@@ -246,7 +246,7 @@
 <div id="config_panle">
 	<div class="btnConf">
 		<a href="javascript:void(0)" onclick="toggleParam(this,'mask',true,false)"><span>√</span>蒙层</a>
-		<a href="javascript:void(0)" onclick="toggleParam(this,'easyClose',true,false)"><span>√</span>简易关闭</a>
+		<a href="javascript:void(0)" onclick="toggleParam(this,'easyClose',true,false)" class="isSelected"><span>√</span>easyClose</a>
 	</div>
 	
 	<div id="from_selected">
@@ -269,7 +269,7 @@
 	<script type="text/javascript" src="src/dialog.js"></script>
 	<script type="text/javascript">
 		var param = {
-			'easyClose' : false,
+			'easyClose' : true,
 			'mask' : false
 		};
 		function toggleParam(elem,type,value,defaultValue){

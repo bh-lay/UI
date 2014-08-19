@@ -103,7 +103,9 @@
 /**х╥хо©Р**/
 .UI_confirm {
 	_border : 1px solid #eee;
-	position : absolute;
+	width: 300px;
+	position : relative;
+	margin: -100px auto 0px;
 	background : #fff;
 	overflow : hidden;
 	box-shadow : 2px 3px 10px rgba(0,0,0,0.6);
@@ -117,7 +119,9 @@
 }
 .UI_ask {
 	_border : 1px solid #eee;
-	position : absolute;
+	width: 300px;
+	position : relative;
+	margin: -100px auto 0px;
 	background : #fff;
 	overflow : hidden;
 	box-shadow : 2px 3px 10px rgba(0,0,0,0.6);
