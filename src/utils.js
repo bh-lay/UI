@@ -99,24 +99,8 @@ define(function (window,document) {
 	
     var Tween = {
 		Linear: function (t, b, c, d) { return c * t / d + b; },
-		QuadEaseIn: function (t, b, c, d) {
-			return c * (t /= d) * t + b;
-		},
 		SineEaseIn: function (t, b, c, d) {
 			return -c * Math.cos(t / d * (Math.PI / 2)) + c + b;
-		},
-		SineEaseOut: function (t, b, c, d) {
-			return c * Math.sin(t / d * (Math.PI / 2)) + b;
-		},
-		ElasticEaseOut: function (t, b, c, d, a, p) {
-			if (t == 0) return b; if ((t /= d) == 1) return b + c; if (!p) p = d * .3;
-			if (!a || a < Math.abs(c)) { a = c; var s = p / 4; }
-			else var s = p / (2 * Math.PI) * Math.asin(c / a);
-			return (a * Math.pow(2, -10 * t) * Math.sin((t * d - s) * (2 * Math.PI) / p) + c + b);
-		},
-		BackEaseOut: function (t, b, c, d, s) {
-			if (s == undefined) s = 1.70158;
-			return c * ((t = t / d - 1) * t * ((s + 1) * t + s) + 1) + b;
 		}
     }
 	
@@ -144,8 +128,8 @@ define(function (window,document) {
 		
 		if (/\px$/.test(value)){
 			value = parseInt(value);
-		} else if( isNum(value) ){
-			value = value = parseInt(value*10000)/10000;;
+		}else if (isNum(value) ){
+			value = parseInt(value*10000)/10000;
 		} else if(value == '' || value == 'medium'){
 			value = 0;
 		} else if (value == 'auto'){
@@ -172,11 +156,13 @@ define(function (window,document) {
 		elem.style[prop] = value;
 	}
 	//设置css
-	function setCss(dom,cssObj){
-		each(cssObj,function(key,value){
-			setStyle(dom,key,value);
+	function setCss(doms,cssObj){
+		doms = [].concat(doms);
+		each(doms,function(i,dom){
+			each(cssObj,function(key,value){
+				setStyle(dom,key,value);
+			});
 		});
-		
 	}
 	
 	/**
@@ -445,16 +431,16 @@ define(function (window,document) {
 		if(typeof(a) == 'string'){
 			className = a.replace(/^\./,'');
 			fn = b;
-			bindHandler(elem,type,function(e){
+			callback = function(e){
 				var bingoDom = checkEventForClass(e,className,elem);
 				if(bingoDom){
 					fn && fn.call(bingoDom);
 				}
-			});
+			};
 		}else{
-			fn = a;
-			bindHandler(elem,type,fn);
+			callback = a;
 		}
+		bindHandler(elem,type,callback);
 	}
 	
     return {

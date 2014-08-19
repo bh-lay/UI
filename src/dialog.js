@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2014-8-19 10:25
+ * @modified 2014-8-19 15:3
  * 
  **/
 
@@ -39,17 +39,16 @@
 	 * 基础模版
 	 */
 	var allCnt_tpl = '<div class="UI_lawyer"><div class="UI_mask"></div><div class="UI_main_cnt"></div><div class="UI_fixedScreenTop_cnt"></div><div class="UI_fixedScreenBottom_cnt"></div></div>';
-	var dragMask_tpl = '<div style="position:absolute;top:0px;left:0px;z-index:100000;cursor:default;"></div>';
-	var pop_tpl = '<div class="UI_pop"><div class="UI_pop_cpt"></div><div class="UI_pop_cnt"></div><a href="javascript:void(0)" class="UI_pop_close" title="\u5173\u95ED">×</a></div>';
+	var pop_tpl = '<div class="UI_pop"><div class="UI_pop_cpt"></div><div class="UI_cnt"></div><a href="javascript:;" class="UI_pop_close" title="\u5173\u95ED">×</a></div>';
 	var confirm_tpl = '<div class="UI_confirm"><div class="UI_confirm_text"><%=text %></div></div>';
 	var ask_tpl = '<div class="UI_ask"><div class="UI_ask_text"><%=text %></div><input class="UI_ask_key" type="text" name="UI_ask_key"/></div>';
-	var confirmBar_tpl = '<div class="UI_pop_confirm"><a href="javascript:void(0)" class="UI_pop_confirm_ok"><%=confirm %></a><a href="javascript:void(0)" class="UI_pop_confirm_cancel"><%=cancel %></a></div>';
+	var confirmBar_tpl = '<div class="UI_pop_confirm"><a href="javascript:;" class="UI_pop_confirm_ok"><%=confirm %></a><a href="javascript:;" class="UI_pop_confirm_cancel"><%=cancel %></a></div>';
 	var plane_tpl = '<div class="UI_plane"></div>';
 	var prompt_tpl = '<div class="UI_prompt"><div class="UI_prompt_cnt"></div></div>';
-	var cover_tpl = '<div class="UI_cover"><div class="UI_coverCnt"></div><a href="javascript:void(0)" class="UI_close UI_coverClose">×</a></div>';
-	var select_tpl = '<div class="UI_select"><div class="UI_select_body"><% if(title){ %><div class="UI_selectCpt"><h3><%=title %></h3><% if(intro){ %><p><%=intro %></p><% } %></div><% } %><div class="UI_selectCnt"><% for(var i=0,total=list.length;i<total;i++){ %><a class="UI_select_btn" href="javascript:void(0)"><%=list[i] %></a><% } %></div></div><div class="UI_selectCancel"><a class="UI_select_btn" href="javascript:void(0)" data-index="-1">取消</a></div></div>';
+	var cover_tpl = '<div class="UI_cover"><div class="UI_cnt"></div><a href="javascript:;" class="UI_close UI_coverClose">×</a></div>';
+	var select_tpl = '<div class="UI_select"><div class="UI_select_body UI_cnt"><% if(title){ %><div class="UI_selectCpt"><h3><%=title %></h3><% if(intro){ %><p><%=intro %></p><% } %></div><% } %><div class="UI_selectCnt"><% for(var i=0,total=list.length;i<total;i++){ %><a class="UI_select_btn" href="javascript:;"><%=list[i] %></a><% } %></div></div><div class="UI_selectCancel"><a class="UI_select_btn" href="javascript:;">取消</a></div></div>';
 	
-	var popCSS = '.UI_lawyer{position:absolute;top:0px;left:0px;z-index:4999;width:100%;height:0px;overflow:visible;font-family:"Microsoft Yahei"}.UI_lawyer a,.UI_lawyer a:hover{text-decoration:none;-webkit-tap-highlight-color:rgba(0,0,0,0);-webkit-tap-highlight-color:transparent}.UI_lawyer a:active{outline:none}.UI_mask{position:absolute;top:0px;left:0px;width:100%;background-color:#000;display:none;opacity:0.6;filter:alpha(opacity=50)}.UI_main_cnt{width:0px;height:0px;overflow:visible}.UI_fixedScreenTop_cnt{position:absolute;z-index:4999;top:0px;left:0px;width:100%;height:0px;overflow:visible}.UI_fixedScreenBottom_cnt{position:absolute;z-index:4999;left:0px;width:100%;height:0px;overflow:visible}.UI-blur{-webkit-transition:0.08s;-webkit-filter:blur(1px)}.UI_pop{width:200px;position:absolute;top:400px;left:300px;background:#fff;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_pop_cpt{position:relative;height:36px;line-height:36px;overflow:hidden;border-bottom:1px solid #ebebeb;color:#777;font-size:16px;text-indent:15px;cursor:default}.UI_pop_cnt{position:relative;min-height:100px;overflow:auto;width:100%}.UI_pop_close{display:block;position:absolute;top:0px;right:0px;width:40px;height:36px;text-align:center;color:#ddd;font:bold 20px/36px "simsun";transition:0.1s}.UI_pop_close:hover{color:#888}.UI_pop_close:active{color:#222}.UI_confirm{_border:1px solid #eee;width:300px;position:relative;margin:-100px auto 0px;background:#fff;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_confirm_text{padding:30px 10px 20px;line-height:26px;text-align:center;font-size:20px;color:#333}.UI_ask{_border:1px solid #eee;width:300px;position:relative;margin:-100px auto 0px;background:#fff;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_ask_text{padding:25px 10px 15px;line-height:26px;text-align:center;font-size:18px;color:#333}.UI_ask input{display:block;margin:0px auto 15px;height:30px;padding:4px 4px;line-height:22px;box-sizing:border-box;width:90%}.UI_pop_confirm{overflow:hidden;text-align:center;border-top:1px solid #ddd}.UI_pop_confirm a{display:block;width:50%;height:36px;float:left;font-size:14px;line-height:36px;color:#03f;box-sizing:border-box;transition:0.15s}.UI_pop_confirm_ok{border-right:1px solid #ddd}@media(min-width:640px){.UI_pop_confirm a:hover{background:#eee}}.UI_plane{width:200px;position:absolute;top:400px;left:300px}.UI_prompt{width:240px;left:50%;margin-left:-120px;position:absolute}.UI_prompt_cnt{padding:30px 10px;background:#fff;box-shadow:2px 2px 10px rgba(0,0,0,0.5);font-size:18px;color:#333;text-align:center}.UI_cover{position:absolute;top:0px;width:100%;height:100px;max-width:100%}.UI_coverCnt{position:relative;width:100%;height:100%;background:#fff;overflow:auto}.UI_coverClose{display:block;position:absolute;top:10px;right:20px;width:30px;height:30px;text-align:center;color:#aaa;font:18px/30px "simsun";background:#eee;border-radius:15px;border:1px solid #aaa}.UI_coverClose:hover{background-color:#333;color:#fff;transition:0.2s}.UI_select{position:absolute;width:100%;padding-bottom:10px}.UI_select a{display:block;height:40px;line-height:40px;text-align:center;color:#03f;font-size:16px}.UI_select_body{margin:0px 10px 10px;border-radius:8px;overflow:hidden;background:#fff}.UI_selectCpt{padding:8px 0px}.UI_selectCpt h3,.UI_selectCpt p{margin:0px;font-size:15px;line-height:18px;text-align:center;color:#aaa;font-weight:normal}.UI_selectCpt p{font-size:12px}.UI_selectCnt a{border-top:1px solid #eee}.UI_selectCancel{margin:0px 10px;border-radius:8px;overflow:hidden;background:#fff}.UI_main_cnt .UI_select{width:200px;padding:0px;border-radius:0px;box-shadow:2px 1px 5px rgba(0,0,0,0.8)}.UI_main_cnt .UI_select_body,.UI_main_cnt .UI_selectCancel{margin:0px;border-radius:0px}.UI_main_cnt .UI_select a{height:34px;line-height:34px;font-size:14px}.UI_main_cnt .UI_selectCancel{display:none}';
+	var popCSS = '.UI_lawyer{position:absolute;top:-100%;left:0;z-index:4999;width:100%;height:100%;overflow:visible;font-family:"Microsoft Yahei"}.UI_lawyer a,.UI_lawyer a:hover,.UI_lawyer a:active{outline:none;text-decoration:none;-webkit-tap-highlight-color:rgba(0,0,0,0);-webkit-tap-highlight-color:transparent}.UI_mask{position:absolute;top:100%;left:0;width:100%;height:100%;background:#000;display:none;opacity:0.6;filter:alpha(opacity=50)}.UI_main_cnt{position:absolute;width:100%;height:0;top:100%;overflow:visible}.UI_fixedScreenTop_cnt{position:absolute;z-index:4999;left:0;width:100%;height:0;overflow:visible}.UI_fixedScreenBottom_cnt{position:absolute;z-index:4999;left:0;width:100%;height:0;overflow:visible}.UI-blur{-webkit-transition:0.08s;-webkit-filter:blur(2px)}.UI_pop{width:200px;position:absolute;top:400px;left:300px;background:#fff;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_pop_cpt{position:relative;height:36px;line-height:36px;overflow:hidden;border-bottom:1px solid #ebebeb;color:#777;font-size:16px;text-indent:15px;cursor:default}.UI_pop .UI_cnt{position:relative;min-height:100px;overflow:auto;width:100%}.UI_pop_close{display:block;position:absolute;top:0;right:0;width:40px;height:36px;text-align:center;color:#ddd;font:bold 20px/36px "simsun";transition:0.1s}.UI_pop_close:hover{color:#888}.UI_pop_close:active{color:#222}.UI_confirm{width:300px;position:relative;margin:-100px auto 0;background:#fff;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_confirm_text{padding:30px 10px 20px;line-height:26px;text-align:center;font-size:20px;color:#333}.UI_ask{width:300px;position:relative;margin:-100px auto 0;background:#fff;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_ask_text{padding:25px 10px 15px;line-height:26px;text-align:center;font-size:18px;color:#333}.UI_ask input{display:block;margin:0 auto 15px;height:30px;padding:4px 4px;line-height:22px;box-sizing:border-box;width:90%}.UI_pop_confirm{overflow:hidden;text-align:center;border-top:1px solid #ddd}.UI_pop_confirm a{display:block;width:50%;height:36px;float:left;font-size:14px;line-height:36px;color:#03f;box-sizing:border-box;transition:0.15s}.UI_pop_confirm_ok{border-right:1px solid #ddd}@media(min-width:640px){.UI_pop_confirm a:hover{background:#eee}}.UI_plane{width:200px;position:absolute;top:400px;left:300px}.UI_prompt{width:240px;left:50%;margin-left:-120px;position:absolute}.UI_prompt_cnt{padding:30px 10px;background:#fff;box-shadow:2px 2px 10px rgba(0,0,0,0.5);font-size:18px;color:#333;text-align:center}.UI_cover{position:absolute;top:0;width:100%;height:100px;max-width:100%}.UI_cover .UI_cnt{position:relative;width:100%;height:100%;background:#fff;overflow:auto}.UI_coverClose{display:block;position:absolute;top:10px;right:20px;width:30px;height:30px;text-align:center;color:#aaa;font:18px/30px "simsun";background:#eee;border-radius:15px;border:1px solid #aaa}.UI_coverClose:hover{background:#333;color:#fff;transition:0.2s}.UI_select{position:absolute;width:100%;padding-bottom:10px}.UI_select a{display:block;height:40px;line-height:40px;text-align:center;color:#03f;font-size:16px}.UI_select_body{margin:0 10px 10px;border-radius:8px;overflow:hidden;background:#fff}.UI_selectCpt{padding:8px 0}.UI_selectCpt h3,.UI_selectCpt p{margin:0;font-size:15px;line-height:18px;text-align:center;color:#aaa;font-weight:normal}.UI_selectCpt p{font-size:12px}.UI_selectCnt a{border-top:1px solid #eee}.UI_selectCancel{margin:0 10px;border-radius:8px;overflow:hidden;background:#fff}.UI_main_cnt .UI_select{width:200px;padding:0;border-radius:0;box-shadow:2px 1px 5px rgba(0,0,0,0.8)}.UI_main_cnt .UI_select_body,.UI_main_cnt .UI_selectCancel{margin:0;border-radius:0}.UI_main_cnt .UI_select a{height:34px;line-height:34px;font-size:14px}.UI_main_cnt .UI_selectCancel{display:none}';
 	
 	var isIE67 = false;
 	if(navigator.appName == "Microsoft Internet Explorer"){
@@ -74,7 +73,6 @@
 		private_winH,
 		private_docH,
 		private_scrollTop,
-		private_isSupportTouch = "ontouchend" in document ? true : false,
 		private_maskCount = 0;
 
 	var private_CONFIG = {
@@ -104,9 +102,8 @@
 		//向css环境写入动态css
 		private_cssDom && utils.removeNode(private_cssDom);
 		var styleStr = [
-			'.UI_cover{height:' + private_winH + 'px;}',
-			'.UI_ask{top:' + (private_winH/2) + 'px;}',
-			'.UI_mask{height:' + private_docH + 'px;}'
+			'.UI_cover{height:' + private_winH + 'px;max-height:' + private_winH + 'px;}',
+			'.UI_ask{top:' + (private_winH/2) + 'px;}'
 		].join('');
 		private_cssDom = utils.createStyleSheet(styleStr,{'data-module' : "UI_plug"});
 	}
@@ -131,32 +128,32 @@
 		var rebuild_fn = null;
 		if(isIE67){
 			setCSS(private_fixedScreenTopDom,{
-				top : private_scrollTop
+				top : private_scrollTop + private_winH
 			});
 			setCSS(private_fixedScreenBottomDom,{
-				top : private_scrollTop + private_winH
+				top : private_scrollTop + private_winH*2
 			});
 			
 			rebuild_fn = function(){
 				refreshSize();
 				setCSS(private_fixedScreenTopDom,{
-					top : private_scrollTop
-				});
-				setCSS(private_fixedScreenBottomDom,{
 					top : private_scrollTop + private_winH
 				});
+				setCSS(private_fixedScreenBottomDom,{
+					top : private_scrollTop + private_winH*2
+				});
 				setCSS(private_maskDom,{
-					top : private_scrollTop
+					'marginTop' : private_scrollTop
 				});
 			};
 		}else{
-			setCSS(private_fixedScreenTopDom,{
-				position : 'fixed',
-				top : 0
-			});
 			setCSS(private_fixedScreenBottomDom,{
 				position : 'fixed',
 				bottom : 0
+			});
+			setCSS([private_fixedScreenTopDom,private_maskDom],{
+				'position' : 'fixed',
+				'top' : 0
 			});
 			rebuild_fn = refreshSize;
 		}
@@ -301,7 +298,7 @@
 	/**
 	 * 模糊效果
 	 */
-	function setRootElementsStyle(callback){
+	function addRootElements(callback){
 		var doms = private_body.childNodes;
 		utils.each(doms,function(i,dom){
 			if(dom != private_allCnt && dom.nodeType ==1 && dom.tagName != 'SCRIPT' && dom.tagName != 'LINK' && dom.tagName != 'STYLE'){
@@ -312,12 +309,12 @@
 	var blur = removeBlur = null;
 	if(utils.supports('-webkit-filter')){
 		blur = function (){
-			setRootElementsStyle(function(dom){
+			addRootElements(function(dom){
 				utils.addClass(dom,'UI-blur');
 			});
 		};
 		removeBlur = function (){
-			setRootElementsStyle(function(dom){
+			addRootElements(function(dom){
 				utils.removeClass(dom,'UI-blur');
 			});
 		};
@@ -407,7 +404,9 @@
 	 *   创建一个dom用来完成动画
 	 *   动画结束，设置dom为结束样式
 	 **/
-	function openAnimation(DOM,from,time,animation_range,fn){
+	var openAnimation = isIE67 ? function openAnimation(a,b,c,d,fn){
+		fn && fn();
+	} : function openAnimation(DOM,from,time,animation_range,fn){
 		if(!from){
 			fn && fn();
 			//不需要动画
@@ -448,6 +447,16 @@
 		//FIXME 过滤iframe正则随便写的
 		html = html.replace(/<iframe.+>\s*<\/iframe>/ig,'');
 		var animDom = utils.createDom(html)[0];
+		//为了效果跟流畅，隐藏内容部分
+		var cntDom = utils.findByClassName(animDom,'UI_cnt')[0];
+		insertAfter(animDom,DOM);
+		if(cntDom){
+			setCSS(cntDom,{
+				'height' : outerHeight(cntDom)
+			});
+			cntDom.innerHTML = '';
+		}
+		
 		
 		//隐藏真实dom
 		setCSS(DOM,{
@@ -457,7 +466,6 @@
 		//放置于初始位置
 		cssStart.opacity = 0;
 		setCSS(animDom,cssStart);
-		insertAfter(animDom,DOM);
 		//动画开始
 		cssAnim.opacity = 1;
 		animation(animDom,cssAnim,time,'SineEaseIn',function(){
@@ -469,8 +477,7 @@
 			});
 			fn && fn();
 		});
-	}
-	
+	};
 	/**
 	 * 处理对象关闭及结束动画
 	 */
@@ -491,9 +498,9 @@
 			var range = animation_range || 80;
 			
 			//处理关闭回调、蒙层检测
-			me.closeFn && me.closeFn();
+			fn && fn.call(me);
 			function endFn(){
-				fn && fn.call(me);
+				me.closeFn && me.closeFn();
 				closeMask(me._mask);
 			}
 			
@@ -533,7 +540,7 @@
 		var me = this;
 		
 		this.dom = utils.createDom(pop_tpl)[0];
-		this.cntDom = findByClassName(this.dom,'UI_pop_cnt')[0];
+		this.cntDom = findByClassName(this.dom,'UI_cnt')[0];
 		this.closeFn = param.closeFn || null;
 		this._mask = param.mask || false;
 		this._from = param.from || 'top';
@@ -554,19 +561,10 @@
 			
 			caption_dom.innerHTML = title;
 			//can drag is pop
-			var dragMask = null;
 			utils.drag(caption_dom,this.dom,{
 				start : function(){
 					//更新窗口尺寸
 					refreshSize();
-					
-					dragMask = utils.createDom(dragMask_tpl)[0];
-					setCSS(dragMask,{
-						width : private_docW,
-						height : private_winH,
-						cursor : getCSS(caption_dom,'cursor')
-					});
-					private_fixedScreenTopDom.appendChild(dragMask);
 				},
 				move : function(mx,my,l_start,t_start,w_start,h_start){
 					var left = mx + l_start;
@@ -577,10 +575,6 @@
 						left : newSize.left,
 						top : newSize.top
 					});
-				},
-				end : function (){
-					dragMask && utils.removeNode(dragMask);
-					dragMask = null;
 				}
 			});
 		}
@@ -657,10 +651,6 @@
 				easyCloseHandle.call(me,param.easyClose,true);
 			});
 		});
-		
-		
-	
-		
 	}
 	CONFIRM.prototype.close = closeAnimation(200);
 
@@ -792,7 +782,7 @@
 		this._mask = typeof(param.mask) == 'boolean' ? param.mask : false;
 		this._from = param.from || 'top';
 		
-		this.cntDom = findByClassName(this.dom,'UI_coverCnt')[0];
+		this.cntDom = findByClassName(this.dom,'UI_cnt')[0];
 		this.closeFn = param.closeFn || null;
 		
 		
@@ -805,7 +795,7 @@
 		//记录body的scrollY设置
 		this._bodyOverflowY = getCSS(private_body,'overflowY');
 		var cssObj = {
-			width : isNum(param.width) ? Math.min(private_docW,param.width) : private_docW,
+			width : isNum(param.width) ? Math.min(private_docW,param.width) : null,
 			height : isNum(param.height) ? Math.min(private_winH,param.height) : private_winH
 		};
 		//水平定位
@@ -834,8 +824,6 @@
 				setCSS(private_body,{
 					'overflowY' : 'hidden'
 				});
-				
-				
 				//处理是否易于关闭
 				easyCloseHandle.call(me,true);
 			});
@@ -845,6 +833,9 @@
 	}
 	//使用close方法
 	COVER.prototype.close = closeAnimation(400,500,function(){
+		setCSS(this.cntDom,{
+			overflowY : 'hidden'
+		});
 		setCSS(private_body,{
 			overflowY : this._bodyOverflowY
 		});
@@ -927,13 +918,7 @@
 				var num = parseInt(num);
 				if(num > 0){
 					private_CONFIG.zIndex = num;
-					setCSS(private_allCnt,{
-						zIndex : num
-					});
-					setCSS(private_fixedScreenBottomDom,{
-						zIndex : num
-					});
-					setCSS(private_fixedScreenTopDom,{
+					setCSS([private_allCnt,private_fixedScreenBottomDom,private_fixedScreenTopDom],{
 						zIndex : num
 					});
 				}
@@ -1055,24 +1040,8 @@
 	
     var Tween = {
 		Linear: function (t, b, c, d) { return c * t / d + b; },
-		QuadEaseIn: function (t, b, c, d) {
-			return c * (t /= d) * t + b;
-		},
 		SineEaseIn: function (t, b, c, d) {
 			return -c * Math.cos(t / d * (Math.PI / 2)) + c + b;
-		},
-		SineEaseOut: function (t, b, c, d) {
-			return c * Math.sin(t / d * (Math.PI / 2)) + b;
-		},
-		ElasticEaseOut: function (t, b, c, d, a, p) {
-			if (t == 0) return b; if ((t /= d) == 1) return b + c; if (!p) p = d * .3;
-			if (!a || a < Math.abs(c)) { a = c; var s = p / 4; }
-			else var s = p / (2 * Math.PI) * Math.asin(c / a);
-			return (a * Math.pow(2, -10 * t) * Math.sin((t * d - s) * (2 * Math.PI) / p) + c + b);
-		},
-		BackEaseOut: function (t, b, c, d, s) {
-			if (s == undefined) s = 1.70158;
-			return c * ((t = t / d - 1) * t * ((s + 1) * t + s) + 1) + b;
 		}
     }
 	
@@ -1100,8 +1069,8 @@
 		
 		if (/\px$/.test(value)){
 			value = parseInt(value);
-		} else if( isNum(value) ){
-			value = value = parseInt(value*10000)/10000;;
+		}else if (isNum(value) ){
+			value = parseInt(value*10000)/10000;
 		} else if(value == '' || value == 'medium'){
 			value = 0;
 		} else if (value == 'auto'){
@@ -1128,11 +1097,13 @@
 		elem.style[prop] = value;
 	}
 	//设置css
-	function setCss(dom,cssObj){
-		each(cssObj,function(key,value){
-			setStyle(dom,key,value);
+	function setCss(doms,cssObj){
+		doms = [].concat(doms);
+		each(doms,function(i,dom){
+			each(cssObj,function(key,value){
+				setStyle(dom,key,value);
+			});
 		});
-		
 	}
 	
 	/**
@@ -1401,16 +1372,16 @@
 		if(typeof(a) == 'string'){
 			className = a.replace(/^\./,'');
 			fn = b;
-			bindHandler(elem,type,function(e){
+			callback = function(e){
 				var bingoDom = checkEventForClass(e,className,elem);
 				if(bingoDom){
 					fn && fn.call(bingoDom);
 				}
-			});
+			};
 		}else{
-			fn = a;
-			bindHandler(elem,type,fn);
+			callback = a;
 		}
+		bindHandler(elem,type,callback);
 	}
 	
     return {

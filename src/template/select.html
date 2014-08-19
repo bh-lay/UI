@@ -1,5 +1,5 @@
 <div class="UI_select">
-	<div class="UI_select_body">
+	<div class="UI_select_body UI_cnt">
 		<% if(title){ %>
 		<div class="UI_selectCpt">
 			<h3><%=title %></h3>
@@ -10,11 +10,11 @@
 		<% } %>
 		<div class="UI_selectCnt">
 			<% for(var i=0,total=list.length;i<total;i++){ %>
-			<a class="UI_select_btn" href="javascript:void(0)"><%=list[i] %></a>
+			<a class="UI_select_btn" href="javascript:;"><%=list[i] %></a>
 			<% } %>
 		</div>
 	</div>
 	<div class="UI_selectCancel">
-		<a class="UI_select_btn" href="javascript:void(0)" data-index="-1">取消</a>
+		<a class="UI_select_btn" href="javascript:;">取消</a>
 	</div>
 </div>

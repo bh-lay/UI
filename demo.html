@@ -9,10 +9,10 @@
 		background:#eee;
 		margin:0px;
 		padding:0px;
-		height:100%;
+	/**	height:100%;
 		position:relative;
 		overflow: hidden;
-		font-family:"Microsoft Yahei";
+	**/	font-family:"Microsoft Yahei";
 	}
 	a{
 		text-decoration:none;
@@ -23,7 +23,7 @@
 		left:0px;
 		width: 100%;
 		height: 100%;
-		overflow:scroll;
+	/**	overflow:scroll;**/
 	}
 	
 	#loading_mask{
@@ -144,7 +144,7 @@
 	}
 	
 	#config_panle{
-		position: absolute;
+		position: fixed;
 		top: 10%;
 		right: 20px;
 		width: 120px;
@@ -245,7 +245,7 @@
 </div>
 <div id="config_panle">
 	<div class="btnConf">
-		<a href="javascript:void(0)" onclick="toggleParam(this,'mask',true,false)"><span>√</span>蒙层</a>
+		<a href="javascript:void(0)" onclick="toggleParam(this,'mask',true,false)" class="isSelected"><span>√</span>蒙层</a>
 		<a href="javascript:void(0)" onclick="toggleParam(this,'easyClose',true,false)" class="isSelected"><span>√</span>easyClose</a>
 	</div>
 	
@@ -263,14 +263,11 @@
 			正在加载……
 		</div>
 	</div>
-	<!--
-	<script type="text/javascript" src="src/dialog.min.js"></script>
-	-->
 	<script type="text/javascript" src="src/dialog.js"></script>
 	<script type="text/javascript">
 		var param = {
 			'easyClose' : true,
-			'mask' : false
+			'mask' : true
 		};
 		function toggleParam(elem,type,value,defaultValue){
 			if(param[type]){
@@ -339,7 +336,7 @@
 			}
 		}
 		function showPrompt(elem,title,time){
-			active_prompt = UI.prompt(title,time,{
+			UI.prompt(title,time,{
 				from : param.from == "dom" ? elem : param.from
 			});
 		}

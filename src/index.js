@@ -39,7 +39,6 @@
 	 * 基础模版
 	 */
 	var allCnt_tpl = requires('template/base.html');
-	var dragMask_tpl = requires('template/dragMask.html');
 	var pop_tpl = requires('template/pop.html');
 	var confirm_tpl = requires('template/confirm.html');
 	var ask_tpl = requires('template/ask.html');
@@ -74,7 +73,6 @@
 		private_winH,
 		private_docH,
 		private_scrollTop,
-		private_isSupportTouch = "ontouchend" in document ? true : false,
 		private_maskCount = 0;
 
 	var private_CONFIG = {
@@ -104,9 +102,8 @@
 		//向css环境写入动态css
 		private_cssDom && utils.removeNode(private_cssDom);
 		var styleStr = [
-			'.UI_cover{height:' + private_winH + 'px;}',
-			'.UI_ask{top:' + (private_winH/2) + 'px;}',
-			'.UI_mask{height:' + private_docH + 'px;}'
+			'.UI_cover{height:' + private_winH + 'px;max-height:' + private_winH + 'px;}',
+			'.UI_ask{top:' + (private_winH/2) + 'px;}'
 		].join('');
 		private_cssDom = utils.createStyleSheet(styleStr,{'data-module' : "UI_plug"});
 	}
@@ -131,32 +128,32 @@
 		var rebuild_fn = null;
 		if(isIE67){
 			setCSS(private_fixedScreenTopDom,{
-				top : private_scrollTop
+				top : private_scrollTop + private_winH
 			});
 			setCSS(private_fixedScreenBottomDom,{
-				top : private_scrollTop + private_winH
+				top : private_scrollTop + private_winH*2
 			});
 			
 			rebuild_fn = function(){
 				refreshSize();
 				setCSS(private_fixedScreenTopDom,{
-					top : private_scrollTop
-				});
-				setCSS(private_fixedScreenBottomDom,{
 					top : private_scrollTop + private_winH
 				});
+				setCSS(private_fixedScreenBottomDom,{
+					top : private_scrollTop + private_winH*2
+				});
 				setCSS(private_maskDom,{
-					top : private_scrollTop
+					'marginTop' : private_scrollTop
 				});
 			};
 		}else{
-			setCSS(private_fixedScreenTopDom,{
-				position : 'fixed',
-				top : 0
-			});
 			setCSS(private_fixedScreenBottomDom,{
 				position : 'fixed',
 				bottom : 0
+			});
+			setCSS([private_fixedScreenTopDom,private_maskDom],{
+				'position' : 'fixed',
+				'top' : 0
 			});
 			rebuild_fn = refreshSize;
 		}
@@ -301,7 +298,7 @@
 	/**
 	 * 模糊效果
 	 */
-	function setRootElementsStyle(callback){
+	function addRootElements(callback){
 		var doms = private_body.childNodes;
 		utils.each(doms,function(i,dom){
 			if(dom != private_allCnt && dom.nodeType ==1 && dom.tagName != 'SCRIPT' && dom.tagName != 'LINK' && dom.tagName != 'STYLE'){
@@ -312,12 +309,12 @@
 	var blur = removeBlur = null;
 	if(utils.supports('-webkit-filter')){
 		blur = function (){
-			setRootElementsStyle(function(dom){
+			addRootElements(function(dom){
 				utils.addClass(dom,'UI-blur');
 			});
 		};
 		removeBlur = function (){
-			setRootElementsStyle(function(dom){
+			addRootElements(function(dom){
 				utils.removeClass(dom,'UI-blur');
 			});
 		};
@@ -407,7 +404,9 @@
 	 *   创建一个dom用来完成动画
 	 *   动画结束，设置dom为结束样式
 	 **/
-	function openAnimation(DOM,from,time,animation_range,fn){
+	var openAnimation = isIE67 ? function openAnimation(a,b,c,d,fn){
+		fn && fn();
+	} : function openAnimation(DOM,from,time,animation_range,fn){
 		if(!from){
 			fn && fn();
 			//不需要动画
@@ -448,6 +447,16 @@
 		//FIXME 过滤iframe正则随便写的
 		html = html.replace(/<iframe.+>\s*<\/iframe>/ig,'');
 		var animDom = utils.createDom(html)[0];
+		//为了效果跟流畅，隐藏内容部分
+		var cntDom = utils.findByClassName(animDom,'UI_cnt')[0];
+		insertAfter(animDom,DOM);
+		if(cntDom){
+			setCSS(cntDom,{
+				'height' : outerHeight(cntDom)
+			});
+			cntDom.innerHTML = '';
+		}
+		
 		
 		//隐藏真实dom
 		setCSS(DOM,{
@@ -457,7 +466,6 @@
 		//放置于初始位置
 		cssStart.opacity = 0;
 		setCSS(animDom,cssStart);
-		insertAfter(animDom,DOM);
 		//动画开始
 		cssAnim.opacity = 1;
 		animation(animDom,cssAnim,time,'SineEaseIn',function(){
@@ -469,8 +477,7 @@
 			});
 			fn && fn();
 		});
-	}
-	
+	};
 	/**
 	 * 处理对象关闭及结束动画
 	 */
@@ -491,9 +498,9 @@
 			var range = animation_range || 80;
 			
 			//处理关闭回调、蒙层检测
-			me.closeFn && me.closeFn();
+			fn && fn.call(me);
 			function endFn(){
-				fn && fn.call(me);
+				me.closeFn && me.closeFn();
 				closeMask(me._mask);
 			}
 			
@@ -533,7 +540,7 @@
 		var me = this;
 		
 		this.dom = utils.createDom(pop_tpl)[0];
-		this.cntDom = findByClassName(this.dom,'UI_pop_cnt')[0];
+		this.cntDom = findByClassName(this.dom,'UI_cnt')[0];
 		this.closeFn = param.closeFn || null;
 		this._mask = param.mask || false;
 		this._from = param.from || 'top';
@@ -554,19 +561,10 @@
 			
 			caption_dom.innerHTML = title;
 			//can drag is pop
-			var dragMask = null;
 			utils.drag(caption_dom,this.dom,{
 				start : function(){
 					//更新窗口尺寸
 					refreshSize();
-					
-					dragMask = utils.createDom(dragMask_tpl)[0];
-					setCSS(dragMask,{
-						width : private_docW,
-						height : private_winH,
-						cursor : getCSS(caption_dom,'cursor')
-					});
-					private_fixedScreenTopDom.appendChild(dragMask);
 				},
 				move : function(mx,my,l_start,t_start,w_start,h_start){
 					var left = mx + l_start;
@@ -577,10 +575,6 @@
 						left : newSize.left,
 						top : newSize.top
 					});
-				},
-				end : function (){
-					dragMask && utils.removeNode(dragMask);
-					dragMask = null;
 				}
 			});
 		}
@@ -657,10 +651,6 @@
 				easyCloseHandle.call(me,param.easyClose,true);
 			});
 		});
-		
-		
-	
-		
 	}
 	CONFIRM.prototype.close = closeAnimation(200);
 
@@ -792,7 +782,7 @@
 		this._mask = typeof(param.mask) == 'boolean' ? param.mask : false;
 		this._from = param.from || 'top';
 		
-		this.cntDom = findByClassName(this.dom,'UI_coverCnt')[0];
+		this.cntDom = findByClassName(this.dom,'UI_cnt')[0];
 		this.closeFn = param.closeFn || null;
 		
 		
@@ -805,7 +795,7 @@
 		//记录body的scrollY设置
 		this._bodyOverflowY = getCSS(private_body,'overflowY');
 		var cssObj = {
-			width : isNum(param.width) ? Math.min(private_docW,param.width) : private_docW,
+			width : isNum(param.width) ? Math.min(private_docW,param.width) : null,
 			height : isNum(param.height) ? Math.min(private_winH,param.height) : private_winH
 		};
 		//水平定位
@@ -834,8 +824,6 @@
 				setCSS(private_body,{
 					'overflowY' : 'hidden'
 				});
-				
-				
 				//处理是否易于关闭
 				easyCloseHandle.call(me,true);
 			});
@@ -845,6 +833,9 @@
 	}
 	//使用close方法
 	COVER.prototype.close = closeAnimation(400,500,function(){
+		setCSS(this.cntDom,{
+			overflowY : 'hidden'
+		});
 		setCSS(private_body,{
 			overflowY : this._bodyOverflowY
 		});
@@ -927,13 +918,7 @@
 				var num = parseInt(num);
 				if(num > 0){
 					private_CONFIG.zIndex = num;
-					setCSS(private_allCnt,{
-						zIndex : num
-					});
-					setCSS(private_fixedScreenBottomDom,{
-						zIndex : num
-					});
-					setCSS(private_fixedScreenTopDom,{
+					setCSS([private_allCnt,private_fixedScreenBottomDom,private_fixedScreenTopDom],{
 						zIndex : num
 					});
 				}
