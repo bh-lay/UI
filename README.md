@@ -20,7 +20,7 @@ UI是前端公用的视觉交互（user interface 、 user interaction）类公�
 在使用中有任何问题，欢迎反馈给我，可以用以下联系方式跟我交流
 
 * 邮件：bh-lay#126.com, 把#换成@
-* QQ：279708284
+* github: [http://github.com/bh-lay](http://github.com/bh-lay)
 * weibo: [@剧中人](http://weibo.com/bhlay)
 
 
