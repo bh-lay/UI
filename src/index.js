@@ -407,7 +407,7 @@
 	var openAnimation = isIE67 ? function openAnimation(a,b,c,d,fn){
 		fn && fn();
 	} : function openAnimation(DOM,from,time,animation_range,fn){
-		if(!from){
+		if(!from || from == 'none'){
 			fn && fn();
 			//不需要动画
 			return
@@ -421,7 +421,7 @@
 			cssAnim = {};
 		
 		//参数是dom对象
-		if(from && from.tagName && from.parentNode){
+		if(from.tagName && from.parentNode){
 			time = 200;
 			var offset_from = utils.offset(from);
 			cssStart = {
