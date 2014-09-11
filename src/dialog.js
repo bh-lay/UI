@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2014-9-10 10:27
+ * @modified 2014-9-11 23:59
  * 
  **/
 
@@ -89,7 +89,7 @@
 	if (document.compatMode == "BackCompat") {
 		docDom = private_body;
 	}else{
-		//document.compatMode == \"CSS1Compat\"
+		//"CSS1Compat"
 		docDom = document.documentElement;
 	}
 	function refreshSize(){

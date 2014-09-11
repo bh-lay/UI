@@ -89,7 +89,7 @@
 	if (document.compatMode == "BackCompat") {
 		docDom = private_body;
 	}else{
-		//document.compatMode == \"CSS1Compat\"
+		//"CSS1Compat"
 		docDom = document.documentElement;
 	}
 	function refreshSize(){
