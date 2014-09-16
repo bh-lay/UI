@@ -65,7 +65,6 @@
 	var private_allCnt = utils.createDom(allCnt_tpl)[0],
 		private_maskDom = findByClassName(private_allCnt,'UI_mask')[0],
 		private_mainDom = findByClassName(private_allCnt,'UI_main_cnt')[0],
-		private_fixedScreenTopDom = findByClassName(private_allCnt,'UI_fixedScreenTop_cnt')[0],
 		private_fixedScreenBottomDom = findByClassName(private_allCnt,'UI_fixedScreenBottom_cnt')[0],
 		private_cssDom = null,
 		private_body = document.body,
@@ -127,18 +126,12 @@
 		
 		var rebuild_fn = null;
 		if(isIE67){
-			setCSS(private_fixedScreenTopDom,{
-				top : private_scrollTop + private_winH
-			});
 			setCSS(private_fixedScreenBottomDom,{
 				top : private_scrollTop + private_winH*2
 			});
 			
 			rebuild_fn = function(){
 				refreshSize();
-				setCSS(private_fixedScreenTopDom,{
-					top : private_scrollTop + private_winH
-				});
 				setCSS(private_fixedScreenBottomDom,{
 					top : private_scrollTop + private_winH*2
 				});
@@ -151,7 +144,7 @@
 				position : 'fixed',
 				bottom : 0
 			});
-			setCSS([private_fixedScreenTopDom,private_maskDom],{
+			setCSS(private_maskDom,{
 				'position' : 'fixed',
 				'top' : 0
 			});
@@ -428,7 +421,8 @@
 				top : offset_from.top,
 				left : offset_from.left,
 				width : outerWidth(from),
-				height : outerHeight(from)
+				height : outerHeight(from),
+				overflow : 'hidden'
 			};
 			cssAnim = {
 				width : getCSS(DOM,'width'),
@@ -640,11 +634,12 @@
 		});
 		//显示蒙层
 		showMask(this._mask,function(){
-			private_fixedScreenTopDom.appendChild(me.dom);
+			private_mainDom.appendChild(me.dom);
 			
 			var newPosition = adaption(300,outerHeight(me.dom));
 			setCSS(me.dom,{
-				top : newPosition.screenTop
+				top : newPosition.top,
+				left : newPosition.left
 			});
 			openAnimation(me.dom,me._from,100,null,function(){
 				//处理是否易于关闭
@@ -691,7 +686,12 @@
 
 		//显示蒙层
 		showMask(this._mask,function(){
-			private_fixedScreenTopDom.appendChild(me.dom);
+			private_mainDom.appendChild(me.dom);
+			var newPosition = adaption(300,outerHeight(me.dom));
+			setCSS(me.dom,{
+				top : newPosition.top,
+				left : newPosition.left
+			});
 			openAnimation(me.dom,me._from,100,80,function(){
 				me.inputDom.focus();
 				//处理是否易于关闭
@@ -710,31 +710,30 @@
 	 * prompt
 	 * 
 	 **/
-	function prompt(text,time,param){
-		var this_prompt = this,
-			param = param || {};
+	function PROMPT(text,time,param){
+		var param = param || {};
+		
 		this.dom = utils.createDom(prompt_tpl)[0];
 		this._from = param.from || 'bottom';
 		this.tips(text,time);
 		
 		// create pop
 		setCSS(this.dom,{
-			top : private_winH/3
+			top : private_winH/3 + private_scrollTop
 		});
-		private_fixedScreenTopDom.appendChild(this.dom);
+		private_mainDom.appendChild(this.dom);
 		
 		openAnimation(this.dom,this._from,100,30);
-		
 	}
-	prompt.prototype.close = closeAnimation(80);
-	prompt.prototype.tips = function(txt,time){
-		var this_prompt = this;
+	PROMPT.prototype.close = closeAnimation(80);
+	PROMPT.prototype.tips = function(txt,time){
+		var me = this;
 		if(txt){
 			findByClassName(this.dom,'UI_prompt_cnt')[0].innerHTML = txt;
 		}
 		if(time != 0){
 			setTimeout(function(){
-				this_prompt.close();
+				me.close();
 			},(time || 1500));
 		}
 	};
@@ -809,16 +808,16 @@
 		}
 		//垂直定位
 		if(isNum(param.bottom)){
-			cssObj.top = private_winH - cssObj.height - param.bottom;
+			cssObj.top = private_winH - cssObj.height - param.bottom + private_scrollTop;
 		}else if(isNum(param.top)){
-			cssObj.top = param.top;
+			cssObj.top = private_scrollTop + param.top;
 		}else{
-			cssObj.top = (private_winH - cssObj.height)/2
+			cssObj.top = private_scrollTop + (private_winH - cssObj.height)/2
 		}
 		//打开蒙层
 		showMask(this._mask,function(){
 			setCSS(me.dom,cssObj);
-			private_fixedScreenTopDom.appendChild(me.dom);
+			private_mainDom.appendChild(me.dom);
 			
 			openAnimation(me.dom,me._from,200,400,function(){
 				setCSS(private_body,{
@@ -877,22 +876,29 @@
 		
 		//显示蒙层
 		showMask(this._mask,function(){
-			var cssObj;
 			if(private_docW > 640){
-				cssObj = {
+				var cssObj = {
 					top : param.top || 100,
 					left : param.left || 100,
 					width : param.width || 200
 				};
 				private_mainDom.appendChild(me.dom);
+				
+				setCSS(me.dom,cssObj);
+				var newSize = fix_position(cssObj.top,cssObj.left,cssObj.width,outerHeight(me.dom));
+				setCSS(me.dom,{
+					left : newSize.left,
+					top : newSize.top
+				});
+				
+				
 			} else {
 				me._from = 'bottom';
 				private_fixedScreenBottomDom.appendChild(me.dom);
-				cssObj = {
+				setCSS(me.dom,{
 					bottom : 0
-				};
+				});
 			}
-			setCSS(me.dom,cssObj);
 			openAnimation(me.dom,me._from,200,400,function(){
 				easyCloseHandle.call(me,param.easyClose,true);
 			});
@@ -918,7 +924,7 @@
 				var num = parseInt(num);
 				if(num > 0){
 					private_CONFIG.zIndex = num;
-					setCSS([private_allCnt,private_fixedScreenBottomDom,private_fixedScreenTopDom],{
+					setCSS([private_allCnt,private_fixedScreenBottomDom],{
 						zIndex : num
 					});
 				}
@@ -931,7 +937,7 @@
 			return new ASK(text,callback,param);
 		},
 		prompt : function(txt,time,param){
-			return new prompt(txt,time,param);
+			return new PROMPT(txt,time,param);
 		},
 		plane : function(){
 			return new PLANE(arguments[0]);
