@@ -35,14 +35,6 @@
 	top : 100%;
 	overflow : visible;
 }
-.UI_fixedScreenBottom_cnt {
-	position : absolute;
-	z-index : 4999;
-	left : 0;
-	width : 100%;
-	height : 0;
-	overflow : visible;
-}
 
 .UI-blur{
 	-webkit-transition : 0.08s;
@@ -55,7 +47,6 @@
 	top : 400px;
 	left : 300px;
 	background : #fff;
-	overflow : hidden;
 	box-shadow : 2px 3px 10px rgba(0,0,0,0.6);
 }
 .UI_pop_cpt {
@@ -73,7 +64,6 @@
 	position : relative;
 	min-height : 100px;
 	overflow : auto;
-	width : 100%;
 }
 .UI_pop_close {
 	display : block;
@@ -135,26 +125,21 @@
 	overflow : hidden;
 	text-align : center;
 	border-top : 1px solid #ddd;
+	white-space: nowrap;
 }
 .UI_pop_confirm a {
-	display : block;
+	display : inline-block;
 	width : 50%;
-	height : 36px;
-	float : left;
 	font-size : 14px;
 	line-height : 36px;
 	color : #03f;
-	box-sizing : border-box;
 	transition : 0.15s;
+}
+.UI_pop_confirm a:hover {
+	background : #eee
 }
 .UI_pop_confirm_ok {
 	border-right : 1px solid #ddd;
-}
-
-@media(min-width : 640px){
-	.UI_pop_confirm a:hover {
-		background : #eee
-	}
 }
 .UI_plane {
 	width : 200px;
@@ -211,8 +196,8 @@
 }
 .UI_select {
 	position : absolute;
-	width : 100%;
-	padding-bottom : 10px;
+	width : 200px;
+	box-shadow : 2px 2px 2px rgba(0,0,0,0.6);
 }
 .UI_select a {
 	display : block;
@@ -223,8 +208,6 @@
 	font-size : 16px;
 }
 .UI_select_body {
-	margin : 0 10px 10px;
-	border-radius : 8px;
 	overflow : hidden;
 	background : #fff;
 }
@@ -244,31 +227,47 @@
 	font-size : 12px;
 }
 .UI_selectCnt a {
-	border-top : 1px solid #eee;
-}
-.UI_selectCancel {
-	margin : 0 10px;
-	border-radius : 8px;
-	overflow : hidden;
-	background : #fff;
-}
-.UI_main_cnt .UI_select {
-	width : 200px;
-	padding : 0;
-	border-radius : 0;
-	box-shadow : 2px 2px 2px rgba(0,0,0,0.6);
-}
-.UI_main_cnt .UI_select_body,
-.UI_main_cnt .UI_selectCancel {
-	margin : 0;
-	border-radius : 0;
-}
-
-.UI_main_cnt .UI_select a{
 	height : 34px;
 	line-height : 34px;
 	font-size : 14px;
+	border-top : 1px solid #ddd;
 }
-.UI_main_cnt .UI_selectCancel{
+.UI_selectCnt a :hover{
+	background: #eee;
+}
+.UI_selectCancel {
 	display : none;
+}
+
+@media(max-width : 640px){
+	.UI_select {
+		position: fixed;
+		bottom: 0;
+		width : 100%;
+		padding-bottom : 10px;
+	}
+	.UI_select_body,
+	.UI_selectCancel {
+		margin : 0 10px;
+		border-radius : 8px;
+	}
+	.UI_select_body {
+		margin : 0 10px 10px;
+	}
+	.UI_selectCancel{
+		display: block;
+		background : #fff;
+	}
+
+	.UI_lawyer a:hover {
+		background : none
+	}
+}
+/** ie ´ò²¹¶¡ **/
+.UI_ie678 .UI_pop,
+.UI_ie678 .UI_confirm,
+.UI_ie678 .UI_ask,
+.UI_ie678 .UI_prompt,
+.UI_ie678 .UI_select{
+	outline:3px solid #ccc;
 }

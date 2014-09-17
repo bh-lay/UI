@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2014-9-17 16:10
+ * @modified 2014-9-17 16:53
  * 
  **/
 
@@ -38,7 +38,7 @@
 	/**
 	 * 基础模版
 	 */
-	var allCnt_tpl = '<div class="UI_lawyer"><div class="UI_mask"></div><div class="UI_main_cnt"></div><div class="UI_fixedScreenBottom_cnt"></div></div>';
+	var allCnt_tpl = '<div class="UI_lawyer"><div class="UI_mask"></div><div class="UI_main_cnt"></div></div>';
 	var pop_tpl = '<div class="UI_pop"><div class="UI_pop_cpt"></div><div class="UI_cnt"></div><a href="javascript:;" class="UI_pop_close" title="\u5173\u95ED">×</a></div>';
 	var confirm_tpl = '<div class="UI_confirm"><div class="UI_confirm_text"><%=text %></div></div>';
 	var ask_tpl = '<div class="UI_ask"><div class="UI_ask_text"><%=text %></div><input class="UI_ask_key" type="text" name="UI_ask_key"/></div>';
@@ -48,7 +48,7 @@
 	var cover_tpl = '<div class="UI_cover"><div class="UI_cnt"></div><a href="javascript:;" class="UI_close UI_coverClose">×</a></div>';
 	var select_tpl = '<div class="UI_select"><div class="UI_select_body UI_cnt"><% if(title){ %><div class="UI_selectCpt"><h3><%=title %></h3><% if(intro){ %><p><%=intro %></p><% } %></div><% } %><div class="UI_selectCnt"><% for(var i=0,total=list.length;i<total;i++){ %><a class="UI_select_btn" href="javascript:;"><%=list[i] %></a><% } %></div></div><div class="UI_selectCancel"><a class="UI_select_btn" href="javascript:;">取消</a></div></div>';
 	
-	var popCSS = '.UI_lawyer{position:absolute;top:-100%;left:0;z-index:4999;width:100%;height:100%;overflow:visible;font-family:"Microsoft Yahei"}.UI_lawyer a,.UI_lawyer a:hover,.UI_lawyer a:active{outline:none;text-decoration:none;-webkit-tap-highlight-color:rgba(0,0,0,0);-webkit-tap-highlight-color:transparent}.UI_mask{position:absolute;top:100%;left:0;width:100%;height:100%;background:#000;display:none;opacity:0.6;filter:alpha(opacity=50)}.UI_main_cnt{position:absolute;width:100%;height:0;top:100%;overflow:visible}.UI_fixedScreenBottom_cnt{position:absolute;z-index:4999;left:0;width:100%;height:0;overflow:visible}.UI-blur{-webkit-transition:0.08s;-webkit-filter:blur(2px)}.UI_pop{width:200px;position:absolute;top:400px;left:300px;background:#fff;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_pop_cpt{position:relative;height:36px;line-height:36px;overflow:hidden;border-bottom:1px solid #ebebeb;color:#777;font-size:16px;text-indent:15px;cursor:default}.UI_pop .UI_cnt{position:relative;min-height:100px;overflow:auto}.UI_pop_close{display:block;position:absolute;top:0;right:0;width:40px;height:36px;text-align:center;color:#ddd;font:bold 20px/36px "simsun";transition:0.1s}.UI_pop_close:hover{color:#888}.UI_pop_close:active{color:#222}.UI_confirm{width:300px;position:absolute;background:#fff;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_confirm_text{padding:30px 10px 20px;line-height:26px;text-align:center;font-size:20px;color:#333}.UI_ask{width:300px;position:absolute;background:#fff;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_ask_text{padding:25px 10px 15px;line-height:26px;text-align:center;font-size:18px;color:#333}.UI_ask input{display:block;margin:0 auto 15px;height:30px;padding:4px 4px;line-height:22px;box-sizing:border-box;width:90%}.UI_pop_confirm{overflow:hidden;text-align:center;border-top:1px solid #ddd;white-space:nowrap}.UI_pop_confirm a{display:inline-block;width:50%;font-size:14px;line-height:36px;color:#03f;transition:0.15s}.UI_pop_confirm a:hover{background:#eee}.UI_pop_confirm_ok{border-right:1px solid #ddd}.UI_plane{width:200px;position:absolute;top:400px;left:300px}.UI_prompt{width:240px;left:50%;margin-left:-120px;position:absolute}.UI_prompt_cnt{padding:30px 10px;background:#fff;box-shadow:2px 2px 10px rgba(0,0,0,0.5);font-size:18px;color:#333;text-align:center}.UI_cover{position:absolute;top:0;width:100%;height:100px;max-width:100%}.UI_cover .UI_cnt{position:relative;width:100%;height:100%;background:#fff;overflow:auto}.UI_coverClose{display:block;position:absolute;top:10px;right:20px;width:30px;height:30px;text-align:center;color:#aaa;font:18px/30px "simsun";background:#eee;border-radius:15px;border:1px solid #aaa}.UI_coverClose:hover{background:#333;color:#fff;transition:0.2s}.UI_select{position:absolute;width:100%;padding-bottom:10px}.UI_select a{display:block;height:40px;line-height:40px;text-align:center;color:#03f;font-size:16px}.UI_select_body{margin:0 10px 10px;border-radius:8px;overflow:hidden;background:#fff}.UI_selectCpt{padding:8px 0}.UI_selectCpt h3,.UI_selectCpt p{margin:0;font-size:15px;line-height:18px;text-align:center;color:#aaa;font-weight:normal}.UI_selectCpt p{font-size:12px}.UI_selectCnt a{border-top:1px solid #eee}.UI_selectCancel{margin:0 10px;border-radius:8px;overflow:hidden;background:#fff}.UI_main_cnt .UI_select{width:200px;padding:0;border-radius:0;box-shadow:2px 2px 2px rgba(0,0,0,0.6)}.UI_main_cnt .UI_select_body,.UI_main_cnt .UI_selectCancel{margin:0;border-radius:0}.UI_main_cnt .UI_select a{height:34px;line-height:34px;font-size:14px}.UI_main_cnt .UI_selectCancel{display:none}@media(max-width:640px){.UI_lawyer a:hover{background:none}}.UI_ie678 .UI_pop,.UI_ie678 .UI_confirm,.UI_ie678 .UI_ask,.UI_ie678 .UI_prompt,.UI_ie678 .UI_select{outline:3px solid #ccc}';
+	var popCSS = '.UI_lawyer{position:absolute;top:-100%;left:0;z-index:4999;width:100%;height:100%;overflow:visible;font-family:"Microsoft Yahei"}.UI_lawyer a,.UI_lawyer a:hover,.UI_lawyer a:active{outline:none;text-decoration:none;-webkit-tap-highlight-color:rgba(0,0,0,0);-webkit-tap-highlight-color:transparent}.UI_mask{position:absolute;top:100%;left:0;width:100%;height:100%;background:#000;display:none;opacity:0.6;filter:alpha(opacity=50)}.UI_main_cnt{position:absolute;width:100%;height:0;top:100%;overflow:visible}.UI-blur{-webkit-transition:0.08s;-webkit-filter:blur(2px)}.UI_pop{width:200px;position:absolute;top:400px;left:300px;background:#fff;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_pop_cpt{position:relative;height:36px;line-height:36px;overflow:hidden;border-bottom:1px solid #ebebeb;color:#777;font-size:16px;text-indent:15px;cursor:default}.UI_pop .UI_cnt{position:relative;min-height:100px;overflow:auto}.UI_pop_close{display:block;position:absolute;top:0;right:0;width:40px;height:36px;text-align:center;color:#ddd;font:bold 20px/36px "simsun";transition:0.1s}.UI_pop_close:hover{color:#888}.UI_pop_close:active{color:#222}.UI_confirm{width:300px;position:absolute;background:#fff;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_confirm_text{padding:30px 10px 20px;line-height:26px;text-align:center;font-size:20px;color:#333}.UI_ask{width:300px;position:absolute;background:#fff;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_ask_text{padding:25px 10px 15px;line-height:26px;text-align:center;font-size:18px;color:#333}.UI_ask input{display:block;margin:0 auto 15px;height:30px;padding:4px 4px;line-height:22px;box-sizing:border-box;width:90%}.UI_pop_confirm{overflow:hidden;text-align:center;border-top:1px solid #ddd;white-space:nowrap}.UI_pop_confirm a{display:inline-block;width:50%;font-size:14px;line-height:36px;color:#03f;transition:0.15s}.UI_pop_confirm a:hover{background:#eee}.UI_pop_confirm_ok{border-right:1px solid #ddd}.UI_plane{width:200px;position:absolute;top:400px;left:300px}.UI_prompt{width:240px;left:50%;margin-left:-120px;position:absolute}.UI_prompt_cnt{padding:30px 10px;background:#fff;box-shadow:2px 2px 10px rgba(0,0,0,0.5);font-size:18px;color:#333;text-align:center}.UI_cover{position:absolute;top:0;width:100%;height:100px;max-width:100%}.UI_cover .UI_cnt{position:relative;width:100%;height:100%;background:#fff;overflow:auto}.UI_coverClose{display:block;position:absolute;top:10px;right:20px;width:30px;height:30px;text-align:center;color:#aaa;font:18px/30px "simsun";background:#eee;border-radius:15px;border:1px solid #aaa}.UI_coverClose:hover{background:#333;color:#fff;transition:0.2s}.UI_select{position:absolute;width:200px;box-shadow:2px 2px 2px rgba(0,0,0,0.6)}.UI_select a{display:block;height:40px;line-height:40px;text-align:center;color:#03f;font-size:16px}.UI_select_body{overflow:hidden;background:#fff}.UI_selectCpt{padding:8px 0}.UI_selectCpt h3,.UI_selectCpt p{margin:0;font-size:15px;line-height:18px;text-align:center;color:#aaa;font-weight:normal}.UI_selectCpt p{font-size:12px}.UI_selectCnt a{height:34px;line-height:34px;font-size:14px;border-top:1px solid #ddd}.UI_selectCnt a:hover{background:#eee}.UI_selectCancel{display:none}@media(max-width:640px){.UI_select{position:fixed;bottom:0;width:100%;padding-bottom:10px}.UI_select_body, .UI_selectCancel{margin:0 10px;border-radius:8px}.UI_select_body{margin:0 10px 10px}.UI_selectCancel{display:block;background:#fff}.UI_lawyer a:hover{background:none}}.UI_ie678 .UI_pop,.UI_ie678 .UI_confirm,.UI_ie678 .UI_ask,.UI_ie678 .UI_prompt,.UI_ie678 .UI_select{outline:3px solid #ccc}';
 	
 	var isIE67 = isIE678 = false;
 	if(navigator.appName == "Microsoft Internet Explorer"){
@@ -68,7 +68,6 @@
 	var private_allCnt = utils.createDom(allCnt_tpl)[0],
 		private_maskDom = findByClassName(private_allCnt,'UI_mask')[0],
 		private_mainDom = findByClassName(private_allCnt,'UI_main_cnt')[0],
-		private_fixedScreenBottomDom = findByClassName(private_allCnt,'UI_fixedScreenBottom_cnt')[0],
 		private_cssDom = null,
 		private_body = document.body,
 		private_docW,
@@ -130,24 +129,14 @@
 		
 		var rebuild_fn = null;
 		if(isIE67){
-			setCSS(private_fixedScreenBottomDom,{
-				top : private_scrollTop + private_winH*2
-			});
 			
 			rebuild_fn = function(){
 				refreshSize();
-				setCSS(private_fixedScreenBottomDom,{
-					top : private_scrollTop + private_winH*2
-				});
 				setCSS(private_maskDom,{
 					'marginTop' : private_scrollTop
 				});
 			};
 		}else{
-			setCSS(private_fixedScreenBottomDom,{
-				position : 'fixed',
-				bottom : 0
-			});
 			setCSS(private_maskDom,{
 				'position' : 'fixed',
 				'top' : 0
@@ -883,7 +872,11 @@
 		
 		//显示蒙层
 		showMask(this._mask,function(){
-			if(private_docW > 640){
+			if(private_docW < 640 && !isIE678){
+				//手机版
+				me._from = 'bottom';
+				private_mainDom.appendChild(me.dom);
+			}else{
 				var cssObj = {
 					top : param.top || 100,
 					left : param.left || 100,
@@ -896,14 +889,6 @@
 				setCSS(me.dom,{
 					left : newSize.left,
 					top : newSize.top
-				});
-				
-				
-			} else {
-				me._from = 'bottom';
-				private_fixedScreenBottomDom.appendChild(me.dom);
-				setCSS(me.dom,{
-					bottom : 0
 				});
 			}
 			openAnimation(me.dom,me._from,200,400,function(){
@@ -931,7 +916,7 @@
 				var num = parseInt(num);
 				if(num > 0){
 					private_CONFIG.zIndex = num;
-					setCSS([private_allCnt,private_fixedScreenBottomDom],{
+					setCSS(private_allCnt,{
 						zIndex : num
 					});
 				}
@@ -962,7 +947,7 @@
 	 * String Number Array
 	 * Object Function 
 	 * HTMLDocument
-	 * Undefined Null 
+	 * Undefined Null
 	 */
 	function TypeOf(obj) {
 		return Object.prototype.toString.call(obj).match(/\s(\w+)/)[1];
