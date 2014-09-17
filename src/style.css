@@ -55,6 +55,7 @@
 	top : 400px;
 	left : 300px;
 	background : #fff;
+	overflow : hidden;
 	box-shadow : 2px 3px 10px rgba(0,0,0,0.6);
 }
 .UI_pop_cpt {
@@ -72,6 +73,7 @@
 	position : relative;
 	min-height : 100px;
 	overflow : auto;
+	width : 100%;
 }
 .UI_pop_close {
 	display : block;
@@ -133,21 +135,26 @@
 	overflow : hidden;
 	text-align : center;
 	border-top : 1px solid #ddd;
-	white-space: nowrap;
 }
 .UI_pop_confirm a {
-	display : inline-block;
+	display : block;
 	width : 50%;
+	height : 36px;
+	float : left;
 	font-size : 14px;
 	line-height : 36px;
 	color : #03f;
+	box-sizing : border-box;
 	transition : 0.15s;
-}
-.UI_pop_confirm a:hover {
-	background : #eee
 }
 .UI_pop_confirm_ok {
 	border-right : 1px solid #ddd;
+}
+
+@media(min-width : 640px){
+	.UI_pop_confirm a:hover {
+		background : #eee
+	}
 }
 .UI_plane {
 	width : 200px;
@@ -264,18 +271,4 @@
 }
 .UI_main_cnt .UI_selectCancel{
 	display : none;
-}
-
-@media(max-width : 640px){
-	.UI_lawyer a:hover {
-		background : none
-	}
-}
-/** ie ´ò²¹¶¡ **/
-.UI_ie678 .UI_pop,
-.UI_ie678 .UI_confirm,
-.UI_ie678 .UI_ask,
-.UI_ie678 .UI_prompt,
-.UI_ie678 .UI_select{
-	outline:3px solid #ccc;
 }

@@ -135,8 +135,6 @@ define(function (window,document) {
 		} else if (value == 'auto'){
 			if(prop == 'height'){
 				value = elem.clientHeight;
-			}else if(prop == 'width'){
-				value = elem.clientWidth;
 			}
 		}
 		
@@ -359,14 +357,14 @@ define(function (window,document) {
 	}
 	if(testDom.getBoundingClientRect !== 'undefined'){
 		outerWidth = function(elem){
-			var output = elem.getBoundingClientRect().width;
+			var output = elem.getBoundingClientRect().width || 0;
 			
-			return typeof(output) == 'number' ? output : count_outerWidth(elem);
+			return typeof(output) != 'undefined' ? output : count_outerWidth(elem);
 		};
 		outerHeight = function(elem){
-			var output = elem.getBoundingClientRect().height;
+			var output = elem.getBoundingClientRect().height || 0;
 			
-			return typeof(output) == 'number' ? output : count_outerHeight(elem);
+			return typeof(output) != 'undefined' ? output : count_outerHeight(elem);
 		};
 	}else{
 		outerWidth = count_outerWidth;
@@ -444,7 +442,6 @@ define(function (window,document) {
 		}
 		bindHandler(elem,type,callback);
 	}
-	
 	
     return {
 		TypeOf : TypeOf,
@@ -636,8 +633,7 @@ define(function (window,document) {
 			}
 			box.screen_top = size.top;
 			box.screen_left = size.left;
-			
-			box.top = size.top + (document.documentElement.scrollTop == 0 ? document.body.scrollTop : document.documentElement.scrollTop);
+			box.top = size.top + document.body.scrollTop;
 			box.left = size.left + document.body.scrollLeft;
 			
 			return box;
