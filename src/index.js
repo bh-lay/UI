@@ -50,11 +50,14 @@
 	
 	var popCSS = requires('style.css');
 	
-	var isIE67 = false;
+	var isIE67 = isIE678 = false;
 	if(navigator.appName == "Microsoft Internet Explorer"){
 		var version = navigator.appVersion.split(";")[1].replace(/[ ]/g,"");
 		if(version == "MSIE6.0" || version == "MSIE7.0"){
-			isIE67 = true; 
+			isIE67 = true;
+			isIE678 = true;
+		}else if(version == "MSIE8.0"){
+			isIE678 = true;
 		}
 	}
 	
@@ -83,7 +86,9 @@
 		},
 		zIndex : 499
 	};
-	
+	if(isIE678){
+		utils.addClass(private_allCnt,'UI_ie678');
+	}
 	var docDom;
 	if (document.compatMode == "BackCompat") {
 		docDom = private_body;
@@ -93,11 +98,10 @@
 	}
 	function refreshSize(){
 		//重新计算窗口尺寸
-		private_scrollTop = document.documentElement.scrollTop == 0 ? private_body.scrollTop : document.documentElement.scrollTop;
+		private_scrollTop = docDom.scrollTop == 0 ? private_body.scrollTop : docDom.scrollTop;
 		private_winH = window.innerHeight || document.documentElement.clientHeight;
 		private_docH = docDom.scrollHeight;
 		private_docW = docDom.clientWidth;
-		
 		//向css环境写入动态css
 		private_cssDom && utils.removeNode(private_cssDom);
 		var styleStr = [
@@ -253,8 +257,8 @@
 	}
 	//检测body的mouseup事件
 	utils.bind(private_body,'mouseup',function checkClick(event) {
+		var target = event.srcElement || event.target;
 		setTimeout(function(){
-			var target = event.srcElement || event.target;
 			while (!utils.hasClass(target,'UI_easyClose')) {
 				target = target.parentNode;
 				if(!target){
@@ -321,13 +325,17 @@
 			callback && callback();
 			return;
 		}
-		
 		private_maskCount++
 		if(private_maskCount==1){
-			utils.fadeIn(private_maskDom,500,function(){
+			if(!isIE678){
+				utils.fadeIn(private_maskDom,500,function(){
+					callback && callback();
+				});
+				blur && blur();
+			}else{
+				utils.css(private_maskDom,{'display':'block'});
 				callback && callback();
-			});
-			blur && blur();
+			}
 		}else{
 			callback && callback();
 		}
@@ -340,8 +348,11 @@
 			private_maskCount--;
 			if(private_maskCount == 0){
 				removeBlur && removeBlur();
-				utils.fadeOut(private_maskDom,400);
-				
+				if(!isIE678){
+					utils.fadeOut(private_maskDom,400);
+				}else{
+					utils.css(private_maskDom,{'display':'none'});
+				}
 			}
 		}
 	}
@@ -397,15 +408,14 @@
 	 *   创建一个dom用来完成动画
 	 *   动画结束，设置dom为结束样式
 	 **/
-	var openAnimation = isIE67 ? function openAnimation(a,b,c,d,fn){
+	var openAnimation = isIE678 ? function (a,b,c,d,fn){
 		fn && fn();
-	} : function openAnimation(DOM,from,time,animation_range,fn){
-		if(!from || from == 'none'){
+	} : function (DOM,from,time,animation_range,fn){
+		if(!from || from == 'none' || !animation_range){
 			fn && fn();
 			//不需要动画
 			return
 		}
-		var range = animation_range || 80;
 		var offset = utils.offset(DOM);
 		
 		//动画第一帧css
@@ -432,7 +442,7 @@
 			};
 		//参数是字符串
 		}else if(typeof(from) == 'string'){
-			var countResult = countAnimation(DOM,from,-range);
+			var countResult = countAnimation(DOM,from,-animation_range);
 			cssStart[countResult[0]] = countResult[2];
 			cssAnim[countResult[0]] = countResult[1];
 		}
@@ -485,27 +495,30 @@
 			}
 			this.dead = true;
 			
+			//处理关闭回调、蒙层检测
+			var DOM = me.dom;
+			fn && fn.call(me);
+			function endFn(){
+				utils.removeNode(DOM);
+				me.closeFn && me.closeFn();
+				closeMask(me._mask);
+			}
+			
+			if(isIE678){
+				endFn();
+				return
+			}
 			
 			var time = isNum(time) ? time : parseInt(time_define) || 80;
 			var from = me._from;
 			
 			var range = animation_range || 80;
 			
-			//处理关闭回调、蒙层检测
-			fn && fn.call(me);
-			function endFn(){
-				me.closeFn && me.closeFn();
-				closeMask(me._mask);
-			}
-			
-			
-			var DOM = me.dom;
 			var cssEnd = {
 				'opacity' : 0
 			};
 			if(from && from.tagName && from.parentNode){
 				utils.zoomOut(DOM,time,function(){
-					utils.removeNode(DOM);
 					endFn();
 				});
 			}else if(typeof(from) == 'string'){
@@ -515,11 +528,9 @@
 				
 				//动画开始
 				animation(DOM,cssEnd,time,'SineEaseIn',function(){
-					utils.removeNode(DOM);
 					endFn();
 				});
 			}else{
-				utils.removeNode(DOM);
 				endFn();
 			}
 		}
@@ -556,10 +567,6 @@
 			caption_dom.innerHTML = title;
 			//can drag is pop
 			utils.drag(caption_dom,this.dom,{
-				start : function(){
-					//更新窗口尺寸
-					refreshSize();
-				},
 				move : function(mx,my,l_start,t_start,w_start,h_start){
 					var left = mx + l_start;
 					var top = my + t_start;
@@ -598,7 +605,7 @@
 				left : left
 			});
 			//开场动画
-			openAnimation(me.dom,me._from,200,null,function(){
+			openAnimation(me.dom,me._from,200,80,function(){
 				//处理是否易于关闭
 				easyCloseHandle.call(me,param.easyClose,true);
 			});
@@ -641,7 +648,7 @@
 				top : newPosition.top,
 				left : newPosition.left
 			});
-			openAnimation(me.dom,me._from,100,null,function(){
+			openAnimation(me.dom,me._from,100,80,function(){
 				//处理是否易于关闭
 				easyCloseHandle.call(me,param.easyClose,true);
 			});
@@ -762,7 +769,7 @@
 		
 		private_mainDom.appendChild(this.dom);
 		
-		openAnimation(this.dom,this._from,100,null,function(){
+		openAnimation(this.dom,this._from,100,80,function(){
 			//处理是否易于关闭
 			easyCloseHandle.call(me,true);
 		});
