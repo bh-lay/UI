@@ -74,17 +74,14 @@
 		private_scrollTop;
 
 	var private_CONFIG = {
-		gap : {
-			top : 0,
-			left : 0,
-			bottom : 0,
-			right : 0
+		'gap' : {
+			'top' : 0,
+			'left' : 0,
+			'bottom' : 0,
+			'right' : 0
 		},
-		zIndex : 499
+		'zIndex' : 499
 	};
-	if(isIE678){
-		utils.addClass(private_allCnt,'UI_ie678');
-	}
 	var docDom;
 	if (document.compatMode == "BackCompat") {
 		docDom = private_body;
@@ -116,6 +113,10 @@
 		//更新窗口尺寸
 		refreshSize();
 		setTimeout(refreshSize,500);
+		
+		if(isIE678){
+			utils.addClass(private_allCnt,'UI_ie678');
+		}
 		
 		var rebuild_fn = null;
 		if(isIE67){
@@ -161,28 +162,26 @@
 		}
 		
 		return {
-			top : top,
-			left : left
+			'top' : Math.ceil(top),
+			'left' : Math.ceil(left)
 		}
 	}
-	//计算自适应页面位置的方法
-	function adaption(width,height){
-		var top = (private_winH - height)/2 + private_scrollTop;
-		var left = (private_docW - width)/2;
-		
-		var gap = private_CONFIG.gap;
-		var screenTop = (private_winH - height)/2;
-		if(screenTop < gap.top){
-			screenTop = gap.top;
+	//设置dom自适应于页面
+	function adaption(dom,param,time){
+		var param = param ||{},
+			width = outerWidth(dom),
+			height = outerHeight(dom),
+			top = (private_winH - height)/2 + private_scrollTop,
+			left = (private_docW - width)/2,
+			newPosition = fix_position(top,left,width,height),
+			method = setCSS;
+		if(isNum(time)){
+			method = animation;
 		}
-		
-		var newPosition = fix_position(top,left,width,height);
-		return {
-			top : newPosition.top,
-			left : newPosition.left,
-			screenTop : screenTop,
-			screenLeft : newPosition.left
-		}
+		method(dom,{
+			'top' : isNum(param.top) ? param.top : Math.ceil(newPosition.top),
+			'left' : isNum(param.left) ? param.left : Math.ceil(newPosition.left)
+		},time);
 	}
 	
 	//增加确认方法
@@ -204,8 +203,8 @@
 			}
 		}
 		var this_html = utils.render(confirmBar_tpl,{
-			confirm : btns[0],
-			cancel : btns[1]
+			'confirm' : btns[0],
+			'cancel' : btns[1]
 		});
 		dom.appendChild(utils.createDom(this_html)[0]);
 		
@@ -221,8 +220,8 @@
 	}
 	
 	/**
-	 * 处理对象是否易于关闭的扩展
-	 *   点击自身以外的空间，按下esc键
+	 * 处理对象易于关闭的扩展
+	 *   点击自身以外 or 按下esc
 	 */
 	 //当前打开状态的对象
 	private_active = [];
@@ -263,9 +262,9 @@
 	 *   default_value 为默认参数
 	 */
 	function easyCloseHandle(mark,default_value){
+		var me = this;
 		if(typeof(mark) == 'boolean' ? mark : default_value){
-			var me = this;
-			utils.addClass(this.dom,'UI_easyClose');
+			utils.addClass(me.dom,'UI_easyClose');
 			setTimeout(function(){
 				private_active.push(me);
 			});
@@ -312,12 +311,16 @@
 	function showMask(callback){
 		var lastMask = maskObjsLast();
 		zIndex = lastMask ? lastMask[1] + 2 : 2;
-		setCSS(this.dom,{'zIndex': zIndex});
+		setCSS(this.dom,{
+			'zIndex': zIndex
+		});
 		if(!this._mask){
 			callback && callback();
 			return;
 		}
-		setCSS(private_maskDom,{'zIndex': zIndex - 1});
+		setCSS(private_maskDom,{
+			'zIndex': zIndex - 1
+		});
 		
 		if(lastMask){
 			//尚有需要蒙层的元素
@@ -330,7 +333,9 @@
 				});
 				blur && blur();
 			}else{
-				setCSS(private_maskDom,{'display':'block'});
+				setCSS(private_maskDom,{
+					'display':'block'
+				});
 				callback && callback();
 			}
 		}
@@ -408,17 +413,17 @@
 			time = 200;
 			var offset_from = utils.offset(from);
 			cssStart = {
-				top : offset_from.top,
-				left : offset_from.left,
-				width : outerWidth(from),
-				height : outerHeight(from),
-				overflow : 'hidden'
+				'top' : offset_from.top,
+				'left' : offset_from.left,
+				'width' : outerWidth(from),
+				'height' : outerHeight(from),
+				'overflow' : 'hidden'
 			};
 			cssAnim = {
-				width : getCSS(DOM,'width'),
-				height : getCSS(DOM,'height'),
-				top : getCSS(DOM,'top'),
-				left : getCSS(DOM,'left')
+				'width' : getCSS(DOM,'width'),
+				'height' : getCSS(DOM,'height'),
+				'top' : getCSS(DOM,'top'),
+				'left' : getCSS(DOM,'left')
 			};
 		//参数是字符串
 		}else if(typeof(from) == 'string'){
@@ -435,8 +440,8 @@
 		var cntDom = findByClassName(animDom,'UI_cnt')[0];
 		insertAfter(animDom,DOM);
 		if(cntDom){
-			setCSS(cntDom,{
-				'height' : outerHeight(cntDom)
+			setCSS(animDom,{
+				'height' : outerHeight(DOM)
 			});
 			cntDom.innerHTML = '';
 		}
@@ -457,7 +462,7 @@
 			utils.removeNode(animDom);
 			//显示真实dom
 			setCSS(DOM,{
-				display : 'block'
+				'display' : 'block'
 			});
 			fn && fn();
 		});
@@ -470,10 +475,10 @@
 			var me = this;
 			
 			//检测、记录自己是否“活着”
-			if(this.dead){
+			if(me.dead){
 				return;
 			}
-			this.dead = true;
+			me.dead = true;
 			
 			//处理关闭回调、蒙层检测
 			var DOM = me.dom;
@@ -547,21 +552,21 @@
 		var param = param || {};
 		var me = this;
 		
-		this.dom = utils.createDom(pop_tpl)[0];
-		this.cntDom = findByClassName(this.dom,'UI_cnt')[0];
-		this.closeFn = param.closeFn || null;
-		this._mask = param.mask || false;
-		this._from = param.from || 'top';
+		me.dom = utils.createDom(pop_tpl)[0];
+		me.cntDom = findByClassName(me.dom,'UI_cnt')[0];
+		me.closeFn = param.closeFn || null;
+		me._mask = param.mask || false;
+		me._from = param.from || 'top';
 		
 
 		//当有确认参数时
 		if(param.confirm){
-			add_confirm(this.dom,param.confirm,function(){
+			add_confirm(me.dom,param.confirm,function(){
 				me.close();
 			});
 		}
 		//处理title参数
-		var caption_dom = findByClassName(this.dom,'UI_pop_cpt')[0];
+		var caption_dom = findByClassName(me.dom,'UI_pop_cpt')[0];
 		if(!param.title){
 			utils.removeNode(caption_dom);
 		}else{
@@ -569,25 +574,25 @@
 			
 			caption_dom.innerHTML = title;
 			//can drag is pop
-			utils.drag(caption_dom,this.dom,{
-				move : function(mx,my,l_start,t_start,w_start,h_start){
+			utils.drag(caption_dom,me.dom,{
+				'move' : function(mx,my,l_start,t_start,w_start,h_start){
 					var left = mx + l_start;
 					var top = my + t_start;
 					
 					var newSize = fix_position(top,left,w_start,h_start);
 					setCSS(me.dom,{
-						left : newSize.left,
-						top : newSize.top
+						'left' : newSize.left,
+						'top' : newSize.top
 					});
 				}
 			});
 		}
 		
-		bindEvent(this.dom,'click','.UI_pop_close',function(){
+		bindEvent(me.dom,'click','.UI_pop_close',function(){
 			me.close();
 		});
 		
-		showMask.call(this,function(){
+		showMask.call(me,function(){
 			var this_width = Math.min(param.width || 600,private_docW-20);
 			
 			//插入内容
@@ -595,18 +600,13 @@
 			
 			//设置宽度，为计算位置尺寸做准备
 			setCSS(me.dom,{
-				width : this_width
+				'width' : this_width
 			});
 			private_allCnt.appendChild(me.dom);
 			
 			//校正位置
-			var fixSize = adaption(this_width,outerHeight(me.dom));
-			var top = isNum(param.top) ? param.top : fixSize.top;
-			var left = isNum(param.left) ? param.left : fixSize.left;
-			setCSS(me.dom,{
-				top : top,
-				left : left
-			});
+			adaption(me.dom,param);
+			
 			//开场动画
 			openAnimation(me.dom,me._from,200,80,function(){
 				//处理是否易于关闭
@@ -617,11 +617,7 @@
 	//使用close方法
 	POP.prototype.close = closeAnimation(500);
 	POP.prototype.adapt = function(){
-		var fixSize = adaption(outerWidth(this.dom),outerHeight(this.dom));
-		animation(this.dom,{
-			top : fixSize.top,
-			left : fixSize.left
-		}, 100);
+		adaption(this.dom,null,100);
 	};
 
 	/**
@@ -634,23 +630,20 @@
 		var this_html = utils.render(confirm_tpl,{
 			'text' : param.text || 'need text in parameter!'
 		});
-		this.dom = utils.createDom(this_html)[0];
-		this.closeFn = param.closeFn || null;
-		this._mask = typeof(param.mask) == 'boolean' ? param.mask : true;
-		this._from = param.from || 'top';
+		me.dom = utils.createDom(this_html)[0];
+		me.closeFn = param.closeFn || null;
+		me._mask = typeof(param.mask) == 'boolean' ? param.mask : true;
+		me._from = param.from || 'top';
 		
-		add_confirm(this.dom,param,function(){
+		add_confirm(me.dom,param,function(){
 			me.close();
 		});
 		//显示蒙层
-		showMask.call(this,function(){
+		showMask.call(me,function(){
 			private_allCnt.appendChild(me.dom);
 			
-			var newPosition = adaption(300,outerHeight(me.dom));
-			setCSS(me.dom,{
-				'top' : newPosition.top,
-				'left' : newPosition.left
-			});
+			adaption(me.dom);
+			
 			openAnimation(me.dom,me._from,100,80,function(){
 				//处理是否易于关闭
 				easyCloseHandle.call(me,param.easyClose,true);
@@ -671,37 +664,35 @@
 			'text' : text || 'need text in parameter!'
 		});
 
-		this.dom = utils.createDom(this_html)[0];
-		this._mask = typeof(param.mask) == 'boolean' ? param.mask : true;
-		this._from = param.from || 'top';
-		this.inputDom = findByClassName(me.dom,'UI_ask_key')[0];
-		this.closeFn =  null;
+		me.dom = utils.createDom(this_html)[0];
+		me._mask = typeof(param.mask) == 'boolean' ? param.mask : true;
+		me._from = param.from || 'top';
+		me.inputDom = findByClassName(me.dom,'UI_ask_key')[0];
+		me.closeFn =  null;
 		
 		var confirm_html = utils.render(confirmBar_tpl,{
 			'confirm' : '确定',
 			'cancel' : '取消'
 		});
 		
-		this.dom.appendChild(utils.createDom(confirm_html)[0]);
+		me.dom.appendChild(utils.createDom(confirm_html)[0]);
 		
 		//确定
-		bindEvent(this.dom,'click','.UI_pop_confirm_ok',function(){
+		bindEvent(me.dom,'click','.UI_pop_confirm_ok',function(){
 			//根据执行结果判断是否要关闭弹框
 			callback ? ((callback(me.inputDom.value) != false) && me.close()) : me.close();
 		});
 		//取消
-		bindEvent(this.dom,'click','.UI_pop_confirm_cancel',function(){
+		bindEvent(me.dom,'click','.UI_pop_confirm_cancel',function(){
 			me.close();
 		});
 
 		//显示蒙层
-		showMask.call(this,function(){
+		showMask.call(me,function(){
 			private_allCnt.appendChild(me.dom);
-			var newPosition = adaption(300,outerHeight(me.dom));
-			setCSS(me.dom,{
-				top : newPosition.top,
-				left : newPosition.left
-			});
+			
+			adaption(me.dom);
+			
 			openAnimation(me.dom,me._from,100,80,function(){
 				me.inputDom.focus();
 				//处理是否易于关闭
@@ -723,17 +714,16 @@
 	function PROMPT(text,time,param){
 		var param = param || {};
 		var me = this;
-		this.dom = utils.createDom(prompt_tpl)[0];
-		this._from = param.from || 'bottom';
-		this._mask = param.mask ? true : false;
-		this.tips(text,time);
+		me.dom = utils.createDom(prompt_tpl)[0];
+		me._from = param.from || 'bottom';
+		me._mask = param.mask ? true : false;
+		me.tips(text,time);
 		
 		// create pop
-		setCSS(this.dom,{
-			top : private_winH/3 + private_scrollTop
-		});
-		showMask.call(this,function(){
+		showMask.call(me,function(){
 			private_allCnt.appendChild(me.dom);
+			adaption(me.dom);
+			
 			openAnimation(me.dom,me._from,100,30);
 		});
 	}
@@ -741,7 +731,7 @@
 	PROMPT.prototype.tips = function(txt,time){
 		var me = this;
 		if(txt){
-			findByClassName(this.dom,'UI_prompt_cnt')[0].innerHTML = txt;
+			findByClassName(this.dom,'UI_cnt')[0].innerHTML = txt;
 		}
 		if(time != 0){
 			setTimeout(function(){
@@ -757,21 +747,20 @@
 		var me = this;
 		var param = param || {};
 		
-		this.closeFn = param.closeFn || null;
-
-		this.dom = utils.createDom(plane_tpl)[0];
-		this._from = param.from || null;
+		me.closeFn = param.closeFn || null;
+		me.dom = utils.createDom(plane_tpl)[0];
+		me._from = param.from || null;
 		
 		//insert html
-		this.dom.innerHTML = param.html || '';
+		me.dom.innerHTML = param.html || '';
 		
-		setCSS(this.dom,{
+		setCSS(me.dom,{
 			'width' : param.width || 240,
-			'height' :param.height || null,
+			'height' : param.height || null,
 			'top' : isNum(param.top) ? param.top : 300,
 			'left' : isNum(param.left) ? param.left : 800
 		});
-		showMask.call(this,function(){
+		showMask.call(me,function(){
 			private_allCnt.appendChild(me.dom);
 			openAnimation(me.dom,me._from,100,80,function(){
 				//处理是否易于关闭
@@ -789,25 +778,25 @@
 	function COVER(param){
 		var param = param || {};
 		var me = this;
-		this.dom = utils.createDom(cover_tpl)[0];
-		this._mask = typeof(param.mask) == 'boolean' ? param.mask : false;
-		this._from = param.from || 'top';
+		me.dom = utils.createDom(cover_tpl)[0];
+		me._mask = typeof(param.mask) == 'boolean' ? param.mask : false;
+		me._from = param.from || 'top';
 		
-		this.cntDom = findByClassName(this.dom,'UI_cnt')[0];
-		this.closeFn = param.closeFn || null;
+		me.cntDom = findByClassName(me.dom,'UI_cnt')[0];
+		me.closeFn = param.closeFn || null;
 		
 		
 		//关闭事件
-		bindEvent(this.dom,'click','.UI_close',function(){
+		bindEvent(me.dom,'click','.UI_close',function(){
 			me.close();
 		});
 
 		
 		//记录body的scrollY设置
-		this._bodyOverflowY = getCSS(private_body,'overflowY');
+		me._bodyOverflowY = getCSS(private_body,'overflowY');
 		var cssObj = {
-			width : isNum(param.width) ? Math.min(private_docW,param.width) : null,
-			height : isNum(param.height) ? Math.min(private_winH,param.height) : private_winH
+			'width' : isNum(param.width) ? Math.min(private_docW,param.width) : null,
+			'height' : isNum(param.height) ? Math.min(private_winH,param.height) : private_winH
 		};
 		//水平定位
 		if(isNum(param.right)){
@@ -827,7 +816,7 @@
 			cssObj.top = private_scrollTop + (private_winH - cssObj.height)/2
 		}
 		//打开蒙层
-		showMask.call(this,function(){
+		showMask.call(me,function(){
 			setCSS(me.dom,cssObj);
 			private_allCnt.appendChild(me.dom);
 			
@@ -840,15 +829,15 @@
 			});
 		});
 		//insert html
-		this.cntDom.innerHTML = param.html || '';
+		me.cntDom.innerHTML = param.html || '';
 	}
 	//使用close方法
 	COVER.prototype.close = closeAnimation(400,500,function(){
 		setCSS(this.cntDom,{
-			overflowY : 'hidden'
+			'overflowY' : 'hidden'
 		});
 		setCSS(private_body,{
-			overflowY : this._bodyOverflowY
+			'overflowY' : this._bodyOverflowY
 		});
 	});
 
@@ -872,13 +861,13 @@
 			'intro' : param.intro || null
 		});
 		
-		this.dom = utils.createDom(this_html)[0];
-		this.closeFn = param.closeFn || null;
-		this._from = param.from || 'bottom';
-		this._mask = private_docW > 640 ? param.mask : true;
+		me.dom = utils.createDom(this_html)[0];
+		me.closeFn = param.closeFn || null;
+		me._from = param.from || 'bottom';
+		me._mask = private_docW > 640 ? param.mask : true;
 		
 		//绑定事件
-		var btns = findByClassName(this.dom,'UI_select_btn');
+		var btns = findByClassName(me.dom,'UI_select_btn');
 		utils.each(btns,function(index,btn){
 			bindEvent(btn,'click',function(){
 				fns[index] && fns[index]();
@@ -887,24 +876,24 @@
 		});
 		
 		//显示蒙层
-		showMask.call(this,function(){
+		showMask.call(me,function(){
 			if(private_docW < 640 && !isIE678){
 				//手机版
 				me._from = 'bottom';
 				private_allCnt.appendChild(me.dom);
 			}else{
 				var cssObj = {
-					top : param.top || 100,
-					left : param.left || 100,
-					width : param.width || 200
+					'top' : param.top || 100,
+					'left' : param.left || 100,
+					'width' : param.width || 200
 				};
 				private_allCnt.appendChild(me.dom);
 				
 				setCSS(me.dom,cssObj);
 				var newSize = fix_position(cssObj.top,cssObj.left,cssObj.width,outerHeight(me.dom));
 				setCSS(me.dom,{
-					left : newSize.left,
-					top : newSize.top
+					'left' : newSize.left,
+					'top' : newSize.top
 				});
 			}
 			openAnimation(me.dom,me._from,200,400,function(){
@@ -918,17 +907,17 @@
 	 *  抛出对外接口
 	 */
 	return {
-		pop : function(){
+		'pop' : function(){
 			return new POP(arguments[0]);
 		},
-		config : {
-			gap : function(name,value){
+		'config' : {
+			'gap' : function(name,value){
 				//name符合top/right/bottom/left,且value值为数字类型（兼容字符类型）
 				if(name && typeof(private_CONFIG.gap[name]) == 'number' && isNum(value)){
 					private_CONFIG.gap[name] = parseInt(value);
 				}
 			},
-			zIndex : function(num){
+			'zIndex' : function(num){
 				var num = parseInt(num);
 				if(num > 0){
 					private_CONFIG.zIndex = num;
@@ -938,22 +927,22 @@
 				}
 			}
 		},
-		confirm : function(){
+		'confirm' : function(){
 			return new CONFIRM(arguments[0]);
 		},
-		ask : function(text,callback,param){
+		'ask' : function(text,callback,param){
 			return new ASK(text,callback,param);
 		},
-		prompt : function(txt,time,param){
+		'prompt' : function(txt,time,param){
 			return new PROMPT(txt,time,param);
 		},
-		plane : function(){
+		'plane' : function(){
 			return new PLANE(arguments[0]);
 		},
-		cover : function(){
+		'cover' : function(){
 			return new COVER(arguments[0]);
 		},
-		select : function(){
+		'select' : function(){
 			return new SELECT(arguments[0],arguments[1]);
 		}
 	};

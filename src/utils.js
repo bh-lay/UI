@@ -129,7 +129,7 @@ define(function (window,document) {
 		if (/\px$/.test(value)){
 			value = parseInt(value);
 		}else if (isNum(value) ){
-			value = parseInt(value*10000)/10000;
+			value = Number(value);
 		} else if(value == '' || value == 'medium'){
 			value = 0;
 		} else if (value == 'auto'){
@@ -186,7 +186,7 @@ define(function (window,document) {
 			}
 			
 			if( isNum(value) ){
-				value = parseInt(value*10000)/10000;
+				value = Number(value);
 				props.push(key);
 				cssOri.push(value);
 				cssEnd.push(end_value);
@@ -254,9 +254,9 @@ define(function (window,document) {
 			var start,end,value;
 			for (var i = 0; i < css_length; i++) {
 				//计算当前帧需要的属性值
-				start = me.cssOri[i] * 10000;
-				end = me.cssEnd[i] * 10000;
-				value = aniFunction(time_use, start, (end-start), time_all)/10000;
+				start = me.cssOri[i];
+				end = me.cssEnd[i];
+				value = aniFunction(time_use, start, (end-start), time_all);
 				setStyle(me.elem,me.props[i],value);
 			}
 			
