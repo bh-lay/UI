@@ -33,22 +33,22 @@
 		animation = utils.animation,
 		outerWidth = utils.outerWidth,
 		outerHeight = utils.outerHeight,
-		findByClassName = utils.findByClassName;
+		findByClassName = utils.findByClassName,
+		bindEvent = utils.bind;
 	
 	/**
 	 * 基础模版
 	 */
-	var allCnt_tpl = requires('template/base.html');
-	var pop_tpl = requires('template/pop.html');
-	var confirm_tpl = requires('template/confirm.html');
-	var ask_tpl = requires('template/ask.html');
-	var confirmBar_tpl = requires('template/confirmBar.html');
-	var plane_tpl = requires('template/plane.html');
-	var prompt_tpl = requires('template/prompt.html');
-	var cover_tpl = requires('template/cover.html');
-	var select_tpl = requires('template/select.html');
-	
-	var popCSS = requires('style.css');
+	var allCnt_tpl = requires('template/base.html'),
+		pop_tpl = requires('template/pop.html'),
+		confirm_tpl = requires('template/confirm.html'),
+		ask_tpl = requires('template/ask.html'),
+		confirmBar_tpl = requires('template/confirmBar.html'),
+		plane_tpl = requires('template/plane.html'),
+		prompt_tpl = requires('template/prompt.html'),
+		cover_tpl = requires('template/cover.html'),
+		select_tpl = requires('template/select.html'),
+		popCSS = requires('style.css');
 	
 	var isIE67 = isIE678 = false;
 	if(navigator.appName == "Microsoft Internet Explorer"){
@@ -67,14 +67,11 @@
 	 **/ 
 	var private_allCnt = utils.createDom(allCnt_tpl)[0],
 		private_maskDom = findByClassName(private_allCnt,'UI_mask')[0],
-		private_mainDom = findByClassName(private_allCnt,'UI_main_cnt')[0],
-		private_cssDom = null,
 		private_body = document.body,
 		private_docW,
 		private_winH,
 		private_docH,
-		private_scrollTop,
-		private_maskCount = 0;
+		private_scrollTop;
 
 	var private_CONFIG = {
 		gap : {
@@ -101,13 +98,6 @@
 		private_winH = window.innerHeight || document.documentElement.clientHeight;
 		private_docH = docDom.scrollHeight;
 		private_docW = docDom.clientWidth;
-		//向css环境写入动态css
-		private_cssDom && utils.removeNode(private_cssDom);
-		var styleStr = [
-			'.UI_cover{height:' + private_winH + 'px;max-height:' + private_winH + 'px;}',
-			'.UI_ask{top:' + (private_winH/2) + 'px;}'
-		].join('');
-		private_cssDom = utils.createStyleSheet(styleStr,{'data-module' : "UI_plug"});
 	}
 	
 	
@@ -129,7 +119,6 @@
 		
 		var rebuild_fn = null;
 		if(isIE67){
-			
 			rebuild_fn = function(){
 				refreshSize();
 				setCSS(private_maskDom,{
@@ -145,8 +134,8 @@
 		}
 		
 		//监听浏览器缩放、滚屏事件
-		utils.bind(window,'resize',rebuild_fn);
-		utils.bind(window,'scroll',rebuild_fn);
+		bindEvent(window,'resize',rebuild_fn);
+		bindEvent(window,'scroll',rebuild_fn);
 //	});
 	
 	//限制位置区域的方法
@@ -221,11 +210,11 @@
 		dom.appendChild(utils.createDom(this_html)[0]);
 		
 		//绑定事件，根据执行结果判断是否要关闭弹框
-		utils.bind(dom,'click','.UI_pop_confirm_ok',function(){
+		bindEvent(dom,'click','.UI_pop_confirm_ok',function(){
 			//点击确认按钮
 			callback ? ((callback() != false) && close()) : close();
 		});
-		utils.bind(dom,'click','.UI_pop_confirm_cancel',function(){
+		bindEvent(dom,'click','.UI_pop_confirm_cancel',function(){
 			//点击取消按钮
 			cancel ? ((cancel() != false) && close()) : close();
 		});
@@ -237,21 +226,24 @@
 	 */
 	 //当前打开状态的对象
 	private_active = [];
-	
+	//关闭最上一个
 	function closeActive(){
-		utils.each(private_active,function(i,item){
-			item.close();
-		});
-		private_active = [];
+		var item = null;
+		while(1){
+			item = private_active.pop();
+			if(!item || !item.dead){
+				break
+			}
+		}
+		item && item.close();
 	}
 	//检测body的mouseup事件
-	utils.bind(private_body,'mouseup',function checkClick(event) {
+	bindEvent(private_body,'mouseup',function checkClick(event) {
 		var target = event.srcElement || event.target;
 		setTimeout(function(){
 			while (!utils.hasClass(target,'UI_easyClose')) {
 				target = target.parentNode;
 				if(!target){
-					//close the active
 					closeActive();
 					break
 				}
@@ -259,7 +251,7 @@
 		});
 	});
 	//检测window的keydown事件（esc）
-	utils.bind(private_body,'keyup',function checkClick(event) {
+	bindEvent(private_body,'keyup',function checkClick(event) {
 		if(event.keyCode == 27){
 			closeActive();
 		}
@@ -276,7 +268,7 @@
 			utils.addClass(this.dom,'UI_easyClose');
 			setTimeout(function(){
 				private_active.push(me);
-			},20);
+			});
 		}
 	}
 	
@@ -306,53 +298,52 @@
 		};
 	}
 	
+	//存储蒙层信息
+	var maskObjs = [];
+	//获取最后一个蒙层信息
+	function maskObjsLast(){
+		var len = maskObjs.length;
+		return len ? maskObjs[len-1] : null;
+	}
+	
 	/**
 	 * 显示蒙层 
 	 */
-	function showMask(mark,callback){
-		if(!mark){
+	function showMask(callback){
+		var lastMask = maskObjsLast();
+		zIndex = lastMask ? lastMask[1] + 2 : 2;
+		setCSS(this.dom,{'zIndex': zIndex});
+		if(!this._mask){
 			callback && callback();
 			return;
 		}
-		private_maskCount++
-		if(private_maskCount==1){
+		setCSS(private_maskDom,{'zIndex': zIndex - 1});
+		
+		if(lastMask){
+			//尚有需要蒙层的元素
+			callback && callback();
+		}else{
+			//没有需要蒙层的元素，关闭蒙层
 			if(!isIE678){
 				utils.fadeIn(private_maskDom,500,function(){
 					callback && callback();
 				});
 				blur && blur();
 			}else{
-				utils.css(private_maskDom,{'display':'block'});
+				setCSS(private_maskDom,{'display':'block'});
 				callback && callback();
 			}
-		}else{
-			callback && callback();
 		}
-	}
-	/**
-	 * 关闭蒙层
-	 */
-	function closeMask(mark){
-		if(mark){
-			private_maskCount--;
-			if(private_maskCount == 0){
-				removeBlur && removeBlur();
-				if(!isIE678){
-					utils.fadeOut(private_maskDom,400);
-				}else{
-					utils.css(private_maskDom,{'display':'none'});
-				}
-			}
-		}
+		maskObjs.push([this,zIndex]);
 	}
 	//在指定DOM后插入新DOM
 	function insertAfter(newElement, targetElement){
 		var parent = targetElement.parentNode;
 		if (parent.lastChild == targetElement) {
-			// 如果最后的节点是目标元素，则直接添加。因为默认是最后
+			// 如果最后的节点是目标元素，则直接追加
 			parent.appendChild(newElement);
 		} else {
-			//如果不是，则插入在目标元素的下一个兄弟节点 的前面。也就是目标元素的后面
+			//插入到目标元素的下一个兄弟节点之前
 			parent.insertBefore(newElement, targetElement.nextSibling);
 		}
 	}
@@ -441,7 +432,7 @@
 		html = html.replace(/<iframe.+>\s*<\/iframe>/ig,'');
 		var animDom = utils.createDom(html)[0];
 		//为了效果跟流畅，隐藏内容部分
-		var cntDom = utils.findByClassName(animDom,'UI_cnt')[0];
+		var cntDom = findByClassName(animDom,'UI_cnt')[0];
 		insertAfter(animDom,DOM);
 		if(cntDom){
 			setCSS(cntDom,{
@@ -490,7 +481,30 @@
 			function endFn(){
 				utils.removeNode(DOM);
 				me.closeFn && me.closeFn();
-				closeMask(me._mask);
+				/**
+				 * 关闭蒙层
+				 */
+				if(me._mask){
+					utils.each(maskObjs,function(index,item){
+						if(item[0] == me){
+							maskObjs.splice(index,1);
+							return false;
+						}
+					});
+					var lastMask = maskObjsLast();
+					setCSS(private_maskDom,{
+						'zIndex' : (lastMask ? lastMask[1]-1 : 1)
+					});
+					
+					if(!lastMask){
+						removeBlur && removeBlur();
+						if(!isIE678){
+							utils.fadeOut(private_maskDom,400);
+						}else{
+							setCSS(private_maskDom,{'display':'none'});
+						}
+					}
+				}
 			}
 			
 			if(isIE678){
@@ -569,11 +583,11 @@
 			});
 		}
 		
-		utils.bind(this.dom,'click','.UI_pop_close',function(){
+		bindEvent(this.dom,'click','.UI_pop_close',function(){
 			me.close();
 		});
 		
-		showMask(this._mask,function(){
+		showMask.call(this,function(){
 			var this_width = Math.min(param.width || 600,private_docW-20);
 			
 			//插入内容
@@ -583,7 +597,7 @@
 			setCSS(me.dom,{
 				width : this_width
 			});
-			private_mainDom.appendChild(me.dom);
+			private_allCnt.appendChild(me.dom);
 			
 			//校正位置
 			var fixSize = adaption(this_width,outerHeight(me.dom));
@@ -629,13 +643,13 @@
 			me.close();
 		});
 		//显示蒙层
-		showMask(this._mask,function(){
-			private_mainDom.appendChild(me.dom);
+		showMask.call(this,function(){
+			private_allCnt.appendChild(me.dom);
 			
 			var newPosition = adaption(300,outerHeight(me.dom));
 			setCSS(me.dom,{
-				top : newPosition.top,
-				left : newPosition.left
+				'top' : newPosition.top,
+				'left' : newPosition.left
 			});
 			openAnimation(me.dom,me._from,100,80,function(){
 				//处理是否易于关闭
@@ -671,18 +685,18 @@
 		this.dom.appendChild(utils.createDom(confirm_html)[0]);
 		
 		//确定
-		utils.bind(this.dom,'click','.UI_pop_confirm_ok',function(){
+		bindEvent(this.dom,'click','.UI_pop_confirm_ok',function(){
 			//根据执行结果判断是否要关闭弹框
 			callback ? ((callback(me.inputDom.value) != false) && me.close()) : me.close();
 		});
 		//取消
-		utils.bind(this.dom,'click','.UI_pop_confirm_cancel',function(){
+		bindEvent(this.dom,'click','.UI_pop_confirm_cancel',function(){
 			me.close();
 		});
 
 		//显示蒙层
-		showMask(this._mask,function(){
-			private_mainDom.appendChild(me.dom);
+		showMask.call(this,function(){
+			private_allCnt.appendChild(me.dom);
 			var newPosition = adaption(300,outerHeight(me.dom));
 			setCSS(me.dom,{
 				top : newPosition.top,
@@ -708,18 +722,20 @@
 	 **/
 	function PROMPT(text,time,param){
 		var param = param || {};
-		
+		var me = this;
 		this.dom = utils.createDom(prompt_tpl)[0];
 		this._from = param.from || 'bottom';
+		this._mask = param.mask ? true : false;
 		this.tips(text,time);
 		
 		// create pop
 		setCSS(this.dom,{
 			top : private_winH/3 + private_scrollTop
 		});
-		private_mainDom.appendChild(this.dom);
-		
-		openAnimation(this.dom,this._from,100,30);
+		showMask.call(this,function(){
+			private_allCnt.appendChild(me.dom);
+			openAnimation(me.dom,me._from,100,30);
+		});
 	}
 	PROMPT.prototype.close = closeAnimation(80);
 	PROMPT.prototype.tips = function(txt,time){
@@ -755,12 +771,12 @@
 			'top' : isNum(param.top) ? param.top : 300,
 			'left' : isNum(param.left) ? param.left : 800
 		});
-		
-		private_mainDom.appendChild(this.dom);
-		
-		openAnimation(this.dom,this._from,100,80,function(){
-			//处理是否易于关闭
-			easyCloseHandle.call(me,true);
+		showMask.call(this,function(){
+			private_allCnt.appendChild(me.dom);
+			openAnimation(me.dom,me._from,100,80,function(){
+				//处理是否易于关闭
+				easyCloseHandle.call(me,true);
+			});
 		});
 	}
 	PLANE.prototype.close = closeAnimation(200);
@@ -782,7 +798,7 @@
 		
 		
 		//关闭事件
-		utils.bind(this.dom,'click','.UI_close',function(){
+		bindEvent(this.dom,'click','.UI_close',function(){
 			me.close();
 		});
 
@@ -811,9 +827,9 @@
 			cssObj.top = private_scrollTop + (private_winH - cssObj.height)/2
 		}
 		//打开蒙层
-		showMask(this._mask,function(){
+		showMask.call(this,function(){
 			setCSS(me.dom,cssObj);
-			private_mainDom.appendChild(me.dom);
+			private_allCnt.appendChild(me.dom);
 			
 			openAnimation(me.dom,me._from,200,400,function(){
 				setCSS(private_body,{
@@ -864,25 +880,25 @@
 		//绑定事件
 		var btns = findByClassName(this.dom,'UI_select_btn');
 		utils.each(btns,function(index,btn){
-			utils.bind(btn,'click',function(){
+			bindEvent(btn,'click',function(){
 				fns[index] && fns[index]();
 				me.close();
 			});
 		});
 		
 		//显示蒙层
-		showMask(this._mask,function(){
+		showMask.call(this,function(){
 			if(private_docW < 640 && !isIE678){
 				//手机版
 				me._from = 'bottom';
-				private_mainDom.appendChild(me.dom);
+				private_allCnt.appendChild(me.dom);
 			}else{
 				var cssObj = {
 					top : param.top || 100,
 					left : param.left || 100,
 					width : param.width || 200
 				};
-				private_mainDom.appendChild(me.dom);
+				private_allCnt.appendChild(me.dom);
 				
 				setCSS(me.dom,cssObj);
 				var newSize = fix_position(cssObj.top,cssObj.left,cssObj.width,outerHeight(me.dom));

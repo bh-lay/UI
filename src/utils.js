@@ -152,7 +152,7 @@ define(function (window,document) {
 		if (prop == "opacity") {
 			elem.style.filter = 'alpha(opacity=' + (value * 100)+ ')';
 			value = value;
-		} else if ( isNum(value) ){
+		} else if ( isNum(value) && prop != 'zIndex'){
 			value = value + "px";
 		}
 		elem.style[prop] = value;

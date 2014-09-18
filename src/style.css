@@ -1,11 +1,11 @@
 /**»ù´¡¿ò¼Ü**/
 .UI_lawyer {
 	position : absolute;
-	top : -100%;
+	top : 0;
 	left : 0;
 	z-index : 4999;
 	width : 100%;
-	height : 100%;
+	height : 0;
 	overflow : visible;
 	font-family : "Microsoft Yahei";
 }
@@ -19,26 +19,19 @@
 }
 .UI_mask {
 	position : absolute;
-	top : 100%;
+	top : 0;
 	left : 0;
 	width : 100%;
 	height : 100%;
 	background : #000;
 	display : none;
 	opacity : 0.6;
-	filter : alpha(opacity=50)
-}
-.UI_main_cnt {
-	position : absolute;
-	width : 100%;
-	height : 0;
-	top : 100%;
-	overflow : visible;
+	filter : alpha(opacity=60)
 }
 
 .UI-blur{
 	-webkit-transition : 0.08s;
-	-webkit-filter : blur(2px)
+	-webkit-filter : blur(3px)
 }
 /**µ¯¿ò**/
 .UI_pop {
