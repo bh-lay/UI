@@ -539,6 +539,17 @@ define(function (window,document) {
 			a.innerHTML = html;
 			return a.childNodes;
 		},
+		//在指定DOM后插入新DOM
+		insertAfter : function (newElement, targetElement){
+			var parent = targetElement.parentNode;
+			if (parent.lastChild == targetElement) {
+				//如果最后的节点是目标元素，则直接追加
+				parent.appendChild(newElement);
+			} else {
+				//插入到目标元素的下一个兄弟节点之前
+				parent.insertBefore(newElement, targetElement.nextSibling);
+			}
+		},
 		//移除dom节点
 		removeNode : function (elem){  
 			if(elem && elem.parentNode && elem.tagName != 'BODY'){  

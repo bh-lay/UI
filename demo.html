@@ -271,7 +271,7 @@
 		<a href="javascript:void(0)" title="下" onclick="toggleFrom(this,'bottom')" class="from-bottom">︿</a>
 		<a href="javascript:void(0)" title="左" onclick="toggleFrom(this,'left')" class="from-left">〉</a>
 		<a href="javascript:void(0)" title="右" onclick="toggleFrom(this,'right')" class="from-right">〈</a>
-		<a href="javascript:void(0)" title="缩放" onclick="toggleFrom(this,'dom')" class="from-dom">○</a>
+		<a href="javascript:void(0)" title="缩放" onclick="toggleFrom(this,'dom')" class="from-dom isSelected">○</a>
 		<a href="javascript:void(0)" title="默认" onclick="toggleFrom(this,'none')" class="from-none">×</a>
 	</div>
 </div>
@@ -284,7 +284,8 @@
 	<script type="text/javascript">
 		var param = {
 			'easyClose' : true,
-			'mask' : true
+			'mask' : true,
+			'from' : 'dom'
 		};
 		function toggleParam(elem,type,value,defaultValue){
 			if(param[type]){
@@ -312,22 +313,33 @@
 		}
 		
 		//弹框
+		var active_pop = null;
 		function showPop(elem){
-			UI.pop({
+			if(active_pop){
+				return
+			}
+			active_pop = UI.pop({
 				'title' : param.title,
 				'confirm' : param.confirm,
 				'width' : 600,
 				'easyClose' : param.easyClose,
 				'from' : param.from == "dom" ? elem : param.from,
 				'mask' : param.mask,
-				'html' : '<div style="height:280px;background:url(http://layasset.qiniudn.com/images/cover/newSkin.jpg) no-repeat center"></div>'
+				'html' : '<div style="height:280px;background:url(http://layasset.qiniudn.com/images/cover/newSkin.jpg) no-repeat center"></div>',
+				'closeFn' : function(){
+					active_pop = null;
+				}
 			});
 		}
 		/**
 		 * 确认框
 		 */
+		var active_confirm = null;
 		function showConfirm(elem){
-			UI.confirm({
+			if(active_confirm){
+				return;
+			}
+			active_confirm = UI.confirm({
 				'text' : '请我吃饭吧！',
 				'btns' : ['好的呀','不愿意'],
 				'from' : param.from == "dom" ? elem : param.from,
@@ -335,6 +347,9 @@
 				'mask' : param.mask,
 				'callback' : function(){
 					UI.prompt('你是好人！');
+				},
+				'closeFn' : function(){
+					active_confirm = null;
 				}
 			});
 		}

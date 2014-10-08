@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2014-10-8 10:43
+ * @modified 2014-10-8 17:17
  * 
  **/
 
@@ -341,17 +341,6 @@
 		}
 		maskObjs.push([this,zIndex]);
 	}
-	//在指定DOM后插入新DOM
-	function insertAfter(newElement, targetElement){
-		var parent = targetElement.parentNode;
-		if (parent.lastChild == targetElement) {
-			// 如果最后的节点是目标元素，则直接追加
-			parent.appendChild(newElement);
-		} else {
-			//插入到目标元素的下一个兄弟节点之前
-			parent.insertBefore(newElement, targetElement.nextSibling);
-		}
-	}
 	
 	/**
 	 * 计算动画所需的方向及目标值
@@ -393,18 +382,16 @@
 	 *   创建一个dom用来完成动画
 	 *   动画结束，设置dom为结束样式
 	 **/
-	var openAnimation = isIE678 ? function (a,b,c,d,fn){
-		fn && fn();
-	} : function (DOM,from,time,animation_range,fn){
-		if(!from || from == 'none' || !animation_range){
+	function openAnimation(DOM,from,time,animation_range,fn){
+		//ie系列或无from信息，不显示效果
+		if(isIE678 || !from || from == 'none' || !animation_range){
 			fn && fn();
-			//不需要动画
 			return
 		}
-		var offset = utils.offset(DOM);
 		
-		//动画第一帧css
-		var cssStart = {},
+		var offset = utils.offset(DOM),
+			//动画第一帧css
+			cssStart = {},
 			//动画需要改变的css
 			cssAnim = {};
 		
@@ -436,7 +423,7 @@
 		//FIXME 过滤iframe正则
 		html = html.replace(/<iframe.+>\s*<\/iframe>/ig,'');
 		var animDom = utils.createDom(html)[0];
-		insertAfter(animDom,DOM);
+		utils.insertAfter(animDom,DOM);
 		
 		
 		//隐藏真实dom
@@ -458,7 +445,7 @@
 			});
 			fn && fn();
 		});
-	};
+	}
 	/**
 	 * 处理对象关闭及结束动画
 	 */
@@ -504,8 +491,8 @@
 					}
 				}
 			}
-			
-			if(isIE678){
+			//ie系列或无from信息，不显示效果
+			if(isIE678 || from == 'none'){
 				endFn();
 				return
 			}
@@ -513,11 +500,6 @@
 			var time = isNum(time) ? time : parseInt(time_define) || 80;
 			var from = me._from;
 			
-			var range = animation_range || 80;
-			
-			var cssEnd = {
-				'opacity' : 0
-			};
 			if(from && from.tagName && from.parentNode){
 				//缩放回启动按钮
 				var offset =  utils.offset(from);
@@ -530,23 +512,22 @@
 					'top' : offset.top,
 					'left' : offset.left,
 					'width' : outerWidth(from),
-					'height' : outerHeight(from)
+					'height' : outerHeight(from),
+					'opacity' : 0.5
 				},time,function(){
 					animation(DOM,{
 						'opacity' : 0
-					},300,endFn);
+					},100,endFn);
 				});
 			}else if(typeof(from) == 'string'){
 				
-				var countResult = countAnimation(DOM,from,-range);
+				var range = animation_range || 80,
+					countResult = countAnimation(DOM,from,-range),
+					cssEnd = {'opacity' : 0};
 				cssEnd[countResult[0]] = countResult[2];
 				
 				//动画开始
-				animation(DOM,cssEnd,time,'SineEaseIn',function(){
-					endFn();
-				});
-			}else{
-				endFn();
+				animation(DOM,cssEnd,time,'SineEaseIn',endFn);
 			}
 		}
 	}
@@ -622,7 +603,7 @@
 		});
 	}
 	//使用close方法
-	POP.prototype.close = closeAnimation(500);
+	POP.prototype.close = closeAnimation(300);
 	POP.prototype.adapt = function(){
 		adaption(this.dom,null,100);
 	};
@@ -1488,6 +1469,17 @@
 			var a = document.createElement('div');
 			a.innerHTML = html;
 			return a.childNodes;
+		},
+		//在指定DOM后插入新DOM
+		insertAfter : function (newElement, targetElement){
+			var parent = targetElement.parentNode;
+			if (parent.lastChild == targetElement) {
+				//如果最后的节点是目标元素，则直接追加
+				parent.appendChild(newElement);
+			} else {
+				//插入到目标元素的下一个兄弟节点之前
+				parent.insertBefore(newElement, targetElement.nextSibling);
+			}
 		},
 		//移除dom节点
 		removeNode : function (elem){  
