@@ -322,6 +322,11 @@ define(function (window,document) {
 	}
 	/**
 	 * 兼容css3、js动画
+	 * @param elem dom对象
+	 * @param cssObj 动画对象
+	 * @param durtime 持续时间
+	 * @param [animType] 缓动类型
+	 * @param [callback] 回调
 	 */
 	function animation(elem,cssObj,durtime,a,b) {
         var animType = "Linear",
@@ -493,41 +498,6 @@ define(function (window,document) {
 				}
 			}
 		})(),
-		//缩小，淡出
-		zoomOut :  private_css3 ? function(DOM,time,fn){
-			var op = getStyle(DOM,'opacity');
-			
-			css_anim(DOM,{
-				'-webkit-transform' : 'scale(0.5)',
-				opacity : 0
-			},time,null,function(){
-				setCss(DOM,{
-					'-webkit-transform' : 'scale(1)',
-					opacity : op
-				});
-				fn && fn.call(DOM);
-			});
-
-		} : function (DOM,time,fn){
-			var op = getStyle(DOM,'opacity');
-			DOM.style.overflow = 'hidden';
-			var width = getStyle(DOM,'width');
-			var height = outerHeight(DOM);
-			var left = getStyle(DOM,'left') || 0;
-			var top = getStyle(DOM,'top') || 0;
-			
-			animation(DOM,{
-				width : width/2,
-				height : height/2,
-				left : (left + width/4),
-				top : (top + height/4),
-				opacity : 0
-			},time,function(){
-				DOM.style.opacity = op;
-				DOM.style.display = 'none';
-				fn && fn.call(DOM);
-			});
-		},
 		//通用拖动方法
 		drag : function drag(handle_dom,dom,param){
 			var param = param || {};

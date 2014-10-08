@@ -433,18 +433,10 @@
 		}
 		//拷贝dom用来完成动画
 		var html = DOM.outerHTML;
-		//FIXME 过滤iframe正则随便写的
+		//FIXME 过滤iframe正则
 		html = html.replace(/<iframe.+>\s*<\/iframe>/ig,'');
 		var animDom = utils.createDom(html)[0];
-		//为了效果跟流畅，隐藏内容部分
-		var cntDom = findByClassName(animDom,'UI_cnt')[0];
 		insertAfter(animDom,DOM);
-		if(cntDom){
-			setCSS(animDom,{
-				'height' : outerHeight(DOM)
-			});
-			cntDom.innerHTML = '';
-		}
 		
 		
 		//隐藏真实dom
@@ -484,6 +476,7 @@
 			var DOM = me.dom;
 			fn && fn.call(me);
 			function endFn(){
+				//删除dom
 				utils.removeNode(DOM);
 				me.closeFn && me.closeFn();
 				/**
@@ -526,8 +519,22 @@
 				'opacity' : 0
 			};
 			if(from && from.tagName && from.parentNode){
-				utils.zoomOut(DOM,time,function(){
-					endFn();
+				//缩放回启动按钮
+				var offset =  utils.offset(from);
+				setCSS(DOM,{
+					'overflow' : 'hidden',
+					'width' : outerWidth(DOM),
+					'height' : outerHeight(DOM)
+				});
+				animation(DOM,{
+					'top' : offset.top,
+					'left' : offset.left,
+					'width' : outerWidth(from),
+					'height' : outerHeight(from)
+				},time,function(){
+					animation(DOM,{
+						'opacity' : 0
+					},300,endFn);
 				});
 			}else if(typeof(from) == 'string'){
 				
@@ -795,7 +802,7 @@
 		//记录body的scrollY设置
 		me._bodyOverflowY = getCSS(private_body,'overflowY');
 		var cssObj = {
-			'width' : isNum(param.width) ? Math.min(private_docW,param.width) : null,
+			'width' : isNum(param.width) ? Math.min(private_docW,param.width) : private_docW,
 			'height' : isNum(param.height) ? Math.min(private_winH,param.height) : private_winH
 		};
 		//水平定位
@@ -804,8 +811,7 @@
 		}else if(isNum(param.left)){
 			cssObj.left = param.left;
 		}else{
-			cssObj.position = 'relative';
-			cssObj.margin = 'auto';
+			cssObj.left = (private_docW - cssObj.width)/2;
 		}
 		//垂直定位
 		if(isNum(param.bottom)){
