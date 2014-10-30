@@ -5,13 +5,13 @@
 define(function (window,document) {
 	/**
 	 * 判断对象类型
-	 * String Number Array
-	 * Object Function 
-	 * HTMLDocument
-	 * Undefined Null
+	 * string number array
+	 * object function 
+	 * htmldocument
+	 * undefined null
 	 */
 	function TypeOf(obj) {
-		return Object.prototype.toString.call(obj).match(/\s(\w+)/)[1];
+		return Object.prototype.toString.call(obj).match(/\s(\w+)/)[1].toLowerCase();
 	}
 	
 	/**
@@ -335,13 +335,13 @@ define(function (window,document) {
 		if (arguments.length < 3) {
 			throw new Error("missing arguments [dom,cssObj,durtime]");
 		} else {
-			if (TypeOf(a) == "Function") {
+			if (TypeOf(a) == "function") {
 				onEnd = a;
 			}else if (typeof (a) == "string") {
 				animType = a;
 			}
 			
-			if (TypeOf(b) == "Function") {
+			if (TypeOf(b) == "function") {
 				onEnd = b;
 			}
 		}
