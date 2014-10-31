@@ -264,7 +264,7 @@
 	}
 	//自适应于页面的原型方法
 	function ADAPT(){
-		adaption(this.dom,this._param,80);
+		adaption(this.dom,null,80);
 	}
 	//增加确认方法
 	function add_confirm(dom,param,close){
@@ -342,14 +342,9 @@
 		});
 		
 		if(lastHasMaskZindex == 0){
-			//之前没有需要蒙层的元素，显示蒙层
-			utils.addClass(private_maskDom,'UI_mask_show');
-			if(!isIE678){
-				blur && blur();
-				utils.fadeIn(private_maskDom,800);
-			}else{
-				utils.css(private_maskDom,{'display':'none'});
-			}
+			//之前蒙层未显示，显示蒙层
+			blur && blur();
+			utils.fadeIn(private_maskDom,400);
 		}
 	}
 	/**
@@ -366,49 +361,37 @@
 		});
 		
 		if(lastHasMaskZindex == 0){
-			if(isIE678){
-				utils.css(private_maskDom,{'display':'none'});
-			}else{
-				removeBlur && removeBlur();
-				utils.fadeOut(private_maskDom,600);
-			}
+			removeBlur && removeBlur();
+			utils.fadeOut(private_maskDom,200);
 		}
 	}
 	
 	/**
 	 * 计算动画所需的方向及目标值
-	 *   @returns[0] 所需修改的方向
-	 *   @returns[1] 当前方向的值
-	 *   @returns[2] 计算后的值
+	 *   @returns[0] 所需修改的方向(X/Y)
+	 *   @returns[1] 计算后的值
 	 */
-	function countAnimation(DOM,direction,range){
+	function countTranslate(direction,range){
 		var prop,
-			start,
-			result;
-		
-		if(direction == 'left' || direction == 'right'){
-			//判断dom水平定位依据
-			var left = getCSS(DOM,'left');
-			if(left != 'auto'){
-				prop = 'left';
-				start = left;
-			}else{
-				prop = 'right';
-				start = getCSS(DOM,'right');
-			}
-		}else{
-			//判断dom垂直定位依据
-			var top = getCSS(DOM,'top');
-			if(top != 'auto'){
-				prop = 'top';
-				start = top;
-			}else{
-				prop = 'bottom';
-				start= getCSS(DOM,'bottom');
-			}
+			start;
+		switch(direction){
+			case 'left':
+				prop = 'X';
+				start = -range;
+				break
+			case 'right':
+				prop = 'X';
+				start = range;
+				break
+			case 'bottom':
+				prop = 'Y';
+				start = range;
+				break
+			default:
+				prop = 'Y';
+				start = -range;
 		}
-		result = (prop == direction) ? start + range : start - range;
-		return [prop,start,result];
+		return [prop,start];
 	}
 	
 	/**
@@ -416,11 +399,11 @@
 	 *   创建一个dom用来完成动画
 	 *   动画结束，设置dom为结束样式
 	 **/
-	function openAnimation(time,animation_range,fn){
+	function openAnimation(animation_range,fn){
 		var me = this;
 		var DOM = me.dom;
 		var from = me._from;
-		
+		var time = 140;
 		//向全局记录的对象内添加对象
 		active_objs.push(me);
 		//显示蒙层（内部判断是否显示）
@@ -437,10 +420,8 @@
 			cssStart = {},
 			//动画需要改变的css
 			cssAnim = {};
-		
 		//参数是dom对象
 		if(from.tagName && from.parentNode){
-			time = 200;
 			var offset_from = utils.offset(from);
 			cssStart = {
 				'top' : offset_from.top,
@@ -457,9 +438,9 @@
 			};
 		//参数是字符串
 		}else if(typeof(from) == 'string'){
-			var countResult = countAnimation(DOM,from,-animation_range);
-			cssStart[countResult[0]] = countResult[2];
-			cssAnim[countResult[0]] = countResult[1];
+			var countResult = countTranslate(from,animation_range);
+			cssStart.transform = 'translate' + countResult[0] + '(' + countResult[1] + 'px)';
+			cssAnim.transform = 'translateX(0) translateY(0)';
 		}
 		//拷贝dom用来完成动画
 		var html = DOM.outerHTML;
@@ -476,10 +457,11 @@
 		
 		//放置于初始位置
 		cssStart.opacity = 0;
+		
 		setCSS(animDom,cssStart);
 		//动画开始
 		cssAnim.opacity = 1;
-		animation(animDom,cssAnim,time,'SineEaseIn',function(){
+		animation(animDom,cssAnim,time,'ease-out',function(){
 			//删除动画dom
 			utils.removeNode(animDom);
 			//显示真实dom
@@ -529,7 +511,7 @@
 			
 			var time = isNum(time) ? time : parseInt(time_define) || 80;
 			var from = me._from;
-			
+			animation_range = animation_range || 80
 			if(from && from.tagName && from.parentNode){
 				//缩放回启动按钮
 				var offset =  utils.offset(from);
@@ -550,14 +532,12 @@
 					},100,removeDom);
 				});
 			}else if(typeof(from) == 'string'){
-				
-				var range = animation_range || 80,
-					countResult = countAnimation(DOM,from,-range),
-					cssEnd = {'opacity' : 0};
-				cssEnd[countResult[0]] = countResult[2];
-				
+				var countResult = countTranslate(from,animation_range);				
 				//动画开始
-				animation(DOM,cssEnd,time,'SineEaseIn',removeDom);
+				animation(DOM,{
+					'opacity' : 0,
+					'transform' : 'translate' + countResult[0] + '(' + countResult[1] + 'px)'
+				},time,removeDom);
 			}
 		}
 	}
@@ -575,7 +555,6 @@
 		me.closeFn = param.closeFn || null;
 		me._mask = param.mask || false;
 		me._from = param.from || 'top';
-		me._param = param;
 		
 
 		//当有确认参数时
@@ -629,7 +608,7 @@
 		easyCloseHandle.call(me,param.easyClose,true);
 		
 		//开场动画
-		openAnimation.call(me,200,80);
+		openAnimation.call(me,80);
 	}
 	//使用close方法
 	POP.prototype.close = closeAnimation(300);
@@ -659,7 +638,7 @@
 		
 		//处理是否易于关闭
 		easyCloseHandle.call(me,param.easyClose,true);
-		openAnimation.call(me,100,80);
+		openAnimation.call(me,80);
 	}
 	CONFIRM.prototype.close = closeAnimation(200);
 	CONFIRM.prototype.adapt = ADAPT;
@@ -705,7 +684,7 @@
 		
 		//处理是否易于关闭
 		easyCloseHandle.call(me,param.easyClose,true);
-		openAnimation.call(me,100,80,function(){
+		openAnimation.call(me,80,function(){
 			me.inputDom.focus();
 		});
 		
@@ -733,7 +712,7 @@
 		private_allCnt.appendChild(me.dom);
 		adaption(me.dom);
 		
-		openAnimation.call(me,100,30);
+		openAnimation.call(me,30);
 	}
 	PROMPT.prototype.close = closeAnimation(80);
 	PROMPT.prototype.tips = function(txt,time){
@@ -772,7 +751,7 @@
 		private_allCnt.appendChild(me.dom);
 		//处理是否易于关闭
 		easyCloseHandle.call(me,true);
-		openAnimation.call(me,100,80);
+		openAnimation.call(me,80);
 	}
 	PLANE.prototype.close = closeAnimation(200);
 	PLANE.prototype.adapt = ADAPT;
@@ -787,7 +766,6 @@
 		me.dom = utils.createDom(cover_tpl)[0];
 		me._mask = typeof(param.mask) == 'boolean' ? param.mask : false;
 		me._from = param.from || 'top';
-		me._param = param;
 		
 		me.cntDom = findByClassName(me.dom,'UI_cnt')[0];
 		me.closeFn = param.closeFn || null;
@@ -826,7 +804,7 @@
 		
 		//处理是否易于关闭
 		easyCloseHandle.call(me,true);
-		openAnimation.call(me,200,400,function(){
+		openAnimation.call(me,400,function(){
 			setCSS(private_body,{
 				'overflowY' : 'hidden'
 			});
@@ -898,7 +876,7 @@
 			});
 		}
 		easyCloseHandle.call(me,param.easyClose,true);
-		openAnimation.call(me,200,400);
+		openAnimation.call(me,400);
 		
 	}
 	SELECT.prototype.close = closeAnimation(200);

@@ -95,16 +95,8 @@ define(function (window,document) {
 	})();
 	
 	
-	var private_css3 = (supports('-webkit-transition') && supports('-webkit-transform')) ? true : false;
+	var private_css3 = (supports('transition') && supports('transform')) ? true : false;
 	
-    var Tween = {
-		Linear: function (t, b, c, d) { return c * t / d + b; },
-		SineEaseIn: function (t, b, c, d) {
-			return -c * Math.cos(t / d * (Math.PI / 2)) + c + b;
-		}
-    }
-	
-
 	/**
 	 * 判断dom是否拥有某个class
 	 */
@@ -160,6 +152,17 @@ define(function (window,document) {
 	//设置css
 	function setCss(doms,cssObj){
 		doms = [].concat(doms);
+		
+		/**
+		 * 为css3属性增加扩展
+		 */
+		each(cssObj,function(key,value){
+			if(key == 'transform' || key == 'transition'){
+				each(['webkit','o','moz'],function(i,text){
+					cssObj['-' + text + '-' + key] = value
+				});
+			}
+		});
 		each(doms,function(i,dom){
 			each(cssObj,function(key,value){
 				setStyle(dom,key,value);
@@ -168,132 +171,33 @@ define(function (window,document) {
 	}
 	
 	/**
-	 * 获取动画所需的参数，只获取为数字的参数
-	 *
-	 * 属性名
-	 * 初始值
-	 * 目标值
-	 */
-	function parseCSS_forAnim (elem, cssObj) {
-		var props = [];
-		var cssOri = [];
-		var cssEnd = [];
-		each(cssObj,function(key,end_value){
-			var value = getStyle(elem, key);
-			//格式化css属性值
-			if (/\px$/.test(value)){
-				value = parseInt(value);
-			}
-			
-			if( isNum(value) ){
-				value = Number(value);
-				props.push(key);
-				cssOri.push(value);
-				cssEnd.push(end_value);
-			}
-		});
-		return [props,cssOri,cssEnd];
-	}
-	
-	var requestAnimationFrame = (function () {
-        return  window.requestAnimationFrame ||
-				window.webkitRequestAnimationFrame ||
-				window.mozRequestAnimationFrame ||
-				window.oRequestAnimationFrame ||
-				function (callback) {
-					return window.setTimeout(callback, 10);
-				};
-    })();
-	
-	/**
-	 * JS动画类
-	 * 内部类，不检测参数
-	 */
-    function JS_anim(elem,cssObj,durtime,animType,onEnd) {
-        this.elem = elem;
-		
-		var cssParse = parseCSS_forAnim(this.elem, cssObj);
-		
-		//需要修改的属性Array
-		this.props = cssParse[0];
-		//属性初始值Array
-		this.cssOri = cssParse[1];
-		//属性目标值Array
-		this.cssEnd = cssParse[2];
-		this.durtime = durtime;
-		this.animType = animType || "Linear";
-		this.onEnd = onEnd;
-		
-		this.startAnim();
-    }
-    JS_anim.prototype.startAnim = function () {
-		var me = this;
-		//全部时间 | 开始时间
-		var time_all = this.durtime;
-		var time_start = new Date();
-		
-		//运动曲线方程
-		var aniFunction = Tween[me.animType];
-		
-		//是否已结束动画
-		var is_end = false;
-		
-		//需要修改的css条数
-		var css_length = this.props.length;
-		
-		//显示当前帧（递归）
-		function showFrame(){
-			var time_use = new Date() - time_start;
-			
-			if (time_use < time_all) {
-				requestAnimationFrame(showFrame);
-			}else{
-				time_use = time_all;
-				is_end = true;
-			}
-			var start,end,value;
-			for (var i = 0; i < css_length; i++) {
-				//计算当前帧需要的属性值
-				start = me.cssOri[i];
-				end = me.cssEnd[i];
-				value = aniFunction(time_use, start, (end-start), time_all);
-				setStyle(me.elem,me.props[i],value);
-			}
-			
-			
-			if(is_end){
-				me.onEnd && me.onEnd.call(me, me.elem);
-			}
-		}
-		//开始动画
-		requestAnimationFrame(showFrame);
-	};
-	
-	/**
 	 * css3动画
 	 * 内部类，不检测参数
 	 */
-	function css_anim(elem,cssObj,durtime,animType,onEnd){
-		
+	function css3_anim(elem,cssObj,durtime,animType,onEnd){
 		//记录初始transition值
-		var transition_start = getStyle(elem,'-webkit-transition');
+		var transition_start = getStyle(elem,'transition');
 		var cssSet = clone(cssObj,{
-			'-webkit-transform' : 'translate3d(0, 0, 0)',
-			'-webkit-transition' : durtime + 'ms'
+			'transition' : durtime + 'ms ' + animType
 		});
+		
+		//开启3d加速
+		if(!cssSet.transform){
+			cssSet.transform = 'translate3d(0, 0, 0)';
+		}else if(!cssSet.transform.match('translate3d')){
+			cssSet.transform = cssSet.transform + ' translate3d(0, 0, 0)';
+		}
 		/**
 		 * 动画结束回调
 		 */
-		var isEnd = false;
 		function endFn(){
-			isEnd = true;
+			endFn = null;
 			elem.removeEventListener("webkitTransitionEnd",transitionFn, true);
 			//还原transition值
 			setCss(elem,{
-				'-webkit-transition' : transition_start
+				'transition' : transition_start || 'all 0s'
 			});
 			onEnd && onEnd.call(elem);
-			onEnd = null;
 		}
 		
 		/**
@@ -304,7 +208,7 @@ define(function (window,document) {
 		function transitionFn(){
 			clearTimeout(delay);
 			delay = setTimeout(function(){
-				!isEnd && endFn();
+				endFn && endFn();
 			},40);
 		}
 		elem.addEventListener("webkitTransitionEnd",transitionFn, true);
@@ -314,14 +218,20 @@ define(function (window,document) {
 		 *   解决 css无变化时webkitTransitionEnd事件不会被触发的问题
 		 */
 		setTimeout(function(){
-			!isEnd && endFn();
+			endFn && endFn();
 		},durtime + 80);
 		
-		//设置样式开始
-		setCss(elem,cssSet);
+		/**
+		 * 不知道为啥，若刚设置完css再修改同一属性，firefox下没效果
+		 *   可能是浏览器优化css动画的逻辑
+		 *	 故加定时器解决此bug
+		 */
+		setTimeout(function(){
+			setCss(elem,cssSet);
+		},10);
 	}
 	/**
-	 * 兼容css3、js动画
+	 * css3动画
 	 * @param elem dom对象
 	 * @param cssObj 动画对象
 	 * @param durtime 持续时间
@@ -329,7 +239,7 @@ define(function (window,document) {
 	 * @param [callback] 回调
 	 */
 	function animation(elem,cssObj,durtime,a,b) {
-        var animType = "Linear",
+        var animType = "linear",
 			onEnd = null;
 		
 		if (arguments.length < 3) {
@@ -346,9 +256,10 @@ define(function (window,document) {
 			}
 		}
 		if(private_css3){
-			return css_anim(elem,cssObj,durtime,animType,onEnd);
+			return css3_anim(elem,cssObj,durtime,animType,onEnd);
 		}else{
-			return new JS_anim(elem,cssObj,durtime,animType,onEnd);
+			setCss(elem,cssObj);
+			onEnd && onEnd.call(elem);
 		}
 	}
 	var outerWidth,
@@ -630,17 +541,11 @@ define(function (window,document) {
 				'opacity' : 0,
 				'display' : 'block'
 			});
-			/**
-			 * 不知道为啥，设置完css直接执行动画，没效果
-			 *   可能是浏览器优化js逻辑
-			 */
-			setTimeout(function(){
-				animation(DOM,{
-					'opacity' : op
-				}, time, function(){
-					fn && fn.call(DOM);
-				});
-			},10);
+			animation(DOM,{
+				'opacity' : op
+			}, time, function(){
+				fn && fn.call(DOM);
+			});
 		},
 		//淡出
 		fadeOut : function (DOM,time,fn){
