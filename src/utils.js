@@ -86,7 +86,6 @@ define(function (window,document) {
 				each(vendors,function(i,value){
 					if ( value + prop in styles ) {
 						returns = ('-' + value + '-' + prop).toLowerCase();
-						return false;
 					}
 				});
 			}
