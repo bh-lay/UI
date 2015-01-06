@@ -500,22 +500,9 @@
 			countSize();
 			UI._utils.bind(window,'resize',countSize);
 			var loadingDom = document.getElementById('loading_mask');
-			/**
 			setTimeout(function(){
-				UI._utils.fadeOut(loadingDom,500,function(){
-					
-					if(UI._utils.supports('-webkit-filter')){
-						UI.pop({
-							'html' : ['<div style="text-align:center">',
-								'<h3>太棒了，您的浏览器简直帅到爆了！</h3>',
-								'<p>您所体验的效果超过了所有IE鬼！</p>',
-							'</div>'].join(''),
-							'mask' : true
-						});
-					}
-				});
+				UI._utils.fadeOut(loadingDom,500);
 			},200);
-			**/
 		});
 	</script>
 </body>
