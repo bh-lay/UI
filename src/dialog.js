@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2014-11-27 16:55
+ * @modified 2015-1-7 11:4
  * 
  **/
 
@@ -396,8 +396,6 @@
 	
 	/**
 	 * 开场动画
-	 *   创建一个dom用来完成动画
-	 *   动画结束，设置dom为结束样式
 	 **/
 	function openAnimation(fn){
 		var me = this;
@@ -441,6 +439,9 @@
 			var countResult = countTranslate(from,40);
 			cssStart.transform = 'translate' + countResult[0] + '(' + countResult[1] + 'px)';
 			cssAnim.transform = 'translateX(0) translateY(0)';
+		}else{
+			//参数出错，不显示效果
+			return
 		}
 		
 		//先隐藏
@@ -517,6 +518,9 @@
 					'opacity' : 0,
 					'transform' : 'translate' + countResult[0] + '(' + countResult[1] + 'px)'
 				},time,removeDom);
+			}else{
+				//参数出错时，直接删除dom
+				removeDom();
 			}
 		}
 	}
@@ -987,7 +991,6 @@
 				each(vendors,function(i,value){
 					if ( value + prop in styles ) {
 						returns = ('-' + value + '-' + prop).toLowerCase();
-						return false;
 					}
 				});
 			}
