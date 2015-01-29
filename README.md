@@ -14,12 +14,12 @@ UI是前端公用的视觉交互（user interface 、 user interaction）类公�
 * 支持`自定义位置`，方便控制对象在页面中的呈现
 * 对象被注销有`回调支持`，方便确认对象状态
 * 不依赖任何库，随拿随用
-* 动画引擎兼容CSS3和JS
+* 动画使用CSS3实现，IE无动画效果（策略问题）
 
 ##1.3、问题反馈
 在使用中有任何问题，欢迎反馈给我，可以用以下联系方式跟我交流
 
-* 邮件：bh-lay#126.com, 把#换成@
+* 邮件：bh-lay#126.com
 * github: [http://github.com/bh-lay](http://github.com/bh-lay)
 * weibo: [@剧中人](http://weibo.com/bhlay)
 
