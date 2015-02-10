@@ -1,4 +1,4 @@
-/**╩Ы╢║©Р╪э**/
+О╩©/**Е÷╨Г║─Ф║├Ф·╤**/
 .UI_lawyer {
 	position : absolute;
 	top : 0;
@@ -30,10 +30,9 @@
 }
 
 .UI-blur{
-	-webkit-transition : 0.6s;
 	-webkit-filter : blur(3px)
 }
-/**╣╞©Р**/
+/**Е╪╧Ф║├**/
 .UI_pop {
 	width : 200px;
 	position : absolute;
@@ -76,7 +75,7 @@
 .UI_pop_close : active {
 	color : #222
 }
-/**х╥хо©Р**/
+/**Г║╝Х╝╓Ф║├**/
 .UI_confirm {
 	width: 300px;
 	position : absolute;
@@ -254,7 +253,7 @@
 		background : none
 	}
 }
-/** ie ╢Р╡╧╤║ **/
+/** ie Ф┴⌠Х║╔Д╦│ **/
 .UI_ie678 .UI_pop,
 .UI_ie678 .UI_confirm,
 .UI_ie678 .UI_ask,
