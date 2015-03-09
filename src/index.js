@@ -402,7 +402,7 @@
 		var me = this;
 		var DOM = me.dom;
 		var from = me._from;
-		var time = 140;
+		var time = 100;
 		//向全局记录的对象内添加对象
 		active_objs.push(me);
 		//显示蒙层（内部判断是否显示）
@@ -449,7 +449,9 @@
 		
 		//动画开始
 		setCSS(DOM,cssStart);
+		utils.addClass(private_allCnt,'isAnimation');
 		animation(DOM,cssAnim,time,'ease-out',function(){
+			utils.removeClass(private_allCnt,'isAnimation');
 			//恢复动画样式
 			setCSS(DOM,{
 				clip: 'auto'
@@ -485,8 +487,10 @@
 			fn && fn.call(me);
 			var DOM = me.dom;
 			
+			utils.addClass(private_allCnt,'isAnimation');
 			//删除dom
 			function removeDom(){
+				utils.removeClass(private_allCnt,'isAnimation');
 				utils.removeNode(DOM);
 			}
 			//ie系列或无from信息，不显示效果

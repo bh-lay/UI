@@ -9,6 +9,11 @@
 	overflow : visible;
 	font-family : "Microsoft Yahei";
 }
+.UI_lawyer.isAnimation{
+	height:auto;
+	bottom: 0;
+	overflow:hidden;
+}
 .UI_lawyer a,
 .UI_lawyer a:hover,
 .UI_lawyer a : active {
