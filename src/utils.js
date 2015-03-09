@@ -375,12 +375,12 @@ define(function (window,document) {
 		clone : clone,
 		unbind : removeHandler,
 		hasClass : hasClass,
-		'addClass' : function (dom, cls) {
+		addClass : function (dom, cls) {
 			if (!this.hasClass(dom, cls)) dom.className += " " + cls;
 		},
-		'removeClass' : function (dom, cls) {
+		removeClass : function (dom, cls) {
 			if (hasClass(dom, cls)) {
-				var reg = new RegExp('(\\s|^)' + cls + '(\\s|$)');
+				var reg = new RegExp('(\\s+|^)' + cls + '(\\s+|$)');
 				dom.className = dom.className.replace(reg, ' ');
 			}
 		},
