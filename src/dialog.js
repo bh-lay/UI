@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2015-2-11 0:0
+ * @modified 2015-3-9 10:44
  * 
  **/
 
@@ -74,13 +74,13 @@
 		private_scrollTop;
 
 	var private_CONFIG = {
-		'gap' : {
-			'top' : 0,
-			'left' : 0,
-			'bottom' : 0,
-			'right' : 0
+		gap : {
+			top : 0,
+			left : 0,
+			bottom : 0,
+			right : 0
 		},
-		'zIndex' : 499
+		zIndex : 499
 	};
 	var docDom;
 	if (document.compatMode == "BackCompat") {
@@ -93,6 +93,7 @@
 		//重新计算窗口尺寸
 		private_scrollTop = docDom.scrollTop == 0 ? private_body.scrollTop : docDom.scrollTop;
 		private_winH = window.innerHeight || document.documentElement.clientHeight;
+		private_winW = window.innerWidth || document.documentElement.clientWidth;
 		private_docH = docDom.scrollHeight;
 		private_docW = docDom.clientWidth;
 	}
@@ -201,13 +202,13 @@
 				refreshSize();
 				adapt_active_obj();
 				setCSS(private_maskDom,{
-					'marginTop' : private_scrollTop
+					marginTop : private_scrollTop
 				});
 			};
 		}else{
 			setCSS(private_maskDom,{
-				'position' : 'fixed',
-				'top' : 0
+				position : 'fixed',
+				top : 0
 			});
 			rebuild_fn = function(){
 				refreshSize();
@@ -243,8 +244,8 @@
 		}
 		
 		return {
-			'top' : Math.ceil(top),
-			'left' : Math.ceil(left)
+			top : Math.ceil(top),
+			left : Math.ceil(left)
 		}
 	}
 	//设置dom自适应于页面
@@ -258,8 +259,8 @@
 		
 		var method = isNum(time) ? animation : setCSS;
 		method(dom,{
-			'top' : isNum(param.top) ? param.top : Math.ceil(newPosition.top),
-			'left' : isNum(param.left) ? param.left : Math.ceil(newPosition.left)
+			top : isNum(param.top) ? param.top : Math.ceil(newPosition.top),
+			left : isNum(param.left) ? param.left : Math.ceil(newPosition.left)
 		},time);
 	}
 	//自适应于页面的原型方法
@@ -285,8 +286,8 @@
 			}
 		}
 		var this_html = utils.render(confirmBar_tpl,{
-			'confirm' : btns[0],
-			'cancel' : btns[1]
+			confirm : btns[0],
+			cancel : btns[1]
 		});
 		dom.appendChild(utils.createDom(this_html)[0]);
 		
@@ -332,13 +333,13 @@
 	function showMask(){
 		var lastHasMaskZindex = last_has_mask_zIndex();
 		setCSS(this.dom,{
-			'zIndex': lastHasMaskZindex + 2
+			zIndex: lastHasMaskZindex + 2
 		});
 		if(!this._mask){
 			return;
 		}
 		setCSS(private_maskDom,{
-			'zIndex': lastHasMaskZindex + 1
+			zIndex: lastHasMaskZindex + 1
 		});
 		
 		if(lastHasMaskZindex == 0){
@@ -357,7 +358,7 @@
 		}
 		var lastHasMaskZindex = last_has_mask_zIndex();
 		setCSS(private_maskDom,{
-			'zIndex' : lastHasMaskZindex - 1
+			zIndex : lastHasMaskZindex - 1
 		});
 		
 		if(lastHasMaskZindex == 0){
@@ -412,7 +413,6 @@
 			fn && fn();
 			return
 		}
-		
 		var offset = utils.offset(DOM),
 			//动画第一帧css
 			cssStart = {},
@@ -422,17 +422,15 @@
 		if(from.tagName && from.parentNode){
 			var offset_from = utils.offset(from);
 			cssStart = {
-				'top' : offset_from.top,
-				'left' : offset_from.left,
-				'width' : outerWidth(from),
-				'height' : outerHeight(from),
-				'overflow' : 'hidden'
+				top : offset_from.top,
+				left : offset_from.left,
+				clip: 'rect(0,' + outerWidth(from) + 'px,' + outerHeight(from) + 'px,0)',
+				overflow : 'hidden'
 			};
 			cssAnim = {
-				'width' : getCSS(DOM,'width'),
-				'height' : getCSS(DOM,'height'),
-				'top' : getCSS(DOM,'top'),
-				'left' : getCSS(DOM,'left')
+				clip: 'rect(0,' + outerWidth(DOM) + 'px,' + outerHeight(DOM) + 'px,0)',
+				top : getCSS(DOM,'top'),
+				left : getCSS(DOM,'left')
 			};
 		//参数是字符串
 		}else if(typeof(from) == 'string'){
@@ -441,16 +439,23 @@
 			cssAnim.transform = 'translateX(0) translateY(0)';
 		}else{
 			//参数出错，不显示效果
+			fn && fn();
 			return
 		}
 		
-		//先隐藏
+		//先隐藏,再显示
 		cssStart.opacity = 0;
-		
-		setCSS(DOM,cssStart);
-		//动画开始
 		cssAnim.opacity = 1;
-		animation(DOM,cssAnim,time,'ease-out',fn);
+		
+		//动画开始
+		setCSS(DOM,cssStart);
+		animation(DOM,cssAnim,time,'ease-out',function(){
+			//恢复动画样式
+			setCSS(DOM,{
+				clip: 'auto'
+			});
+			fn && fn();
+		});
 	}
 	
 	/**
@@ -496,27 +501,25 @@
 				//缩放回启动按钮
 				var offset =  utils.offset(from);
 				setCSS(DOM,{
-					'overflow' : 'hidden',
-					'width' : outerWidth(DOM),
-					'height' : outerHeight(DOM)
+					overflow : 'hidden',
+					clip: 'rect(0,' + outerWidth(DOM) + 'px,' + outerHeight(DOM) + 'px,0)'
 				});
 				animation(DOM,{
-					'top' : offset.top,
-					'left' : offset.left,
-					'width' : outerWidth(from),
-					'height' : outerHeight(from),
-					'opacity' : 0.5
+					top : offset.top,
+					left : offset.left,
+					clip: 'rect(0,' + outerWidth(from) + 'px,' + outerHeight(from) + 'px,0)',
+					opacity : 0.3
 				},time,function(){
 					animation(DOM,{
-						'opacity' : 0
-					},100,removeDom);
+						opacity : 0
+					},50,removeDom);
 				});
 			}else if(typeof(from) == 'string'){
 				var countResult = countTranslate(from,40);			
 				//动画开始
 				animation(DOM,{
-					'opacity' : 0,
-					'transform' : 'translate' + countResult[0] + '(' + countResult[1] + 'px)'
+					opacity : 0,
+					transform : 'translate' + countResult[0] + '(' + countResult[1] + 'px)'
 				},time,removeDom);
 			}else{
 				//参数出错时，直接删除dom
@@ -556,14 +559,14 @@
 			caption_dom.innerHTML = title;
 			//can drag is pop
 			utils.drag(caption_dom,me.dom,{
-				'move' : function(mx,my,l_start,t_start,w_start,h_start){
+				move : function(mx,my,l_start,t_start,w_start,h_start){
 					var left = mx + l_start;
 					var top = my + t_start;
 					
 					var newSize = fix_position(top,left,w_start,h_start);
 					setCSS(me.dom,{
-						'left' : newSize.left,
-						'top' : newSize.top
+						left : newSize.left,
+						top : newSize.top
 					});
 				}
 			});
@@ -580,7 +583,7 @@
 		
 		//设置宽度，为计算位置尺寸做准备
 		setCSS(me.dom,{
-			'width' : this_width
+			width : this_width
 		});
 		private_allCnt.appendChild(me.dom);
 		
@@ -594,7 +597,7 @@
 		openAnimation.call(me);
 	}
 	//使用close方法
-	POP.prototype.close = closeAnimation(300);
+	POP.prototype.close = closeAnimation(150);
 	POP.prototype.adapt = ADAPT;
 
 	/**
@@ -605,7 +608,7 @@
 		var me = this;
 		
 		var this_html = utils.render(confirm_tpl,{
-			'text' : param.text || 'need text in parameter!'
+			text : param.text || 'need text in parameter!'
 		});
 		me.dom = utils.createDom(this_html)[0];
 		me.closeFn = param.closeFn || null;
@@ -635,7 +638,7 @@
 		var param = param || {};
 		
 		var this_html = utils.render(ask_tpl,{
-			'text' : text || 'need text in parameter!'
+			text : text || 'need text in parameter!'
 		});
 
 		me.dom = utils.createDom(this_html)[0];
@@ -645,8 +648,8 @@
 		me.closeFn =  null;
 		
 		var confirm_html = utils.render(confirmBar_tpl,{
-			'confirm' : '确定',
-			'cancel' : '取消'
+			confirm : '确定',
+			cancel : '取消'
 		});
 		
 		me.dom.appendChild(utils.createDom(confirm_html)[0]);
@@ -726,10 +729,10 @@
 		me.dom.innerHTML = param.html || '';
 		
 		setCSS(me.dom,{
-			'width' : param.width || 240,
-			'height' : param.height || null,
-			'top' : isNum(param.top) ? param.top : 300,
-			'left' : isNum(param.left) ? param.left : 800
+			width : param.width || 240,
+			height : param.height || null,
+			top : isNum(param.top) ? param.top : 300,
+			left : isNum(param.left) ? param.left : 800
 		});
 		private_allCnt.appendChild(me.dom);
 		//处理是否易于关闭
@@ -763,16 +766,17 @@
 		//记录body的scrollY设置
 		me._bodyOverflowY = getCSS(private_body,'overflowY');
 		var cssObj = {
-			'width' : isNum(param.width) ? Math.min(private_docW,param.width) : private_docW,
-			'height' : isNum(param.height) ? Math.min(private_winH,param.height) : private_winH
+			width : isNum(param.width) ? Math.min(private_winW,param.width) : private_winW,
+			height : isNum(param.height) ? Math.min(private_winH,param.height) : private_winH
 		};
+		console.log(cssObj);
 		//水平定位
 		if(isNum(param.right)){
 			cssObj.right = param.right;
 		}else if(isNum(param.left)){
 			cssObj.left = param.left;
 		}else{
-			cssObj.left = (private_docW - cssObj.width)/2;
+			cssObj.left = (private_winW - cssObj.width)/2;
 		}
 		//垂直定位
 		if(isNum(param.bottom)){
@@ -789,7 +793,7 @@
 		easyCloseHandle.call(me,true);
 		openAnimation.call(me,function(){
 			setCSS(private_body,{
-				'overflowY' : 'hidden'
+				overflowY : 'hidden'
 			});
 		});
 		//insert html
@@ -798,10 +802,10 @@
 	//使用close方法
 	COVER.prototype.close = closeAnimation(400,function(){
 		setCSS(this.cntDom,{
-			'overflowY' : 'hidden'
+			overflowY : 'hidden'
 		});
 		setCSS(private_body,{
-			'overflowY' : this._bodyOverflowY
+			overflowY : this._bodyOverflowY
 		});
 	});
 	COVER.prototype.adapt = ADAPT;
@@ -820,9 +824,9 @@
 			fns.push(item[1]);
 		});
 		var this_html = utils.render(select_tpl,{
-			'list' : nameList,
-			'title' : param.title || null,
-			'intro' : param.intro || null
+			list : nameList,
+			title : param.title || null,
+			intro : param.intro || null
 		});
 		
 		me.dom = utils.createDom(this_html)[0];
@@ -845,17 +849,17 @@
 			private_allCnt.appendChild(me.dom);
 		}else{
 			var cssObj = {
-				'top' : param.top || 100,
-				'left' : param.left || 100,
-				'width' : param.width || 200
+				top : param.top || 100,
+				left : param.left || 100,
+				width : param.width || 200
 			};
 			private_allCnt.appendChild(me.dom);
 			
 			setCSS(me.dom,cssObj);
 			var newSize = fix_position(cssObj.top,cssObj.left,cssObj.width,outerHeight(me.dom));
 			setCSS(me.dom,{
-				'left' : newSize.left,
-				'top' : newSize.top
+				left : newSize.left,
+				top : newSize.top
 			});
 		}
 		easyCloseHandle.call(me,param.easyClose,true);
@@ -868,17 +872,17 @@
 	 *  抛出对外接口
 	 */
 	return {
-		'pop' : function(){
+		pop : function(){
 			return new POP(arguments[0]);
 		},
-		'config' : {
-			'gap' : function(name,value){
+		config : {
+			gap : function(name,value){
 				//name符合top/right/bottom/left,且value值为数字类型（兼容字符类型）
 				if(name && typeof(private_CONFIG.gap[name]) == 'number' && isNum(value)){
 					private_CONFIG.gap[name] = parseInt(value);
 				}
 			},
-			'zIndex' : function(num){
+			zIndex : function(num){
 				var num = parseInt(num);
 				if(num > 0){
 					private_CONFIG.zIndex = num;
@@ -888,22 +892,22 @@
 				}
 			}
 		},
-		'confirm' : function(){
+		confirm : function(){
 			return new CONFIRM(arguments[0]);
 		},
-		'ask' : function(text,callback,param){
+		ask : function(text,callback,param){
 			return new ASK(text,callback,param);
 		},
-		'prompt' : function(txt,time,param){
+		prompt : function(txt,time,param){
 			return new PROMPT(txt,time,param);
 		},
-		'plane' : function(){
+		plane : function(){
 			return new PLANE(arguments[0]);
 		},
-		'cover' : function(){
+		cover : function(){
 			return new COVER(arguments[0]);
 		},
-		'select' : function(){
+		select : function(){
 			return new SELECT(arguments[0],arguments[1]);
 		}
 	};
