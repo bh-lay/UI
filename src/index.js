@@ -773,7 +773,6 @@
 			width : isNum(param.width) ? Math.min(private_winW,param.width) : private_winW,
 			height : isNum(param.height) ? Math.min(private_winH,param.height) : private_winH
 		};
-		console.log(cssObj);
 		//水平定位
 		if(isNum(param.right)){
 			cssObj.right = param.right;
@@ -794,7 +793,7 @@
 		private_allCnt.appendChild(me.dom);
 		
 		//处理是否易于关闭
-		easyCloseHandle.call(me,true);
+		easyCloseHandle.call(me,param.easyClose,true);
 		openAnimation.call(me,function(){
 			setCSS(private_body,{
 				overflowY : 'hidden'
