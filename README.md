@@ -113,31 +113,9 @@ UI.confirm({
 });
 ```
 
-## 2.3、 UI.plane 虚拟弹层
-没有样式，页面中只能同时存在一个plane实例化后的对象，点击自己以外的DOM，就会关掉自己，生命体征较弱的屌丝。
-### param 传入参数
- * *Object* **param** 参数对象
- * *String* **param.html** 弹层内容
- * *Number* [**param.width**] 宽度(默认为240px)
- * *Number* [**param.height**] 高度
- * *Number* [**param.top**]
- * *Number* [**param.left**]
- * *Function* [**param.closeFn**] 被关闭时的回调
+## 2.3、 ~~UI.plane 虚拟弹层~~（已废弃）
+~~没有样式，页面中只能同时存在一个plane实例化后的对象，点击自己以外的DOM，就会关掉自己，生命体征较弱的屌丝。~~
 
-### returns 返回值 
- * *Object* **plane** 弹层对象
- * *Object* **plane.dom**
- * *Function* **plane.closeFn**
-
-###demo
-```javascript
-    UI.plane({
-        'top' : 100,
-        'left' : 120,
-        'width' : 200,
-        'html' : '<div>....</div>'
-    });
-```
 ## 2.4、UI.select 选择组件
 展示一组待选项，供用户选择，移动端样式仿IOS原生ActionSheet组件（web版样式尚未完成）
 

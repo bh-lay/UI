@@ -141,12 +141,6 @@ body{
 .UI_pop_confirm_ok {
 	border-right : 1px solid #ddd;
 }
-.UI_plane {
-	width : 200px;
-	position : absolute;
-	top : 400px;
-	left : 300px;
-}
 .UI_prompt {
 	position : absolute;
 	width : 240px;

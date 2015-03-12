@@ -44,7 +44,6 @@
 		confirm_tpl = requires('template/confirm.html'),
 		ask_tpl = requires('template/ask.html'),
 		confirmBar_tpl = requires('template/confirmBar.html'),
-		plane_tpl = requires('template/plane.html'),
 		prompt_tpl = requires('template/prompt.html'),
 		cover_tpl = requires('template/cover.html'),
 		select_tpl = requires('template/select.html'),
@@ -718,34 +717,6 @@
 	};
 	PROMPT.prototype.adapt = ADAPT;
 
-	/**
-	 *	PLANE 
-	 */
-	function PLANE(param){
-		var me = this;
-		var param = param || {};
-		
-		me.closeFn = param.closeFn || null;
-		me.dom = utils.createDom(plane_tpl)[0];
-		me._from = param.from || null;
-		
-		//insert html
-		me.dom.innerHTML = param.html || '';
-		
-		setCSS(me.dom,{
-			width : param.width || 240,
-			height : param.height || null,
-			top : isNum(param.top) ? param.top : 300,
-			left : isNum(param.left) ? param.left : 800
-		});
-		private_allCnt.appendChild(me.dom);
-		//处理是否易于关闭
-		easyCloseHandle.call(me,true);
-		openAnimation.call(me);
-	}
-	PLANE.prototype.close = closeAnimation(200);
-	PLANE.prototype.adapt = ADAPT;
-
 	/***
 	 * 全屏弹框
 	 * COVER 
@@ -903,9 +874,6 @@
 		},
 		prompt : function(txt,time,param){
 			return new PROMPT(txt,time,param);
-		},
-		plane : function(){
-			return new PLANE(arguments[0]);
 		},
 		cover : function(){
 			return new COVER(arguments[0]);
