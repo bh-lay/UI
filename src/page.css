@@ -184,6 +184,15 @@
 		font-size: 30px;
 	}
       
+.download {
+  display: inline-block;
+  padding: 0 1em;
+  font-size: 14px;
+  color: #fff;
+}
+.download:hover{
+  text-decoration: underline;
+}
 .btn {
   display: inline-block;
   min-width: 40px;
