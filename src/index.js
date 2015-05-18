@@ -49,7 +49,8 @@
 		select_tpl = requires('template/select.html'),
 		popCSS = requires('style.css');
 	
-	var isIE67 = isIE678 = false;
+	var isIE67,
+      isIE678;
 	if(navigator.appName == "Microsoft Internet Explorer"){
 		var version = navigator.appVersion.split(";")[1].replace(/[ ]/g,"");
 		if(version == "MSIE6.0" || version == "MSIE7.0"){
@@ -320,7 +321,8 @@
 			}
 		});
 	}
-	var blur = removeBlur = null;
+	var blur,
+      removeBlur;
 	if(utils.supports('-webkit-filter')){
 		blur = function (){
 			travelRootElements(function(dom){
