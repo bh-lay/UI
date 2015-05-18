@@ -234,7 +234,6 @@
 		<div class="demoItem">
 			<h3>浮层</h3>
 			<div class="btnList">
-				<a href="javascript:void(0)" onclick="showPlane(this)" >屌丝层</a>
 				<a href="javascript:void(0)" onclick="showCover(this)" >全屏</a>
 			</div>
 		</div>
@@ -403,27 +402,6 @@
 				}
 			});
 		}
-		var active_plane = null;
-		function showPlane(elem){
-			if(active_plane){
-				active_plane.close();
-				return
-			}
-			var offset = UI._utils.offset(elem);
-			active_plane = UI.plane({
-				'width' : UI._utils.outerWidth(elem) - 20,
-				'top' : offset.top - 140,
-				'left' : offset.left + 10,
-				'from' : param.from == "dom" ? elem : param.from,
-				'easyClose' : param.easyClose,
-				'mask' : param.mask,
-				'html' : '<div style="height:150px;line-height:150px;text-align:center;color:#333;background:#fff;box-shadow: 0px 0px 10px #000;">我最可怜，一丁点儿样式都没有</div>',
-				'closeFn' : function(){
-					active_plane = null;
-				}
-			});
-		}
-		
 		function showCover(elem){
 			var from = param.from == "dom" ? elem : param.from;
 			var param1 = {

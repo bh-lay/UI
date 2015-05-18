@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2015-5-18 10:29
+ * @modified 2015-5-18 11:2
  * 
  **/
 
@@ -1066,7 +1066,7 @@
 		//记录初始transition值
 		var transition_start = getStyle(elem,'transition');
 		var cssSet = clone(cssObj,{
-			'transition' : durtime + 'ms ' + animType
+			transition: durtime + 'ms ' + animType
 		});
 		
 		//开启3d加速
@@ -1083,7 +1083,7 @@
 			elem.removeEventListener("webkitTransitionEnd",transitionFn, true);
 			//还原transition值
 			setCss(elem,{
-				'transition' : transition_start || 'all 0s'
+				transition: transition_start || 'all 0s'
 			});
 			onEnd && onEnd.call(elem);
 		}
@@ -1426,11 +1426,11 @@
 		fadeIn : function (DOM,time,fn){
 			var op = getStyle(DOM,'opacity');
 			setCss(DOM,{
-				'opacity' : 0,
-				'display' : 'block'
+				opacity: 0,
+				display: 'block'
 			});
 			animation(DOM,{
-				'opacity' : op
+				opacity: op
 			}, time, function(){
 				fn && fn.call(DOM);
 			});
@@ -1439,7 +1439,7 @@
 		fadeOut : function (DOM,time,fn){
 			var op = getStyle(DOM,'opacity');
 			animation(DOM,{
-				'opacity' : 0
+				opacity: 0
 			}, time,function(){
 				DOM.style.opacity = op;
 				DOM.style.display = 'none';
