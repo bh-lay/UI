@@ -88,8 +88,9 @@
 		//"CSS1Compat"
 		docDom = document.documentElement;
 	}
+  
+  //重新计算浏览器窗口尺寸
 	function refreshSize(){
-		//重新计算窗口尺寸
 		private_scrollTop = docDom.scrollTop == 0 ? private_body.scrollTop : docDom.scrollTop;
 		private_winH = window.innerHeight || document.documentElement.clientHeight;
 		private_winW = window.innerWidth || document.documentElement.clientWidth;
@@ -116,13 +117,20 @@
 			}
 		}
 	}
-	//最后一个有蒙层的对象的zIndex值，无则返回0
+	//最后一个有蒙层的对象的zIndex值，
 	function last_has_mask_zIndex(){
+    //逆序遍历所有显示中的对象
 		for(var i= active_objs.length-1;i>=0;i--){
-			if(active_objs[i]._easyClose){
-				return getCSS(active_objs[i].dom,'zIndex');
+      //判断是否含有蒙层
+			if(active_objs[i]._mask){
+        var zIndex = getCSS(active_objs[i].dom,'zIndex');
+        //是否为数值
+        if(isNum(zIndex)){
+          return parseInt(zIndex);
+        }
 			}
 		}
+    // 无则返回 0
 		return 0;
 	}
 	//调整正在显示的对象的位置
@@ -404,6 +412,7 @@
 		var time = 100;
 		//向全局记录的对象内添加对象
 		active_objs.push(me);
+    
 		//显示蒙层（内部判断是否显示）
 		showMask.call(me);
 		
