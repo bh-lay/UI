@@ -250,10 +250,6 @@ body{
 		display: block;
 		background : #fff;
 	}
-
-	.UI_lawyer a:hover {
-		background : none
-	}
 }
 /** ie 打补丁 **/
 .UI_ie678 .UI_pop,
