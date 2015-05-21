@@ -1,7 +1,7 @@
 响应式用户交互组件库UI
 ======
-##demo:[稳定版](http://bh-lay.com/demo/lab/UI/demo.html)、[最新版](http://bh-lay.github.io/UI/)）
-##下载 [dialog.js](src/dialog.js)
+##demo:[稳定版](http://bh-lay.com/demo/lab/UI/demo.html)、[最新版](http://bh-lay.github.io/UI/)
+##下载：只需要一个文件，多神奇 [dialog.js](src/dialog.js)
 #一、简介
 
 ##1.1、UI是什么?
@@ -53,7 +53,8 @@ UI.config.zIndex(5000);
  * *String* [**param.height**] 弹框高度
  * *String* [**param.top**] 弹框与页面顶部距离
  * *String* [**param.left**] 弹框与页面左侧距离
- * *String* [**param.mask**] 是否显示蒙层（默认不显示）
+ * *Boolean* [**param.mask**] 是否显示蒙层（默认不显示）
+ * *Boolean* [**param.easyClose**] 点击空白或按下esc，关闭自己
  * *Function* [**param.closeFn**] 被关闭时的回调
  * *Object|Function* [**param.confirm**] 使用对话方式（详细定义或只定义回调）
  * *Array* [**param.confirm.btns**] 按钮自定义名称
