@@ -1,6 +1,7 @@
-响应式用户交互组件库UI（[demo(稳定版)](http://bh-lay.com/demo/lab/UI/demo.html)、[demo（最新版）](http://bh-lay.github.io/UI/)）
+响应式用户交互组件库UI
 ======
-
+##demo:[稳定版](http://bh-lay.com/demo/lab/UI/demo.html)、[最新版](http://bh-lay.github.io/UI/)）
+##下载 [dialog.js](src/dialog.js)
 #一、简介
 
 ##1.1、UI是什么?
