@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2015-6-8 20:16
+ * @modified 2015-6-8 20:26
  * 
  **/
 
@@ -548,6 +548,9 @@
 	 * pop 
 	 */
 	function POP(param){
+        if(!(this instanceof POP)){
+          return new POP(param);
+        }
 		var param = param || {};
 		var me = this;
 		
@@ -619,6 +622,9 @@
 	 * CONFIRM 
 	 */
 	function CONFIRM(param){
+        if(!(this instanceof CONFIRM)){
+          return new CONFIRM(param);
+        }
 		var param = param || {};
 		var me = this;
 		
@@ -649,6 +655,9 @@
 	 * ASK 
 	 */
 	function ASK(text,callback,param){
+        if(!(this instanceof ASK)){
+          return new ASK(text,callback,param);
+        }
 		var me = this;
 		var param = param || {};
 		
@@ -702,6 +711,9 @@
 	 * 
 	 **/
 	function PROMPT(text,time,param){
+        if(!(this instanceof PROMPT)){
+          return new PROMPT(text,time,param);
+        }
 		var param = param || {};
 		var me = this;
 		me.dom = utils.createDom(prompt_tpl)[0];
@@ -732,6 +744,9 @@
 	 *	PLANE 
 	 */
 	function PLANE(param){
+        if(!(this instanceof PLANE)){
+          return new PLANE(param);
+        }
 		var me = this;
 		var param = param || {};
 		
@@ -761,6 +776,9 @@
 	 * COVER 
 	 */
 	function COVER(param){
+        if(!(this instanceof COVER)){
+          return new COVER(param);
+        }
 		var param = param || {};
 		var me = this;
 		me.dom = utils.createDom(cover_tpl)[0];
@@ -826,6 +844,9 @@
 	 * 选择功能
 	 */
 	function SELECT(list,param){
+        if(!(this instanceof SELECT)){
+          return new SELECT(list,param);
+        }
 		var me = this,
 			param = param || {},
 			list = list || [],
@@ -885,9 +906,7 @@
 	 *  抛出对外接口
 	 */
 	return {
-		pop : function(){
-			return new POP(arguments[0]);
-		},
+		pop : POP,
 		config : {
 			gap : function(name,value){
 				//name符合top/right/bottom/left,且value值为数字类型（兼容字符类型）
@@ -905,24 +924,12 @@
 				}
 			}
 		},
-		confirm : function(){
-			return new CONFIRM(arguments[0]);
-		},
-		ask : function(text,callback,param){
-			return new ASK(text,callback,param);
-		},
-		prompt : function(txt,time,param){
-			return new PROMPT(txt,time,param);
-		},
-		plane : function(){
-			return new PLANE(arguments[0]);
-		},
-		cover : function(){
-			return new COVER(arguments[0]);
-		},
-		select : function(){
-			return new SELECT(arguments[0],arguments[1]);
-		}
+		confirm : CONFIRM,
+		ask : ASK,
+		prompt : PROMPT,
+		plane : PLANE,
+		cover : COVER,
+		select : SELECT
 	};
 },function (window,document) {
 	/**
