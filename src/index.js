@@ -795,27 +795,11 @@
 
     //记录body的scrollY设置
     me._bodyOverflowY = getCSS(private_body,'overflowY');
-    var cssObj = {
-      width : isNum(param.width) ? Math.min(private_winW,param.width) : private_winW,
-      height : isNum(param.height) ? Math.min(private_winH,param.height) : private_winH
-    };
-    //水平定位
-    if(isNum(param.right)){
-      cssObj.right = param.right;
-    }else if(isNum(param.left)){
-      cssObj.left = param.left;
-    }else{
-      cssObj.left = (private_winW - cssObj.width)/2;
-    }
-    //垂直定位
-    if(isNum(param.bottom)){
-      cssObj.top = private_winH - cssObj.height - param.bottom + private_scrollTop;
-    }else if(isNum(param.top)){
-      cssObj.top = private_scrollTop + param.top;
-    }else{
-      cssObj.top = private_scrollTop + (private_winH - cssObj.height)/2
-    }
-    setCSS(me.dom,cssObj);
+
+      setCSS(me.dom,{
+        height: private_winH,
+        top: private_scrollTop
+      });
     private_allCnt.appendChild(me.dom);
 
     //处理是否易于关闭
