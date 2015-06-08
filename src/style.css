@@ -153,6 +153,9 @@ body{
 	color : #333;
 	text-align : center;
 }
+.UI_plane{
+  position: absolute;
+}
 .UI_cover {
 	position : absolute;
 	top : 0;
