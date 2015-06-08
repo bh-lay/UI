@@ -30,6 +30,7 @@
 		<div class="demoItem">
 			<h3>浮层</h3>
 			<div class="btnList">
+				<a href="javascript:void(0)" onclick="showPlane(this)" >屌丝层</a>
 				<a href="javascript:void(0)" onclick="showCover(this)" >全屏</a>
 			</div>
 		</div>
@@ -219,6 +220,19 @@
 			});
 		}
 		
+		function showPlane(elem){
+			var from = param.from == "dom" ? elem : param.from;
+			var offset = UI._utils.offset(elem);
+			var param1 = {
+				'from' : from,
+				'top' : offset.top + UI._utils.outerHeight(elem),
+				'left' : offset.left + 30,
+				'easyClose' : param.easyClose,
+				'html' : '<div style="padding:20px 30px;background:#333;color:#fff;">我是屌丝</div>'
+			};
+			
+			UI.plane(param1);
+		}
 		function showCover(elem){
 			var from = param.from == "dom" ? elem : param.from;
 			var param1 = {
