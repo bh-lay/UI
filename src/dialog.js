@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2015-6-8 22:30
+ * @modified 2015-6-18 10:1
  * 
  **/
 
@@ -596,11 +596,9 @@
     //插入内容
     me.cntDom.innerHTML = param.html || '';
 
-    var this_width = Math.min(param.width || 600,private_docW-20);
-
     //设置宽度，为计算位置尺寸做准备
     setCSS(me.dom,{
-        width : this_width
+      width:  Math.min(param.width || 600,private_docW-20)
     });
     private_allCnt.appendChild(me.dom);
 

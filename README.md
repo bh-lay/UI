@@ -50,7 +50,7 @@ UI.config.zIndex(5000);
  * *String* [**param.title**] 弹框标题
  * *String* **param.html** 弹框内容
  * *String* [**param.width**] 弹框宽度
- * *String* [**param.height**] 弹框高度
+ ~~* *String* [**param.height**] 弹框高度（推荐根据内容自适应）~~
  * *String* [**param.top**] 弹框与页面顶部距离
  * *String* [**param.left**] 弹框与页面左侧距离
  * *Boolean* [**param.mask**] 是否显示蒙层（默认不显示）
@@ -115,8 +115,8 @@ UI.confirm({
 });
 ```
 
-## 2.3、 ~~UI.plane 虚拟弹层~~（已废弃）
-~~没有样式，页面中只能同时存在一个plane实例化后的对象，点击自己以外的DOM，就会关掉自己，生命体征较弱的屌丝。~~
+## 2.3、 UI.plane 虚拟弹层
+没有样式，页面中只能同时存在一个plane实例化后的对象，点击自己以外的DOM，就会关掉自己，生命体征较弱的屌丝
 
 ## 2.4、UI.select 选择组件
 展示一组待选项，供用户选择，移动端样式仿IOS原生ActionSheet组件（web版样式尚未完成）
