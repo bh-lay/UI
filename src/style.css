@@ -14,6 +14,7 @@ body{
 }
 .UI_lawyer.isAnimation{
   height:auto;
+  min-height: 600px;
   bottom: 0;
   overflow:hidden;
 }
