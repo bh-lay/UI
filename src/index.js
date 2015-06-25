@@ -609,7 +609,9 @@
     easyCloseHandle.call(me,param.easyClose,true);
 
     //开场动画
-    openAnimation.call(me);
+    openAnimation.call(me,function(){
+      param.init && param.init.call(me,me.cntDom);
+    });
   }
   //使用close方法
   POP.prototype.close = closeAnimation(150);
@@ -642,7 +644,9 @@
 
     //处理是否易于关闭
     easyCloseHandle.call(me,param.easyClose,true);
-    openAnimation.call(me);
+    openAnimation.call(me,function(){
+      param.init && param.init.call(me,me.dom);
+    });
   }
   CONFIRM.prototype.close = closeAnimation(200);
   CONFIRM.prototype.adapt = ADAPT;
@@ -693,6 +697,7 @@
     easyCloseHandle.call(me,param.easyClose,true);
     openAnimation.call(me,function(){
       me.inputDom.focus();
+      param.init && param.init.call(me,me.dom);
     });
   }
   ASK.prototype.close = closeAnimation(200);
@@ -721,7 +726,9 @@
     private_allCnt.appendChild(me.dom);
     adaption(me.dom);
 
-    openAnimation.call(me);
+    openAnimation.call(me,function(){
+      param.init && param.init.call(me,me.dom);
+    });
   }
   PROMPT.prototype.close = closeAnimation(80);
   PROMPT.prototype.tips = function(txt,time){
@@ -762,7 +769,9 @@
     private_allCnt.appendChild(me.dom);
 
     easyCloseHandle.call(me,true);
-    openAnimation.call(me);
+    openAnimation.call(me,function(){
+      param.init && param.init.call(me,me.dom);
+    });
   }
   PLANE.prototype.close = closeAnimation(200);
   PLANE.prototype.adapt = ADAPT;
@@ -806,6 +815,7 @@
       setCSS(private_body,{
         overflowY : 'hidden'
       });
+      param.init && param.init.call(me,me.cntDom);
     });
     //insert html
     me.cntDom.innerHTML = param.html || '';
@@ -877,7 +887,9 @@
       });
     }
     easyCloseHandle.call(me,param.easyClose,true);
-    openAnimation.call(me);
+    openAnimation.call(me,function(){
+      param.init && param.init.call(me,me.dom);
+    });
   }
   SELECT.prototype.close = closeAnimation(200);
   SELECT.prototype.adapt = ADAPT;

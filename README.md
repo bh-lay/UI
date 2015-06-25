@@ -56,6 +56,7 @@ UI.config.zIndex(5000);
  * *Boolean* [**param.mask**] 是否显示蒙层（默认不显示）
  * *Boolean* [**param.easyClose**] 点击空白或按下esc，关闭自己
  * *Function* [**param.closeFn**] 被关闭时的回调
+ * *Function* [**param.init**] 对象构建完成时的回调（主要是动画）
  * *Object|Function* [**param.confirm**] 使用对话方式（详细定义或只定义回调）
  * *Array* [**param.confirm.btns**] 按钮自定义名称
  * *Function* [**param.confirm.callback**] 确定时的回调方法
@@ -98,6 +99,7 @@ UI.pop({
  * *Array* [**param.btns**] 按钮自定义名称
  * *String* [**param.mask**] 是否显示蒙层(默认显示)
  * *Function* [**param.callback**] 确定时的回调方法
+ * *Function* [**param.init**] 对象构建完成时的回调（主要是动画）
 
 ### returns 返回值
  * *Object* **confirm**
@@ -129,6 +131,7 @@ UI.confirm({
  * *Object* [**param**] 参数对象
  * *String* [**param.title**] 标题
  * *String* [**param.intro**] 提示文字
+ * *Function* [**param.init**] 对象构建完成时的回调（主要是动画）
 
 ### returns 返回值
  * *Object* **select** select对象
@@ -183,6 +186,7 @@ UI.select([
  * *Object* **param** 参数对象
  * *String* **param.html** 弹层内容
  * *Function* [**param.closeFn**] 被关闭时的回调
+ * *Function* [**param.init**] 对象构建完成时的回调（主要是动画）
 
 ### returns 返回值
  * *Object* **cover** cover对象
@@ -204,6 +208,7 @@ UI.cover({
  * *String* **text** 引导信息
  * *Function* [**callback**] 点击确定时的回调
    默认会在掉用后关掉弹层，方法内return false会阻止关闭动作
+ * *Function* [**param.init**] 对象构建完成时的回调（主要是动画）
 
 ### returns 返回值
  * *Object* **ask** ask对象
