@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2015-7-15 11:20
+ * @modified 2015-7-15 12:20
  * 
  **/
 
@@ -354,7 +354,7 @@
     if(lastHasMaskZindex == 0){
       //之前蒙层未显示，显示蒙层
       blur && blur();
-      utils.fadeIn(private_maskDom,400);
+      utils.fadeIn(private_maskDom,300);
     }
   }
   /**
@@ -372,7 +372,7 @@
 
     if(lastHasMaskZindex == 0){
       removeBlur && removeBlur();
-      utils.fadeOut(private_maskDom,200);
+      utils.fadeOut(private_maskDom,150);
     }
   }
 
@@ -411,7 +411,7 @@
     var me = this;
     var DOM = me.dom;
     var from = me._from;
-    var time = 100;
+    var time = 80;
     //向全局记录的对象内添加对象
     active_objs.push(me);
 
@@ -444,7 +444,7 @@
       };
     //参数是字符串
     }else if(typeof(from) == 'string'){
-      var countResult = countTranslate(from,40);
+      var countResult = countTranslate(from,10);
       cssStart.transform = 'translate' + countResult[0] + '(' + countResult[1] + 'px)';
       cssAnim.transform = 'translateX(0) translateY(0)';
     }else{
@@ -524,7 +524,7 @@
           },50,end);
         });
       }else if(typeof(from) == 'string'){
-        var countResult = countTranslate(from,40);			
+        var countResult = countTranslate(from,10);			
         //动画开始
         animation(DOM,{
           opacity : 0,
@@ -609,7 +609,7 @@
     });
   }
   //使用close方法
-  POP.prototype.close = closeAnimation(150);
+  POP.prototype.close = closeAnimation(80);
   POP.prototype.adapt = ADAPT;
 
   /**
@@ -643,7 +643,7 @@
       param.init && param.init.call(me,me.dom);
     });
   }
-  CONFIRM.prototype.close = closeAnimation(200);
+  CONFIRM.prototype.close = closeAnimation(80);
   CONFIRM.prototype.adapt = ADAPT;
 
 
@@ -695,7 +695,7 @@
       param.init && param.init.call(me,me.dom);
     });
   }
-  ASK.prototype.close = closeAnimation(200);
+  ASK.prototype.close = closeAnimation(80);
   ASK.prototype.setValue = function(text){
       this.inputDom.value = text.toString();
   };
@@ -725,7 +725,7 @@
       param.init && param.init.call(me,me.dom);
     });
   }
-  PROMPT.prototype.close = closeAnimation(80);
+  PROMPT.prototype.close = closeAnimation(60);
   PROMPT.prototype.tips = function(txt,time){
     var me = this;
     if(txt){
@@ -768,7 +768,7 @@
       param.init && param.init.call(me,me.dom);
     });
   }
-  PLANE.prototype.close = closeAnimation(200);
+  PLANE.prototype.close = closeAnimation(80);
   PLANE.prototype.adapt = ADAPT;
 
   /***
@@ -816,7 +816,7 @@
     me.cntDom.innerHTML = param.html || '';
   }
   //使用close方法
-  COVER.prototype.close = closeAnimation(400,function(){
+  COVER.prototype.close = closeAnimation(200,function(){
     setCSS(this.cntDom,{
       overflowY : 'hidden'
     });
@@ -887,7 +887,7 @@
       param.init && param.init.call(me,me.dom);
     });
   }
-  SELECT.prototype.close = closeAnimation(200);
+  SELECT.prototype.close = closeAnimation(100);
   /**
    *  抛出对外接口
    */

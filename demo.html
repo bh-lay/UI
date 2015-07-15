@@ -268,11 +268,11 @@
 	</div>
 	
 	<div id="from_selected">
-		<a href="javascript:void(0)" title="上" onclick="toggleFrom(this,'top')" class="from-top">﹀</a>
+		<a href="javascript:void(0)" title="上" onclick="toggleFrom(this,'top')" class="from-top isSelected">﹀</a>
 		<a href="javascript:void(0)" title="下" onclick="toggleFrom(this,'bottom')" class="from-bottom">︿</a>
 		<a href="javascript:void(0)" title="左" onclick="toggleFrom(this,'left')" class="from-left">〉</a>
 		<a href="javascript:void(0)" title="右" onclick="toggleFrom(this,'right')" class="from-right">〈</a>
-		<a href="javascript:void(0)" title="缩放" onclick="toggleFrom(this,'dom')" class="from-dom isSelected">○</a>
+		<a href="javascript:void(0)" title="缩放" onclick="toggleFrom(this,'dom')" class="from-dom">○</a>
 		<a href="javascript:void(0)" title="默认" onclick="toggleFrom(this,'none')" class="from-none">×</a>
 	</div>
 </div>
@@ -286,7 +286,7 @@
 		var param = {
 			'easyClose' : true,
 			'mask' : true,
-			'from' : 'dom'
+			'from' : 'top'
 		};
 		function toggleParam(elem,type,value,defaultValue){
 			if(param[type]){
