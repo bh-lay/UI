@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2015-7-1 23:3
+ * @modified 2015-7-15 10:48
  * 
  **/
 
@@ -140,7 +140,7 @@
     clearTimeout(adapt_delay);
     adapt_delay = setTimeout(function(){
       utils.each(active_objs,function(index,item){
-        item.adapt();
+        item.adapt && item.adapt();
       });
     },150);
   }
@@ -885,6 +885,7 @@
         left : newSize.left,
         top : newSize.top
       });
+			me.adapt = ADAPT;
     }
     easyCloseHandle.call(me,param.easyClose,true);
     openAnimation.call(me,function(){
@@ -892,7 +893,6 @@
     });
   }
   SELECT.prototype.close = closeAnimation(200);
-  SELECT.prototype.adapt = ADAPT;
   /**
    *  抛出对外接口
    */
