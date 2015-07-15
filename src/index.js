@@ -459,9 +459,7 @@
 
     //动画开始
     setCSS(DOM,cssStart);
-    utils.addClass(private_allCnt,'isAnimation');
     animation(DOM,cssAnim,time,'ease-out',function(){
-      utils.removeClass(private_allCnt,'isAnimation');
       //恢复动画样式
       setCSS(DOM,{
         clip: 'auto'
@@ -489,23 +487,20 @@
 
       //触发关闭回调
       me.closeFn && me.closeFn();
-
-      // 关闭蒙层（内部判断是否关闭）
-      closeMask.call(me);
+			function end(){
+				// 关闭蒙层（内部判断是否关闭）
+  	  	closeMask.call(me);
+      	//删除dom
+        utils.removeNode(DOM);
+			}
 
       //执行生成此function的方法提供的回调
       fn && fn.call(me);
       var DOM = me.dom;
 
-      utils.addClass(private_allCnt,'isAnimation');
-      //删除dom
-      function removeDom(){
-        utils.removeClass(private_allCnt,'isAnimation');
-        utils.removeNode(DOM);
-      }
       //ie系列或无from信息，不显示效果
       if(isIE678 || from == 'none'){
-        removeDom();
+        end();
         return
       }
 
@@ -526,7 +521,7 @@
         },time,function(){
           animation(DOM,{
             opacity : 0
-          },50,removeDom);
+          },50,end);
         });
       }else if(typeof(from) == 'string'){
         var countResult = countTranslate(from,40);			
@@ -534,10 +529,10 @@
         animation(DOM,{
           opacity : 0,
           transform : 'translate' + countResult[0] + '(' + countResult[1] + 'px)'
-        },time,removeDom);
+        },time,end);
       }else{
-        //参数出错时，直接删除dom
-        removeDom();
+        //参数出错时，直接结束
+        end();
       }
     }
   }
