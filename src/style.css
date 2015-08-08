@@ -30,6 +30,7 @@
 }
 
 .UI-blur{
+  transform: translate3d(0,0,0);
   -webkit-filter : blur(3px)
 }
 /**弹框**/
