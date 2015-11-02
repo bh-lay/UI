@@ -354,7 +354,7 @@
     if(lastHasMaskZindex == 0){
       //之前蒙层未显示，显示蒙层
       blur && blur();
-      utils.fadeIn(private_maskDom,300);
+      utils.fadeIn(private_maskDom,20);
     }
   }
   /**
@@ -377,163 +377,63 @@
   }
 
   /**
-   * 计算动画所需的方向及目标值
-   *   @returns[0] 所需修改的方向(X/Y)
-   *   @returns[1] 计算后的值
-   */
-  function countTranslate(direction,range){
-    var prop,
-        start;
-    switch(direction){
-        case 'left':
-          prop = 'X';
-          start = -range;
-          break
-        case 'right':
-          prop = 'X';
-          start = range;
-          break
-        case 'bottom':
-          prop = 'Y';
-          start = range;
-          break
-        default:
-          prop = 'Y';
-          start = -range;
-    }
-    return [prop,start];
-  }
-
-  /**
    * 开场动画
    **/
-  function openAnimation(fn){
-    var me = this;
-    var DOM = me.dom;
-    var from = me._from;
-    var time = 80;
+  function openAnimation(param,fn){
+
+    var me = this,
+        DOM = me.dom;
+    me.leaveAminateClass = param.leaveAminateClass; 
     //向全局记录的对象内添加对象
     active_objs.push(me);
-
     //显示蒙层（内部判断是否显示）
     showMask.call(me);
 
-    //ie系列或无from信息，不显示效果
-    if(isIE678 || !from || from == 'none'){
-      fn && fn();
-      return
-    }
-    var offset = utils.offset(DOM),
-        //动画第一帧css
-        cssStart = {},
-        //动画需要改变的css
-        cssAnim = {};
-    //参数是dom对象
-    if(from.tagName && from.parentNode){
-      var offset_from = utils.offset(from);
-      cssStart = {
-        top : offset_from.top,
-        left : offset_from.left,
-        clip: 'rect(0,' + outerWidth(from) + 'px,' + outerHeight(from) + 'px,0)',
-        overflow : 'hidden'
-      };
-      cssAnim = {
-        clip: 'rect(0,' + outerWidth(DOM) + 'px,' + outerHeight(DOM) + 'px,0)',
-        top : getCSS(DOM,'top'),
-        left : getCSS(DOM,'left')
-      };
-    //参数是字符串
-    }else if(typeof(from) == 'string'){
-      var countResult = countTranslate(from,10);
-      cssStart.transform = 'translate' + countResult[0] + '(' + countResult[1] + 'px)';
-      cssAnim.transform = 'translateX(0) translateY(0)';
+    if(param.enterAminateClass){
+      utils.addClass(DOM,param.enterAminateClass);
+      function listen(){
+        fn && fn();
+        utils.removeClass(DOM,param.enterAminateClass);
+        utils.unbind(DOM,'animationend',listen);
+      }
+      bindEvent(DOM,'animationend',listen);
     }else{
-      //参数出错，不显示效果
       fn && fn();
-      return
     }
-
-    //先隐藏,再显示
-    cssStart.opacity = 0;
-    cssAnim.opacity = 1;
-
-    //动画开始
-    setCSS(DOM,cssStart);
-    animation(DOM,cssAnim,time,'ease-out',function(){
-      //恢复动画样式
-      setCSS(DOM,{
-        clip: 'auto'
-      });
-      fn && fn();
-    });
   }
 
   /**
    * 处理对象关闭及结束动画
    */
-  function closeAnimation(time_define,fn){
-    return function(time){
-      var me = this;
+  function closeAnimation(){
+    var me = this,
+        DOM = me.dom;
 
-      //检测自己是否已阵亡
-      if(me.dead){
-        return;
-      }
-      //把自己标记为已阵亡
-      me.dead = true;
+    //检测自己是否已阵亡
+    if(me.dead){
+      return;
+    }
+    //把自己标记为已阵亡
+    me.dead = true;
 
-      //从全局记录的对象内删除自己；
-      remove_active_obj(me);
+    //从全局记录的对象内删除自己；
+    remove_active_obj(me);
 
-      //触发关闭回调
-      me.closeFn && me.closeFn();
-			function end(){
-				// 关闭蒙层（内部判断是否关闭）
-  	  	closeMask.call(me);
-      	//删除dom
-        utils.removeNode(DOM);
-			}
+    //触发关闭回调
+    me.closeFn && me.closeFn();
 
-      //执行生成此function的方法提供的回调
-      fn && fn.call(me);
-      var DOM = me.dom;
+		function end(){
+			// 关闭蒙层（内部判断是否关闭）
+	  	closeMask.call(me);
+    	//删除dom
+      utils.removeNode(DOM);
+		}
 
-      //ie系列或无from信息，不显示效果
-      if(isIE678 || from == 'none'){
-        end();
-        return
-      }
-
-      var time = isNum(time) ? time : parseInt(time_define) || 80;
-      var from = me._from;
-      if(from && from.tagName && from.parentNode){
-        //缩放回启动按钮
-        var offset =  utils.offset(from);
-        setCSS(DOM,{
-          overflow : 'hidden',
-          clip: 'rect(0,' + outerWidth(DOM) + 'px,' + outerHeight(DOM) + 'px,0)'
-        });
-        animation(DOM,{
-          top : offset.top,
-          left : offset.left,
-          clip: 'rect(0,' + outerWidth(from) + 'px,' + outerHeight(from) + 'px,0)',
-          opacity : 0.3
-        },time,function(){
-          animation(DOM,{
-            opacity : 0
-          },50,end);
-        });
-      }else if(typeof(from) == 'string'){
-        var countResult = countTranslate(from,10);			
-        //动画开始
-        animation(DOM,{
-          opacity : 0,
-          transform : 'translate' + countResult[0] + '(' + countResult[1] + 'px)'
-        },time,end);
-      }else{
-        //参数出错时，直接结束
-        end();
-      }
+    if(me.leaveAminateClass){
+      utils.addClass(DOM,me.leaveAminateClass);
+      utils.bind(DOM,'animationend',end);
+    }else{
+      end();
     }
   }
 
@@ -604,12 +504,12 @@
     easyCloseHandle.call(me,param.easyClose,true);
 
     //开场动画
-    openAnimation.call(me,function(){
+    openAnimation.call(me,param,function(){
       param.init && param.init.call(me,me.cntDom);
     });
   }
   //使用close方法
-  POP.prototype.close = closeAnimation(80);
+  POP.prototype.close = closeAnimation;
   POP.prototype.adapt = ADAPT;
 
   /**
@@ -639,11 +539,11 @@
 
     //处理是否易于关闭
     easyCloseHandle.call(me,param.easyClose,true);
-    openAnimation.call(me,function(){
+    openAnimation.call(me,param,function(){
       param.init && param.init.call(me,me.dom);
     });
   }
-  CONFIRM.prototype.close = closeAnimation(80);
+  CONFIRM.prototype.close = closeAnimation;
   CONFIRM.prototype.adapt = ADAPT;
 
 
@@ -690,12 +590,12 @@
 
     //处理是否易于关闭
     easyCloseHandle.call(me,param.easyClose,true);
-    openAnimation.call(me,function(){
+    openAnimation.call(me,param,function(){
       me.inputDom.focus();
       param.init && param.init.call(me,me.dom);
     });
   }
-  ASK.prototype.close = closeAnimation(80);
+  ASK.prototype.close = closeAnimation;
   ASK.prototype.setValue = function(text){
       this.inputDom.value = text.toString();
   };
@@ -721,11 +621,11 @@
     private_allCnt.appendChild(me.dom);
     adaption(me.dom);
 
-    openAnimation.call(me,function(){
+    openAnimation.call(me,param,function(){
       param.init && param.init.call(me,me.dom);
     });
   }
-  PROMPT.prototype.close = closeAnimation(60);
+  PROMPT.prototype.close = closeAnimation;
   PROMPT.prototype.tips = function(txt,time){
     var me = this;
     if(txt){
@@ -764,11 +664,11 @@
     private_allCnt.appendChild(me.dom);
 
     easyCloseHandle.call(me,true);
-    openAnimation.call(me,function(){
+    openAnimation.call(me,param,function(){
       param.init && param.init.call(me,me.dom);
     });
   }
-  PLANE.prototype.close = closeAnimation(80);
+  PLANE.prototype.close = closeAnimation;
   PLANE.prototype.adapt = ADAPT;
 
   /***
@@ -788,7 +688,6 @@
     me.cntDom = findByClassName(me.dom,'UI_cnt')[0];
     me.closeFn = param.closeFn || null;
 
-
     //关闭事件
     bindEvent(me.dom,'click','.UI_close',function(){
       me.close();
@@ -798,15 +697,15 @@
     //记录body的scrollY设置
     me._bodyOverflowY = getCSS(private_body,'overflowY');
 
-      setCSS(me.dom,{
-        height: private_winH,
-        top: private_scrollTop
-      });
+    setCSS(me.dom,{
+      height: private_winH,
+      top: private_scrollTop
+    });
     private_allCnt.appendChild(me.dom);
 
     //处理是否易于关闭
     easyCloseHandle.call(me,param.easyClose,true);
-    openAnimation.call(me,function(){
+    openAnimation.call(me,param,function(){
       setCSS(private_body,{
         overflowY : 'hidden'
       });
@@ -816,14 +715,12 @@
     me.cntDom.innerHTML = param.html || '';
   }
   //使用close方法
-  COVER.prototype.close = closeAnimation(200,function(){
-    setCSS(this.cntDom,{
-      overflowY : 'hidden'
-    });
+  COVER.prototype.close = function(){
     setCSS(private_body,{
       overflowY : this._bodyOverflowY
     });
-  });
+    closeAnimation.call(this);
+  };
   COVER.prototype.adapt = ADAPT;
   /**
    * 选择功能
@@ -883,11 +780,11 @@
 			me.adapt = ADAPT;
     }
     easyCloseHandle.call(me,param.easyClose,true);
-    openAnimation.call(me,function(){
+    openAnimation.call(me,param,function(){
       param.init && param.init.call(me,me.dom);
     });
   }
-  SELECT.prototype.close = closeAnimation(100);
+  SELECT.prototype.close = closeAnimation;
   /**
    *  抛出对外接口
    */

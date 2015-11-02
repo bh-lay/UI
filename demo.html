@@ -4,6 +4,7 @@
 	<meta charset="UTF-8">
 	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
 	<title>UI_demo</title>
+	<link rel="stylesheet" href="src/animate.css">
 <!--	<style type="text/css">
 	html,body{
 		background:#eee;
@@ -165,52 +166,7 @@
 		position: fixed;
 		top: 10%;
 		right: 20px;
-		width: 120px;
-	}
-	#from_selected{
-		position: relative;
-		height: 120px;
-	}
-	#from_selected a{
-		display: block;
-		position : absolute;
-		width: 33%;
-		height: 33%;
-		text-align: center;
-		line-height: 40px;
-		font-size: 20px;
-		color:#fff;
-		background: #888;
-	}
-	#from_selected a.isSelected{
-		background: #333;
-		color:#fff;
-	}
-	.from-top{
-		top: 0;
-		left: 33%;
-	}
-	.from-bottom{
-		top: 66%;
-		left: 33%;
-	}
-	.from-left{
-		top: 33%;
-		left: 0;
-	}
-	.from-right{
-		left: 66%;
-		top: 33%;
-	}
-	#from_selected .from-none{
-		left: 66%;
-		top: 0;
-		background:#aaa;
-	}
-	#from_selected .from-dom{
-		top: 33%;
-		left: 33%;
-		font-size: 30px;
+		width: 180px;
 	}
 	</style>
 </head>
@@ -263,17 +219,35 @@
 </div>
 <div id="config_panle">
 	<div class="btnConf">
+		<p>入场动画<br/>
+		<select onchange="toggleEnter(this)" id="enterAminateClass">
+			<option value="fadeIn">fadeIn</option>
+			<option value="scaleIn" selected>scaleIn</option>
+			<option value="bounceIn">bounceIn</option>
+			<option value="fadeInDown">fadeInDown</option>
+			<option value="fadeInLeft">fadeInLeft</option>
+			<option value="fadeInRight">fadeInRight</option>
+			<option value="fadeInUp">fadeInUp</option>
+			<option value="flipInX">flipInX</option>
+			<option value="flipInY">flipInY</option>
+			<!-- <option value=""></option> -->
+		</select></p>
+		<p>出场动画<br/>
+		<select onchange="toggleLeave(this)" id="leaveAminateClass">
+			<option value="fadeOut">fadeOut</option>
+			<option value="scaleOut" selected>scaleOut</option>
+			<option value="bounceOut">bounceOut</option>
+			<option value="fadeOutDown">fadeOutDown</option>
+			<option value="fadeOutLeft">fadeOutLeft</option>
+			<option value="fadeOutRight">fadeOutRight</option>
+			<option value="fadeOutUp">fadeOutUp</option>
+			<option value="flipOutX">flipOutX</option>
+			<option value="flipOutY">flipOutY</option>
+			<!-- <option value=""></option> -->
+		</select></p>
 		<a href="javascript:void(0)" onclick="toggleParam(this,'mask',true,false)" class="isSelected"><span>√</span>蒙层</a>
+		<br/><br/>
 		<a href="javascript:void(0)" onclick="toggleParam(this,'easyClose',true,false)" class="isSelected"><span>√</span>easyClose</a>
-	</div>
-	
-	<div id="from_selected">
-		<a href="javascript:void(0)" title="上" onclick="toggleFrom(this,'top')" class="from-top isSelected">﹀</a>
-		<a href="javascript:void(0)" title="下" onclick="toggleFrom(this,'bottom')" class="from-bottom">︿</a>
-		<a href="javascript:void(0)" title="左" onclick="toggleFrom(this,'left')" class="from-left">〉</a>
-		<a href="javascript:void(0)" title="右" onclick="toggleFrom(this,'right')" class="from-right">〈</a>
-		<a href="javascript:void(0)" title="缩放" onclick="toggleFrom(this,'dom')" class="from-dom">○</a>
-		<a href="javascript:void(0)" title="默认" onclick="toggleFrom(this,'none')" class="from-none">×</a>
 	</div>
 </div>
 	<div id="loading_mask">
@@ -286,7 +260,7 @@
 		var param = {
 			'easyClose' : true,
 			'mask' : true,
-			'from' : 'top'
+			enterAminateClass: null
 		};
 		function toggleParam(elem,type,value,defaultValue){
 			if(param[type]){
@@ -298,20 +272,14 @@
 			}
 		}
 		
-		function toggleFrom(elem,from){
-			param.from = from;
-			if(from == 'none'){
-				param.from = null;
-			}
-			
-			UI._utils.each(elem.parentNode.getElementsByTagName('a'),function(i,dom){
-				if(UI._utils.hasClass(dom,'from-'+from)){
-					UI._utils.addClass(dom,'isSelected');
-				}else{
-					UI._utils.removeClass(dom,'isSelected');
-				}
-			});
+		function toggleEnter(){
+			param.enterAminateClass = 'animated ' + 'animate ' + document.getElementById('enterAminateClass').value
 		}
+		function toggleLeave(){
+			param.leaveAminateClass = 'animated ' + 'animate ' + document.getElementById('leaveAminateClass').value
+		}
+		toggleEnter();
+		toggleLeave();
 		
 		//弹框
 		var active_pop = null;
@@ -324,8 +292,9 @@
 				'confirm' : param.confirm,
 				'width' : 600,
 				'easyClose' : param.easyClose,
-				'from' : param.from == "dom" ? elem : param.from,
 				'mask' : param.mask,
+				enterAminateClass : param.enterAminateClass,
+				leaveAminateClass: param.leaveAminateClass,
 				'html' : '<div style="height:280px;background:url(http://layasset.qiniudn.com/images/cover/newSkin.jpg) no-repeat center"></div>',
 				'closeFn' : function(){
 					active_pop = null;
@@ -345,6 +314,8 @@
 				'btns' : ['好的呀','不愿意'],
 				'from' : param.from == "dom" ? elem : param.from,
 				'easyClose' : param.easyClose,
+				enterAminateClass : param.enterAminateClass,
+				leaveAminateClass: param.leaveAminateClass,
 				'mask' : param.mask,
 				'callback' : function(){
 					UI.prompt('你是好人！');
@@ -370,7 +341,9 @@
 		}
 		function showPrompt(elem,title,time){
 			UI.prompt(title,time,{
-				from : param.from == "dom" ? elem : param.from
+				from : param.from == "dom" ? elem : param.from,
+				enterAminateClass : param.enterAminateClass,
+				leaveAminateClass: param.leaveAminateClass,
 			});
 		}
 		var active_select = null;
@@ -396,6 +369,8 @@
 				'width' : 300,
 				'left' : offset.left + 30,
 				'from' : param.from == "dom" ? elem : param.from,
+				enterAminateClass : param.enterAminateClass,
+				leaveAminateClass: param.leaveAminateClass,
 				'easyClose' : param.easyClose,
 				'mask' : param.mask,
 				'closeFn' : function(){
@@ -408,6 +383,8 @@
 			var offset = UI._utils.offset(elem);
 			var param1 = {
 				'from' : from,
+				enterAminateClass : param.enterAminateClass,
+				leaveAminateClass: param.leaveAminateClass,
 				'top' : offset.top + UI._utils.outerHeight(elem),
 				'left' : offset.left + 30,
 				'easyClose' : param.easyClose,
@@ -420,24 +397,12 @@
 			var from = param.from == "dom" ? elem : param.from;
 			var param1 = {
 				'from' : from,
+				enterAminateClass : param.enterAminateClass,
+				leaveAminateClass: param.leaveAminateClass,
 				'mask' : param.mask,
 				'easyClose' : param.easyClose,
 				'html' : '<table width="100%" height="100%"><tr><td style="text-align:center;vertical-align:middle;"><img src="http://layasset.qiniudn.com/labs/UI.jpg" /></td></tr></table>'
 			};
-			if(from == 'left'){
-				param1.left = 0;
-				param1.width = 400;
-			}else if(from == 'right'){
-				param1.right = 0;
-				param1.width = 400;
-			}else if(from == 'top'){
-				param1.top = 0;
-				param1.height = 400;
-			}else if(from == 'bottom'){
-				param1.bottom = 0;
-				param1.height = 400;
-			}
-			
 			UI.cover(param1);
 		}
 		
@@ -462,6 +427,8 @@
 			},{
 				'easyClose' : param.easyClose,
 				'from' : param.from == "dom" ? elem : param.from,
+				enterAminateClass : param.enterAminateClass,
+				leaveAminateClass: param.leaveAminateClass,
 				'mask' : param.mask
 			});
 			active_ask.closeFn = function(){
