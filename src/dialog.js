@@ -1,9 +1,9 @@
 /**
  * @author bh-lay
- * 
+ *
  * @github https://github.com/bh-lay/UI
- * @modified 2015-11-2 19:27
- * 
+ * @modified 2015-12-22 18:7
+ *
  **/
 
 (function(global,doc,UI_factory,utils_factory){
@@ -64,12 +64,13 @@
 
   /**
    * 定义私有变量
-   * 
-   **/ 
+   *
+   **/
   var private_allCnt = utils.createDom(allCnt_tpl)[0],
       private_maskDom = findByClassName(private_allCnt,'UI_mask')[0],
       private_body = document.body,
       private_docW,
+      private_winW,
       private_winH,
       private_docH,
       private_scrollTop;
@@ -337,7 +338,7 @@
   }
 
   /**
-   * 显示蒙层 
+   * 显示蒙层
    */
   function showMask(){
     var lastHasMaskZindex = last_has_mask_zIndex();
@@ -383,7 +384,7 @@
 
     var me = this,
         DOM = me.dom;
-    me.leaveAminateClass = param.leaveAminateClass; 
+    me.leaveAminateClass = param.leaveAminateClass;
     //向全局记录的对象内添加对象
     active_objs.push(me);
     //显示蒙层（内部判断是否显示）
@@ -439,7 +440,7 @@
 
   /**
    * 弹框
-   * pop 
+   * pop
    */
   function POP(param){
     if(!(this instanceof POP)){
@@ -513,7 +514,7 @@
   POP.prototype.adapt = ADAPT;
 
   /**
-   * CONFIRM 
+   * CONFIRM
    */
   function CONFIRM(param){
     if(!(this instanceof CONFIRM)){
@@ -548,7 +549,7 @@
 
 
   /**
-   * ASK 
+   * ASK
    */
   function ASK(text,callback,param){
     if(!(this instanceof ASK)){
@@ -604,7 +605,7 @@
 
   /**
    * prompt
-   * 
+   *
    **/
   function PROMPT(text,time,param){
     if(!(this instanceof PROMPT)){
@@ -639,7 +640,7 @@
   };
   PROMPT.prototype.adapt = ADAPT;
   /**
-   *	PLANE 
+   *	PLANE
    */
   function PLANE(param){
     if(!(this instanceof PLANE)){
@@ -673,7 +674,7 @@
 
   /***
    * 全屏弹框
-   * COVER 
+   * COVER
    */
   function COVER(param){
     if(!(this instanceof COVER)){
@@ -818,7 +819,7 @@
   /**
    * 判断对象类型
    * string number array
-   * object function 
+   * object function
    * htmldocument
    * undefined null
    */
@@ -836,7 +837,7 @@
 
   /**
    * 遍历数组或对象
-   * 
+   *
    */
   function each(arr,fn){
     //检测输入的值
@@ -868,7 +869,7 @@
    */
   function clone(fromObj,toObj){
     each(fromObj,function(i,item){
-      if(typeof item == "object"){   
+      if(typeof item == "object"){
         toObj[i] = item.constructor==Array ? [] : {};
 
         clone(item,toObj[i]);
@@ -878,7 +879,7 @@
     });
 
     return toObj;
-  }	
+  }
   /**
    * 判断是否支持css属性
    * 兼容css3
@@ -1156,7 +1157,7 @@
     }
   }
   function bind(elem, type,a,b){
-    var className,fn;
+    var className,fn,callback;
     if(typeof(a) == 'string'){
       className = a.replace(/^\./,'');
       fn = b;
@@ -1273,10 +1274,10 @@
       }
     },
     //移除dom节点
-    removeNode : function (elem){  
-      if(elem && elem.parentNode && elem.tagName != 'BODY'){  
-        elem.parentNode.removeChild(elem);  
-      }  
+    removeNode : function (elem){
+      if(elem && elem.parentNode && elem.tagName != 'BODY'){
+        elem.parentNode.removeChild(elem);
+      }
     },
     //创建style标签
     createStyleSheet : function (cssStr,attr){
