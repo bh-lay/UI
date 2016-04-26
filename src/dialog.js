@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2016-4-26 14:19
+ * @modified 2016-4-26 14:33
  * 
  **/
 
@@ -1011,7 +1011,7 @@
   /**
    * class 操作
    */
-  var private_css3 = (supports('transition') && supports('transform')) ? true : false,
+  var private_css3 = !!(supports('transition') && supports('transform')),
       supports_classList = !!document.createElement('div').classList,
       // 是否含有某个 class
       hasClass = supports_classList ? function( node, classSingle ){
@@ -1194,32 +1194,25 @@
       onEnd && onEnd.call(elem);
     }
   }
-  var outerWidth,
-      outerHeight;
-  var testDom = document.createElement('div');
-  //用生命在计算宽度
-  function count_outerWidth (elem){
-    return (getStyle(elem,'borderLeftWidth') + getStyle(elem,'paddingLeft') + getStyle(elem,'width') + getStyle(elem,'paddingRight') + getStyle(elem,'borderRightWidth'));
-  }
-  //用生命在计算高度
-  function count_outerHeight (elem){
-    return (getStyle(elem,'borderTopWidth') + getStyle(elem,'paddingTop') + getStyle(elem,'height') + getStyle(elem,'paddingBottom') + getStyle(elem,'borderBottomWidth'));
-  }
-  if(testDom.getBoundingClientRect !== 'undefined'){
-    outerWidth = function(elem){
-      var output = elem.getBoundingClientRect().width;
-
-      return typeof(output) == 'number' ? output : count_outerWidth(elem);
-    };
-    outerHeight = function(elem){
-      var output = elem.getBoundingClientRect().height;
-
-      return typeof(output) == 'number' ? output : count_outerHeight(elem);
-    };
-  }else{
-    outerWidth = count_outerWidth;
-    outerHeight = count_outerHeight;
-  }
+  var isSupportGBCR = !!document.createElement('div').getBoundingClientRect,
+      //用生命在计算宽度
+      count_outerWidth = function ( node ){
+        return (getStyle(node,'borderLeftWidth') + getStyle(node,'paddingLeft') + getStyle(node,'width') + getStyle(node,'paddingRight') + getStyle(node,'borderRightWidth'));
+      },
+      //用生命在计算高度
+      count_outerHeight = function ( node ){
+        return (getStyle(node,'borderTopWidth') + getStyle(node,'paddingTop') + getStyle(node,'height') + getStyle(node,'paddingBottom') + getStyle(node,'borderBottomWidth'));
+      },
+      // 外部宽度
+      outerWidth = isSupportGBCR ? function( node ){
+        var output = node.getBoundingClientRect().width;
+        return typeof(output) == 'number' ? output : count_outerWidth( node );
+      } : count_outerWidth,
+      // 外部高度
+      outerHeight = isSupportGBCR ? function( node ){
+        var output = node.getBoundingClientRect().height;
+        return typeof(output) == 'number' ? output : count_outerHeight( node );
+      } : count_outerHeight;
 
   /**
    * 事件绑定
