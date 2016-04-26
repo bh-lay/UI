@@ -93,16 +93,34 @@ define(function (window,document) {
     };
   })();
 
-
-  var private_css3 = (supports('transition') && supports('transform')) ? true : false;
-
   /**
-   * 判断dom是否拥有某个class
+   * class 操作
    */
-  function hasClass(dom,classSingle){
-    return dom.className && dom.className.match(new RegExp('(\\s|^)' + classSingle + '(\\s|$)')) || false;
-  }
-
+  var private_css3 = (supports('transition') && supports('transform')) ? true : false,
+      supports_classList = !!document.createElement('div').classList,
+      // 是否含有某个 class
+      hasClass = supports_classList ? function( node, classSingle ){
+        return node && node.classList && node.classList.contains( classSingle );
+      } : function ( node, classSingle ){
+        if( !node || typeof( node.className ) !== 'string'  ){
+          return false;
+        }
+        return !! node.className.match(new RegExp('(\\s|^)' + classSingle + '(\\s|$)'));
+      },
+      // 增加一个 class
+      addClass = supports_classList ? function( node, classSingle ){
+        node && node.classList && node.classList.add( classSingle );
+      } : function ( node, cls) {
+        !hasClass(node, cls) && ( node.className += " " + cls );
+      },
+      // 移除一个 class
+      removeClass = supports_classList ? function ( node, classSingle ) {
+        node && node.classList && node.classList.remove( classSingle );  
+      } : function ( node, classSingle ) {
+        if ( hasClass( node, classSingle ) ) {
+          node.className = node.className.replace( new RegExp('(\\s+|^)' + classSingle + '(\\s+|$)'), '' );
+        }
+      };
   //获取样式
   function getStyle(elem, prop) {
     var value;
@@ -375,15 +393,8 @@ define(function (window,document) {
     clone : clone,
     unbind : removeHandler,
     hasClass : hasClass,
-    addClass : function (dom, cls) {
-      if (!this.hasClass(dom, cls)) dom.className += " " + cls;
-    },
-    removeClass : function (dom, cls) {
-      if (hasClass(dom, cls)) {
-        var reg = new RegExp('(\\s+|^)' + cls + '(\\s+|$)');
-        dom.className = dom.className.replace(reg, ' ');
-      }
-    },
+    addClass : addClass,
+    removeClass : removeClass,
     /**
      * 页面加载
      */
