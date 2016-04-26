@@ -299,47 +299,31 @@ define(function (window,document) {
         return typeof(output) == 'number' ? output : count_outerHeight( node );
       } : count_outerHeight;
 
-  /**
-   * 事件绑定
-   * elem:节点
-   * type:事件类型
-   * handler:回调
-   */
-  var bindHandler = (function() {
-    // 标准浏览器
-    if (window.addEventListener) {
-      return function(elem, type, handler) {
-        // 最后一个参数为true:在捕获阶段调用事件处理程序
-        //为false:在冒泡阶段调用事件处理程序
-        elem.addEventListener(type, handler, false);
-      }
-    } else if (window.attachEvent) {
-      // IE浏览器
-      return function(elem, type, handler) {
+  var supportEventListener = !!window.addEventListener,
+    /**
+     * 事件绑定
+     * elem:节点
+     * type:事件类型
+     * handler:回调
+     */
+    bindHandler = supportEventListener ? function(elem, type, handler) {
+      // 最后一个参数为true:在捕获阶段调用事件处理程序
+      //为false:在冒泡阶段调用事件处理程序
+      elem.addEventListener(type, handler, false);
+    } : function(elem, type, handler) {
         elem.attachEvent("on" + type, handler);
-      }
-    }
-  })();
-
-  /**
-   * 事件解除
-   * elem:节点
-   * type:事件类型
-   * handler:回调
-   */
-  var removeHandler = (function() {
-    // 标准浏览器
-    if (window.removeEventListener) {
-      return function(elem, type, handler) {
-        elem.removeEventListener(type, handler, false);
-      }
-    } else if (window.detachEvent) {
-      // IE浏览器
-      return function(elem, type, handler) {
-        elem.detachEvent("on" + type, handler);
-      }
-    }
-  })();
+    },
+    /**
+     * 事件解除
+     * elem:节点
+     * type:事件类型
+     * handler:回调
+     */
+    removeHandler = supportEventListener ? function(elem, type, handler) {
+      elem.removeEventListener(type, handler, false);
+    } : function(elem, type, handler) {
+      elem.detachEvent("on" + type, handler);
+    };
 
   function checkEventForClass(event,classStr,dom){
     var target = event.srcElement || event.target;
