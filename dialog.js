@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2016-9-5 17:31
+ * @modified 2016-9-5 18:50
  * 
  **/
 
@@ -48,7 +48,7 @@
       cover_tpl = '<div class="UI_cover"><div class="UI_cnt"></div><a href="javascript:;" class="UI_close UI_coverClose">×</a></div>',
       plane_tpl = '<div class="UI_plane"></div>',
       select_tpl = '<div class="UI_select"><div class="UI_select_body UI_cnt"><% if(title){ %><div class="UI_selectCpt"><h3><%=title %></h3><% if(intro){ %><p><%=intro %></p><% } %></div><% } %><div class="UI_selectCnt"><% for(var i=0,total=list.length;i<total;i++){ %><a class="UI_select_btn" href="javascript:;"><%=list[i] %></a><% } %></div></div><div class="UI_selectCancel"><a class="UI_select_btn" href="javascript:;">取消</a></div></div>',
-      popCSS = '.UI_lawyer{position:absolute;top:0;left:0;z-index:4999;width:100%;height:0;overflow:visible;font-family:"Microsoft Yahei"}.UI_lawyer a,.UI_lawyer a:hover,.UI_lawyer a:active{outline:none;text-decoration:none;-webkit-tap-highlight-color:rgba(0,0,0,0);-webkit-tap-highlight-color:transparent}.UI_mask{position:absolute;top:0;left:0;width:100%;height:100%;background:#000;opacity:0.6;filter:alpha(opacity=60);display:none}.UI-blur{transform:translate3d(0,0,0);-webkit-filter:blur(3px)}.UI_pop{width:200px;position:absolute;top:400px;left:300px;background:#fff;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_pop_cpt{position:relative;height:36px;line-height:36px;overflow:hidden;border-bottom:1px solid #ebebeb;color:#777;font-size:16px;text-indent:15px;cursor:default}.UI_pop .UI_cnt{position:relative;min-height:100px;overflow:auto}.UI_pop_close{display:block;position:absolute;top:0;right:0;width:40px;height:36px;text-align:center;color:#ddd;font:bold 20px/36px "simsun";transition:0.1s}.UI_pop_close:hover{color:#888}.UI_pop_close:active{color:#222}.UI_confirm{width:300px;position:absolute;background:#fff;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_confirm_text{padding:30px 10px 20px;line-height:26px;text-align:center;font-size:20px;color:#333}.UI_ask{width:300px;position:absolute;background:#fff;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_ask_text{padding:25px 10px 15px;line-height:26px;text-align:center;font-size:18px;color:#333}.UI_ask input{display:block;margin:0 auto 15px;height:30px;padding:4px 4px;line-height:22px;box-sizing:border-box;width:90%}.UI_pop_confirm{overflow:hidden;text-align:center;border-top:1px solid #ddd;white-space:nowrap}.UI_pop_confirm a{display:inline-block;width:50%;font-size:14px;line-height:36px;color:#03f;transition:0.15s}.UI_pop_confirm a:hover{background:#eee}.UI_pop_confirm_ok{border-right:1px solid #ddd}.UI_prompt{position:absolute;width:240px;background:#fff;box-shadow:2px 2px 10px rgba(0,0,0,0.5)}.UI_prompt .UI_cnt{padding:30px 10px;font-size:18px;color:#333;text-align:center}.UI_plane{position:absolute}.UI_cover{position:absolute;left:0;width:100%;height:100%}.UI_cover .UI_cnt{position:relative;width:100%;height:100%;background:#fff;overflow:auto}.UI_coverClose{display:block;position:absolute;top:10px;right:20px;width:30px;height:30px;text-align:center;color:#aaa;font:18px/30px "simsun";background:#eee;border-radius:15px;border:1px solid #aaa}.UI_coverClose:hover{background:#333;color:#fff;transition:0.2s}.UI_select{position:absolute;width:200px;box-shadow:2px 2px 2px rgba(0,0,0,0.6)}.UI_select a{display:block;height:40px;line-height:40px;text-align:center;color:#03f;font-size:16px}.UI_select_body{overflow:hidden;background:#fff}.UI_selectCpt{padding:8px 0}.UI_selectCpt h3,.UI_selectCpt p{margin:0;font-size:15px;line-height:18px;text-align:center;color:#aaa;font-weight:normal}.UI_selectCpt p{font-size:12px}.UI_selectCnt a{height:34px;line-height:34px;font-size:14px;border-top:1px solid #ddd}.UI_selectCnt a:hover{background:#eee}.UI_selectCancel{display:none}@media(max-width:640px){.UI_select{position:fixed;bottom:0;width:100%;padding-bottom:10px}.UI_select_body, .UI_selectCancel{margin:0 10px;border-radius:8px}.UI_select_body{margin:0 10px 10px}.UI_selectCancel{display:block;background:#fff}}.UI_ie678 .UI_pop,.UI_ie678 .UI_confirm,.UI_ie678 .UI_ask,.UI_ie678 .UI_prompt,.UI_ie678 .UI_select{outline:3px solid #ccc}';
+      popCSS = '.UI_lawyer{position:absolute;top:0;left:0;z-index:4999;width:100%;height:0;overflow:visible;font-family:"Microsoft Yahei"}.UI_lawyer a,.UI_lawyer a:hover,.UI_lawyer a:active{outline:none;text-decoration:none;-webkit-tap-highlight-color:rgba(0,0,0,0);-webkit-tap-highlight-color:transparent}.UI_mask{position:absolute;top:0;left:0;width:100%;height:100%;background:#000;opacity:0.6;filter:alpha(opacity=60);display:none}.UI-blur{transform:translate3d(0,0,0);-webkit-filter:blur(3px)}.UI-noscroll{overflow:hidden}.UI_pop{width:200px;position:absolute;top:400px;left:300px;background:#fff;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_pop_cpt{position:relative;height:36px;line-height:36px;overflow:hidden;border-bottom:1px solid #ebebeb;color:#777;font-size:16px;text-indent:15px;cursor:default}.UI_pop .UI_cnt{position:relative;min-height:100px;overflow:auto}.UI_pop_close{display:block;position:absolute;top:0;right:0;width:40px;height:36px;text-align:center;color:#ddd;font:bold 20px/36px "simsun";transition:0.1s}.UI_pop_close:hover{color:#888}.UI_pop_close:active{color:#222}.UI_confirm{width:300px;position:absolute;background:#fff;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_confirm_text{padding:30px 10px 20px;line-height:26px;text-align:center;font-size:20px;color:#333}.UI_ask{width:300px;position:absolute;background:#fff;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_ask_text{padding:25px 10px 15px;line-height:26px;text-align:center;font-size:18px;color:#333}.UI_ask input{display:block;margin:0 auto 15px;height:30px;padding:4px 4px;line-height:22px;box-sizing:border-box;width:90%}.UI_pop_confirm{overflow:hidden;text-align:center;border-top:1px solid #ddd;white-space:nowrap}.UI_pop_confirm a{display:inline-block;width:50%;font-size:14px;line-height:36px;color:#03f;transition:0.15s}.UI_pop_confirm a:hover{background:#eee}.UI_pop_confirm_ok{border-right:1px solid #ddd}.UI_prompt{position:absolute;width:240px;background:#fff;box-shadow:2px 2px 10px rgba(0,0,0,0.5)}.UI_prompt .UI_cnt{padding:30px 10px;font-size:18px;color:#333;text-align:center}.UI_plane{position:absolute}.UI_cover{position:absolute;left:0;width:100%;height:100%}.UI_cover .UI_cnt{position:relative;width:100%;height:100%;background:#fff;overflow:auto}.UI_coverClose{display:block;position:absolute;top:10px;right:20px;width:30px;height:30px;text-align:center;color:#aaa;font:18px/30px "simsun";background:#eee;border-radius:15px;border:1px solid #aaa}.UI_coverClose:hover{background:#333;color:#fff;transition:0.2s}.UI_select{position:absolute;width:200px;box-shadow:2px 2px 2px rgba(0,0,0,0.6)}.UI_select a{display:block;height:40px;line-height:40px;text-align:center;color:#03f;font-size:16px}.UI_select_body{overflow:hidden;background:#fff}.UI_selectCpt{padding:8px 0}.UI_selectCpt h3,.UI_selectCpt p{margin:0;font-size:15px;line-height:18px;text-align:center;color:#aaa;font-weight:normal}.UI_selectCpt p{font-size:12px}.UI_selectCnt a{height:34px;line-height:34px;font-size:14px;border-top:1px solid #ddd}.UI_selectCnt a:hover{background:#eee}.UI_selectCancel{display:none}@media(max-width:640px){.UI_select{position:fixed;bottom:0;width:100%;padding-bottom:10px}.UI_select_body, .UI_selectCancel{margin:0 10px;border-radius:8px}.UI_select_body{margin:0 10px 10px}.UI_selectCancel{display:block;background:#fff}}.UI_ie678 .UI_pop,.UI_ie678 .UI_confirm,.UI_ie678 .UI_ask,.UI_ie678 .UI_prompt,.UI_ie678 .UI_select{outline:3px solid #ccc}/** * CSS3动画 * **/@-webkit-keyframes UI-fadeInDown{0%{opacity:0;-webkit-transform:translateY(-10px)}100%{opacity:1;-webkit-transform:translateY(0)}}@keyframes UI-fadeInDown{0%{opacity:0;transform:translateY(-10px)}100%{opacity:1;transform:translateX(0)}}@-webkit-keyframes UI-fadeOutUp{0%{opacity:1;-webkit-transform:translateY(0)}100%{opacity:0;-webkit-transform:translateY(-10px)}}@keyframes UI-fadeOutUp{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-10px)}}.UI-fadeInDown{-webkit-animation:UI-fadeInDown 0.2s ease both;animation:UI-fadeInDown 0.2s ease both}.UI-fadeOutUp{-webkit-animation:UI-fadeOutUp 0.2s ease both;animation:UI-fadeOutUp 0.2s ease both}';
 
   var isIE67,
     isIE678;
@@ -81,7 +81,7 @@
       bottom : 0,
       right : 0
     },
-    defaultAnimationClass: [],
+    defaultAnimationClass: [ 'UI-fadeInDown', 'UI-fadeOutUp' ],
     zIndex : 499
   };
   var docDom;
@@ -424,41 +424,36 @@
   /**
    * 处理对象关闭及结束动画
    */
-  function closeAnimation(time_define,fn){
-    return function(time){
-      var me = this;
+  function closeAnimation(){
+    var me = this,
+        DOM = me.dom,
+        animationClass = private_CONFIG.defaultAnimationClass[1];
 
-      //检测自己是否已阵亡
-      if(me.dead){
-        return;
-      }
-      //把自己标记为已阵亡
-      me.dead = true;
+    //检测自己是否已阵亡
+    if(me.dead){
+      return;
+    }
+    //把自己标记为已阵亡
+    me.dead = true;
 
-      //从全局记录的对象内删除自己；
-      remove_active_obj(me);
+    //从全局记录的对象内删除自己；
+    remove_active_obj(me);
 
-      function end(){
-        // 关闭蒙层（内部判断是否关闭）
-        closeMask.call(me);
-        //删除dom
-        utils.removeNode(DOM);
-      }
+    function end(){
+      // 关闭蒙层（内部判断是否关闭）
+      closeMask.call(me);
+      //删除dom
+      utils.removeNode(DOM);
+    }
 
-      //执行生成此function的方法提供的回调
-      fn && fn.call(me);
-      var DOM = me.dom,
-          animationClass = private_CONFIG.defaultAnimationClass[1];
-
-      //ie系列或未配置动画class，立即结束
-      if( isIE678 || !animationClass ){
+    //ie系列或未配置动画class，立即结束
+    if( isIE678 || !animationClass ){
+      end();
+    }else{
+      utils.addClass( DOM, animationClass );
+      setTimeout(function(){
         end();
-      }else{
-        utils.addClass( DOM, animationClass );
-        setTimeout(function(){
-          end();
-        },200);
-      }
+      },200);
     }
   }
 
@@ -531,7 +526,7 @@
     openAnimation.call( me, animationClass );
   }
   POP.prototype = new BaseClass({
-    destroy: closeAnimation(80)
+    destroy: closeAnimation
   });
 
   /**
@@ -563,7 +558,7 @@
     openAnimation.call( me, animationClass );
   }
   CONFIRM.prototype = new BaseClass({
-    destroy: closeAnimation(80)
+    destroy: closeAnimation
   });
 
 
@@ -613,7 +608,7 @@
     me.inputDom.focus();
   }
   ASK.prototype = new BaseClass({
-    destroy: closeAnimation(80)
+    destroy: closeAnimation
   });
   ASK.prototype.setValue = function(text){
       this.inputDom.value = text.toString();
@@ -642,7 +637,7 @@
     openAnimation.call( me, animationClass );
   }
   PROMPT.prototype = new BaseClass({
-    destroy: closeAnimation(80)
+    destroy: closeAnimation
   });
   PROMPT.prototype.tips = function(txt,time){
     var me = this;
@@ -683,7 +678,7 @@
     openAnimation.call( me, animationClass );
   }
   PLANE.prototype = new BaseClass({
-    destroy: closeAnimation(80)
+    destroy: closeAnimation
   });
   /***
    * 全屏弹框
@@ -709,33 +704,28 @@
 
 
     //记录body的scrollY设置
-    me._bodyOverflowY = getCSS(private_body,'overflowY');
 
-      setCSS(me.dom,{
-        height: private_winH,
-        top: private_scrollTop
-      });
+    setCSS(me.dom,{
+      height: private_winH,
+      top: private_scrollTop
+    });
     private_allCnt.appendChild(me.dom);
 
     //处理是否易于关闭
     easyCloseHandle.call(me,param.easyClose,true);
     openAnimation.call( me, animationClass );
-    setCSS(private_body,{
-      overflowY : 'hidden'
-    });
+    utils.addClass( private_body, 'UI-noscroll' );
     //insert html
     me.cntDom.innerHTML = param.html || '';
+
+    me.on('destroy',function(){
+      utils.addClass( me.cntDom, 'UI-noscroll' );
+      utils.removeClass( private_body, 'UI-noscroll' );
+    });
   }
   //使用close方法
   COVER.prototype = new BaseClass({
-    destroy: closeAnimation(200,function(){
-      setCSS(this.cntDom,{
-        overflowY : 'hidden'
-      });
-      setCSS(private_body,{
-        overflowY : this._bodyOverflowY
-      });
-    })
+    destroy: closeAnimation
   });
   /**
    * 选择功能
@@ -795,7 +785,7 @@
     openAnimation.call( me, animationClass );
   }
   SELECT.prototype = new BaseClass({
-    destroy: closeAnimation(100)
+    destroy: closeAnimation
   });
   /**
    *  抛出对外接口
@@ -808,6 +798,10 @@
         if(name && typeof(private_CONFIG.gap[name]) == 'number' && isNum(value)){
             private_CONFIG.gap[name] = parseInt(value);
         }
+      },
+      setDefaultAnimationClass: function( startClassStr, endClassStr ){
+        private_CONFIG.defaultAnimationClass[0] = startClassStr;
+        endClassStr && (private_CONFIG.defaultAnimationClass[1] = endClassStr);
       },
       zIndex : function(num){
         var num = parseInt(num);

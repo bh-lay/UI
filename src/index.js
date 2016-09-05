@@ -81,7 +81,7 @@
       bottom : 0,
       right : 0
     },
-    defaultAnimationClass: [],
+    defaultAnimationClass: [ 'UI-fadeInDown', 'UI-fadeOutUp' ],
     zIndex : 499
   };
   var docDom;
@@ -424,41 +424,36 @@
   /**
    * 处理对象关闭及结束动画
    */
-  function closeAnimation(time_define,fn){
-    return function(time){
-      var me = this;
+  function closeAnimation(){
+    var me = this,
+        DOM = me.dom,
+        animationClass = private_CONFIG.defaultAnimationClass[1];
 
-      //检测自己是否已阵亡
-      if(me.dead){
-        return;
-      }
-      //把自己标记为已阵亡
-      me.dead = true;
+    //检测自己是否已阵亡
+    if(me.dead){
+      return;
+    }
+    //把自己标记为已阵亡
+    me.dead = true;
 
-      //从全局记录的对象内删除自己；
-      remove_active_obj(me);
+    //从全局记录的对象内删除自己；
+    remove_active_obj(me);
 
-      function end(){
-        // 关闭蒙层（内部判断是否关闭）
-        closeMask.call(me);
-        //删除dom
-        utils.removeNode(DOM);
-      }
+    function end(){
+      // 关闭蒙层（内部判断是否关闭）
+      closeMask.call(me);
+      //删除dom
+      utils.removeNode(DOM);
+    }
 
-      //执行生成此function的方法提供的回调
-      fn && fn.call(me);
-      var DOM = me.dom,
-          animationClass = private_CONFIG.defaultAnimationClass[1];
-
-      //ie系列或未配置动画class，立即结束
-      if( isIE678 || !animationClass ){
+    //ie系列或未配置动画class，立即结束
+    if( isIE678 || !animationClass ){
+      end();
+    }else{
+      utils.addClass( DOM, animationClass );
+      setTimeout(function(){
         end();
-      }else{
-        utils.addClass( DOM, animationClass );
-        setTimeout(function(){
-          end();
-        },200);
-      }
+      },200);
     }
   }
 
@@ -531,7 +526,7 @@
     openAnimation.call( me, animationClass );
   }
   POP.prototype = new BaseClass({
-    destroy: closeAnimation(80)
+    destroy: closeAnimation
   });
 
   /**
@@ -563,7 +558,7 @@
     openAnimation.call( me, animationClass );
   }
   CONFIRM.prototype = new BaseClass({
-    destroy: closeAnimation(80)
+    destroy: closeAnimation
   });
 
 
@@ -613,7 +608,7 @@
     me.inputDom.focus();
   }
   ASK.prototype = new BaseClass({
-    destroy: closeAnimation(80)
+    destroy: closeAnimation
   });
   ASK.prototype.setValue = function(text){
       this.inputDom.value = text.toString();
@@ -642,7 +637,7 @@
     openAnimation.call( me, animationClass );
   }
   PROMPT.prototype = new BaseClass({
-    destroy: closeAnimation(80)
+    destroy: closeAnimation
   });
   PROMPT.prototype.tips = function(txt,time){
     var me = this;
@@ -683,7 +678,7 @@
     openAnimation.call( me, animationClass );
   }
   PLANE.prototype = new BaseClass({
-    destroy: closeAnimation(80)
+    destroy: closeAnimation
   });
   /***
    * 全屏弹框
@@ -709,33 +704,28 @@
 
 
     //记录body的scrollY设置
-    me._bodyOverflowY = getCSS(private_body,'overflowY');
 
-      setCSS(me.dom,{
-        height: private_winH,
-        top: private_scrollTop
-      });
+    setCSS(me.dom,{
+      height: private_winH,
+      top: private_scrollTop
+    });
     private_allCnt.appendChild(me.dom);
 
     //处理是否易于关闭
     easyCloseHandle.call(me,param.easyClose,true);
     openAnimation.call( me, animationClass );
-    setCSS(private_body,{
-      overflowY : 'hidden'
-    });
+    utils.addClass( private_body, 'UI-noscroll' );
     //insert html
     me.cntDom.innerHTML = param.html || '';
+
+    me.on('destroy',function(){
+      utils.addClass( me.cntDom, 'UI-noscroll' );
+      utils.removeClass( private_body, 'UI-noscroll' );
+    });
   }
   //使用close方法
   COVER.prototype = new BaseClass({
-    destroy: closeAnimation(200,function(){
-      setCSS(this.cntDom,{
-        overflowY : 'hidden'
-      });
-      setCSS(private_body,{
-        overflowY : this._bodyOverflowY
-      });
-    })
+    destroy: closeAnimation
   });
   /**
    * 选择功能
@@ -795,7 +785,7 @@
     openAnimation.call( me, animationClass );
   }
   SELECT.prototype = new BaseClass({
-    destroy: closeAnimation(100)
+    destroy: closeAnimation
   });
   /**
    *  抛出对外接口
@@ -808,6 +798,10 @@
         if(name && typeof(private_CONFIG.gap[name]) == 'number' && isNum(value)){
             private_CONFIG.gap[name] = parseInt(value);
         }
+      },
+      setDefaultAnimationClass: function( startClassStr, endClassStr ){
+        private_CONFIG.defaultAnimationClass[0] = startClassStr;
+        endClassStr && (private_CONFIG.defaultAnimationClass[1] = endClassStr);
       },
       zIndex : function(num){
         var num = parseInt(num);

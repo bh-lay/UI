@@ -33,6 +33,9 @@
   transform: translate3d(0,0,0);
   -webkit-filter : blur(3px)
 }
+.UI-noscroll{
+  overflow: hidden;
+}
 /**弹框**/
 .UI_pop {
   width : 200px;
@@ -253,4 +256,60 @@ position: absolute;
 .UI_ie678 .UI_prompt,
 .UI_ie678 .UI_select{
   outline:3px solid #ccc;
+}
+
+
+/**
+ * CSS3动画
+ *
+ **/
+@-webkit-keyframes UI-fadeInDown{
+  0%{
+    opacity:0;
+    -webkit-transform:translateY(-10px)
+  }
+  100%{
+    opacity:1;
+    -webkit-transform:translateY(0)
+  }
+}
+@keyframes UI-fadeInDown{
+  0%{
+    opacity:0;
+    transform:translateY(-10px)
+  }
+  100%{
+    opacity:1;
+    transform:translateX(0)
+  }
+}
+@-webkit-keyframes UI-fadeOutUp{
+  0%{
+    opacity:1;
+    -webkit-transform:translateY(0)
+  }
+  100%{
+    opacity:0;
+    -webkit-transform:translateY(-10px)
+  }
+}
+
+@keyframes UI-fadeOutUp{
+  0%{
+    opacity:1;
+    transform:translateY(0)
+  }
+  100%{
+    opacity:0;
+    transform:translateY(-10px)
+  }
+}
+
+.UI-fadeInDown{
+  -webkit-animation:UI-fadeInDown 0.2s ease both;
+  animation:UI-fadeInDown 0.2s ease both;
+}
+.UI-fadeOutUp{
+  -webkit-animation:UI-fadeOutUp 0.2s ease both;
+  animation:UI-fadeOutUp 0.2s ease both;
 }
