@@ -3,15 +3,15 @@ var fs = require('fs');
 function getStyleSheet(src){
 	var cssStr = fs.readFileSync(src,'UTF-8')
 	
-	//¹ýÂË×¢ÊÍ
+	//è¿‡æ»¤æ³¨é‡Š
 	var txt = cssStr.replace(/\/\*.*?\*\//g,'');
-	//¹ýÂË»»ÐÐ
+	//è¿‡æ»¤æ¢è¡Œ
 	var txt = txt.replace(/\r|\n/g,'');
-	//¹ýÂËÁ¬Ðø¿Õ¸ñ
+	//è¿‡æ»¤è¿žç»­ç©ºæ ¼
 	txt = txt.replace(/\s+/g,' ');
-	//¹ýÂË²»±ØÒªµÄ¿Õ¸ñ
+	//è¿‡æ»¤ä¸å¿…è¦çš„ç©ºæ ¼
 	txt = txt.replace(/\s*({|}|;|:)\s*/g,'$1');
-	//È¥³ý×îºóÒ»¸ö·ÖºÅ
+	//åŽ»é™¤æœ€åŽä¸€ä¸ªåˆ†å·
 	txt = txt.replace(/;}/g,'}');
 	
 	return txt;
@@ -26,11 +26,11 @@ function getJS(src){
 
 function getTemplate(src){
 	var tmp = fs.readFileSync(src,'UTF-8')
-	//¹ýÂË»»ÐÐ
+	//è¿‡æ»¤æ¢è¡Œ
 	var tmp = tmp.replace(/\r|\n/g,'');
-	//¹ýÂËÁ¬Ðø¿Õ¸ñ
+	//è¿‡æ»¤è¿žç»­ç©ºæ ¼
 	tmp = tmp.replace(/\s+/g,' ');
-	//¹ýÂË±êÇ©¼äµÄ¿Õ¸ñ
+	//è¿‡æ»¤æ ‡ç­¾é—´çš„ç©ºæ ¼
 	tmp = tmp.replace(/\>\s+\</g,'><');
 	tmp = "'" + tmp + "'";
 	return tmp;
@@ -41,17 +41,17 @@ function getTemplate(src){
 function checkMainFiles(src){
 	var str = fs.readFileSync(src,'UTF-8');
 	str = str.replace(/requires\(((?:\,|\s|\w|\.|\/|\'|\")+)\)/g,function(a,b){
-		//¹ýÂËÎÞÒâÒåµÄ¿Õ¸ñ
+		//è¿‡æ»¤æ— æ„ä¹‰çš„ç©ºæ ¼
 		b = b.replace(/\s*\,\s*/g,',');
-		//¹ýÂËÒýºÅ
+		//è¿‡æ»¤å¼•å·
 		b = b.replace(/\'|\"/g,'');
 		
-		//»ñÈ¡²ÎÊý
+		//èŽ·å–å‚æ•°
 		var args = b.split(/\,/g);
 		
 		console.log('find require',args);
 		
-		//ÅÐ¶Ï×ÊÔ´ÀàÐÍ
+		//åˆ¤æ–­èµ„æºç±»åž‹
 		if(args[0].match(/\.css$/)){
 			console.log('loading and min css\n');
 			return "'" + getStyleSheet(args[0]) + "'";
@@ -84,11 +84,9 @@ function mainFn(type,file){
 	}
 	console.log('\n\n' + file + ' changed' + new Date());
 	var newContent = checkMainFiles('index.js');
-	write('dialog.js',newContent);
+	write('../dialog.js',newContent);
 	console.log('successful!\n');
 }
 	
 fs.watch('./',mainFn);
 fs.watch('./template/',mainFn);
-
-

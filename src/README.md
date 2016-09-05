@@ -20,13 +20,5 @@ UI样式表
 ##index.js
 源码主文件，包括各个UI组件的定义
 
-##dialog.js
-生成后的主文件，包括完整功能。
-
 ##tween.js
 运动曲线
-
-
-------
-##dialog_support_color_animation
-保留曾经对颜色过度提供支持的版本
