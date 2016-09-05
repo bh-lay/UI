@@ -359,7 +359,7 @@
 		function showMessage(elem){
 			if(active_prompt){
 				elem.innerHTML = '一直显示（别点）';
-				active_prompt.close();
+				active_prompt.destroy();
 				active_prompt = null;
 			}else{
 				elem.innerHTML = '想关掉它，点我啊';

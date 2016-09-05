@@ -2,17 +2,17 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2016-9-5 11:39
+ * @modified 2016-9-5 15:19
  * 
  **/
 
-(function(global,doc,UI_factory,utils_factory){
+(function( global, doc, UI_factory, BaseClass_factory, utils_factory){
 
-  //初始化工具类
-  var utils = utils_factory(global,doc);
-
-  //初始化UI模块
-  var UI = UI_factory(global,doc,utils);
+      //初始化工具类
+  var utils = utils_factory(global,doc),
+      BaseClass = BaseClass_factory( utils ),
+      //初始化UI模块
+      UI = UI_factory( global, doc, utils, BaseClass );
 
   //提供window.UI的接口
   global.UI = global.UI || UI;
@@ -22,7 +22,7 @@
   global.define && define(function(){
     return UI;
   });
-})(window,document,function(window,document,utils){
+})(window,document,function( window, document, utils, BaseClass ){
   /**
    * 缓存utils下常用工具
    *   为压缩变量名做准备
@@ -114,7 +114,8 @@
   function close_last_easyClose_obj(){
     for(var i= active_objs.length-1;i>=0;i--){
       if(active_objs[i]['_easyClose']){
-        active_objs[i].close();
+        active_objs[i].close && active_objs[i].close();
+        active_objs[i].destroy && active_objs[i].destroy();
         break;
       }
     }
@@ -140,7 +141,7 @@
     clearTimeout(adapt_delay);
     adapt_delay = setTimeout(function(){
       utils.each(active_objs,function(index,item){
-        item.adapt && item.adapt();
+        item.adaption && item.adaption();
       });
     },150);
   }
@@ -256,27 +257,24 @@
       left : Math.ceil(left)
     }
   }
-  //设置dom自适应于页面
-  function adaption(dom,param,time){
+  //自适应于页面的原型方法
+  BaseClass.prototype.adaption = function( param ){
     var param = param ||{},
-        width = outerWidth(dom),
-        height = outerHeight(dom),
+        dom = this.dom,
+        width = outerWidth( dom ),
+        height = outerHeight( dom ),
         top = (private_winH - height)/2 + private_scrollTop,
         left = (private_docW - width)/2,
-        newPosition = fix_position(top,left,width,height);
+        newPosition = fix_position( top, left, width, height );
 
-    var method = isNum(time) ? animation : setCSS;
-    method(dom,{
+    animation(dom,{
       top : isNum(param.top) ? param.top : Math.ceil(newPosition.top),
       left : isNum(param.left) ? param.left : Math.ceil(newPosition.left)
-    },time);
-  }
-  //自适应于页面的原型方法
-  function ADAPT(){
-    adaption(this.dom,null,80);
-  }
+    }, 80 );
+  };
+
   //增加确认方法
-  function add_confirm(dom,param,close){
+  function add_confirm(dom,param,destroy){
     var callback = null;
     var cancel = null;
     var btns = ['\u786E\u8BA4','\u53D6\u6D88'];
@@ -302,11 +300,11 @@
     //绑定事件，根据执行结果判断是否要关闭弹框
     bindEvent(dom,'click','.UI_pop_confirm_ok',function(){
       //点击确认按钮
-      callback ? ((callback() != false) && close()) : close();
+      callback ? ((callback() != false) && destroy()) : destroy();
     });
     bindEvent(dom,'click','.UI_pop_confirm_cancel',function(){
       //点击取消按钮
-      cancel ? ((cancel() != false) && close()) : close();
+      cancel ? ((cancel() != false) && destroy()) : destroy();
     });
   }
 
@@ -558,7 +556,7 @@
     //当有确认参数时
     if(param.confirm){
       add_confirm(me.dom,param.confirm,function(){
-        me.close();
+        me.destroy();
       });
     }
     //处理title参数
@@ -585,7 +583,7 @@
     }
 
     bindEvent(me.dom,'click','.UI_pop_close',function(){
-      me.close();
+      me.destroy();
     });
 
     //插入内容
@@ -598,7 +596,7 @@
     private_allCnt.appendChild(me.dom);
 
     //校正位置
-    adaption(me.dom,param);
+    this.adaption( param );
 
     //处理是否易于关闭
     easyCloseHandle.call(me,param.easyClose,true);
@@ -608,9 +606,9 @@
       param.init && param.init.call(me,me.cntDom);
     });
   }
-  //使用close方法
-  POP.prototype.close = closeAnimation(80);
-  POP.prototype.adapt = ADAPT;
+  POP.prototype = new BaseClass({
+    destroy: closeAnimation(80)
+  });
 
   /**
    * CONFIRM 
@@ -631,11 +629,11 @@
     me._from = param.from || 'top';
 
     add_confirm(me.dom,param,function(){
-        me.close();
+        me.destroy();
     });
     private_allCnt.appendChild(me.dom);
 
-    adaption(me.dom);
+    this.adaption( param );
 
     //处理是否易于关闭
     easyCloseHandle.call(me,param.easyClose,true);
@@ -643,8 +641,9 @@
       param.init && param.init.call(me,me.dom);
     });
   }
-  CONFIRM.prototype.close = closeAnimation(80);
-  CONFIRM.prototype.adapt = ADAPT;
+  CONFIRM.prototype = new BaseClass({
+    destroy: closeAnimation(80)
+  });
 
 
   /**
@@ -677,16 +676,16 @@
     //确定
     bindEvent(me.dom,'click','.UI_pop_confirm_ok',function(){
       //根据执行结果判断是否要关闭弹框
-      callback ? ((callback(me.inputDom.value) != false) && me.close()) : me.close();
+      callback ? ((callback(me.inputDom.value) != false) && me.destroy()) : me.destroy();
     });
     //取消
     bindEvent(me.dom,'click','.UI_pop_confirm_cancel',function(){
-      me.close();
+      me.destroy();
     });
 
     private_allCnt.appendChild(me.dom);
 
-    adaption(me.dom);
+    this.adaption( param );
 
     //处理是否易于关闭
     easyCloseHandle.call(me,param.easyClose,true);
@@ -695,11 +694,12 @@
       param.init && param.init.call(me,me.dom);
     });
   }
-  ASK.prototype.close = closeAnimation(80);
+  ASK.prototype = new BaseClass({
+    destroy: closeAnimation(80)
+  });
   ASK.prototype.setValue = function(text){
       this.inputDom.value = text.toString();
   };
-  ASK.prototype.adapt = ADAPT;
 
 
   /**
@@ -719,13 +719,15 @@
 
     // create pop
     private_allCnt.appendChild(me.dom);
-    adaption(me.dom);
+    this.adaption( param );
 
     openAnimation.call(me,function(){
       param.init && param.init.call(me,me.dom);
     });
   }
-  PROMPT.prototype.close = closeAnimation(60);
+  PROMPT.prototype = new BaseClass({
+    destroy: closeAnimation(80)
+  });
   PROMPT.prototype.tips = function(txt,time){
     var me = this;
     if(txt){
@@ -733,11 +735,10 @@
     }
     if(time != 0){
       setTimeout(function(){
-        me.close();
+        me.destroy();
       },(time || 1500));
     }
   };
-  PROMPT.prototype.adapt = ADAPT;
   /**
    *	PLANE 
    */
@@ -768,9 +769,9 @@
       param.init && param.init.call(me,me.dom);
     });
   }
-  PLANE.prototype.close = closeAnimation(80);
-  PLANE.prototype.adapt = ADAPT;
-
+  PLANE.prototype = new BaseClass({
+    destroy: closeAnimation(80)
+  });
   /***
    * 全屏弹框
    * COVER 
@@ -791,7 +792,7 @@
 
     //关闭事件
     bindEvent(me.dom,'click','.UI_close',function(){
-      me.close();
+      me.destroy();
     });
 
 
@@ -816,15 +817,16 @@
     me.cntDom.innerHTML = param.html || '';
   }
   //使用close方法
-  COVER.prototype.close = closeAnimation(200,function(){
-    setCSS(this.cntDom,{
-      overflowY : 'hidden'
-    });
-    setCSS(private_body,{
-      overflowY : this._bodyOverflowY
-    });
+  COVER.prototype = new BaseClass({
+    destroy: closeAnimation(200,function(){
+      setCSS(this.cntDom,{
+        overflowY : 'hidden'
+      });
+      setCSS(private_body,{
+        overflowY : this._bodyOverflowY
+      });
+    })
   });
-  COVER.prototype.adapt = ADAPT;
   /**
    * 选择功能
    */
@@ -858,7 +860,7 @@
     utils.each(btns,function(index,btn){
       bindEvent(btn,'click',function(){
         fns[index] && fns[index]();
-        me.close();
+        me.destroy();
       });
     });
 
@@ -880,14 +882,15 @@
         left : newSize.left,
         top : newSize.top
       });
-			me.adapt = ADAPT;
     }
     easyCloseHandle.call(me,param.easyClose,true);
     openAnimation.call(me,function(){
       param.init && param.init.call(me,me.dom);
     });
   }
-  SELECT.prototype.close = closeAnimation(100);
+  SELECT.prototype = new BaseClass({
+    destroy: closeAnimation(100)
+  });
   /**
    *  抛出对外接口
    */
@@ -917,7 +920,77 @@
     cover : COVER,
     select : SELECT
   };
-},function (window,document) {
+}, function(){
+	function isFunction( input ){
+		return typeof( input ) === 'function'
+	}
+	function isNotEmptyString( input ){
+		return typeof( input ) === 'string' && input.length > 0
+	}
+
+
+	function BaseClass( param ){
+		if( !param || !isFunction( param.destroy ) ){
+	      throw new Error("use BaseClass must define param & param.destroy");
+		}
+		param = param || {};
+		this._events = {};
+		this._isDestroy = false;
+		this._onDestroy = param.destroy;
+	}
+	BaseClass.prototype = {
+		//监听自定义事件
+		on: function( eventName, callback ){
+			if( isNotEmptyString( eventName ) && isFunction( callback ) ){
+				//事件堆无该事件，创建一个事件堆
+				this._events[eventName] = this._events[eventName] || [];
+				// 追加至事件列表
+				this._events[eventName].push( callback );
+			}
+			//提供链式调用的支持
+			return this;
+		},
+		//解除自定义事件监听
+		un: function( eventName, callback ){
+			var eventList = this._events[eventName];
+			//事件堆无该事件队列，或未传入事件名结束运行
+			if( !eventList || !isNotEmptyString( eventName ) ){
+				return
+			}
+			// 若未传入回调参数，则直接置空事件队列
+			if( !isFunction( callback ) ){
+				eventList = [];
+			}else{
+				// 逆序遍历事件队列
+				for( var i = eventList.length-1; i!=-1; i-- ){
+					// 回调相同，移除当前项
+					if( eventList[i] == callback ){
+						eventList.splice(i,1);
+					}
+				}
+			}
+			//提供链式调用的支持
+			return this;
+		},
+		// 主动触发自定义事件
+		emit: function( eventName ){
+			// 获取除了事件名之外的参数
+			var args = Array.prototype.slice.call( arguments, 1, arguments.length );
+			//事件堆无该事件，结束运行
+			if(!this._events[eventName]){
+				return
+			}
+			for(var i=0,total=this._events[eventName].length;i<total;i++){
+				this._events[eventName][i].apply( this, args );
+			}
+		},
+		destroy: function(){
+			this._onDestroy.call( this );
+			this.emit( 'destroy' );
+		}
+	};
+	return BaseClass;
+}, function (window,document) {
   /**
    * 判断对象类型
    * string number array
