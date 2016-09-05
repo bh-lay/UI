@@ -346,7 +346,7 @@
     });
 
     //之前蒙层未显示，显示蒙层
-    if(lastHasMaskZindex == private_config_zIndex ){
+    if(lastHasMaskZindex <= private_config_zIndex ){
       blur && blur();
     }
   }
@@ -363,7 +363,7 @@
       zIndex : lastHasMaskZindex - 1
     });
 
-    if(lastHasMaskZindex == private_config_zIndex){
+    if(lastHasMaskZindex <= private_config_zIndex){
       removeBlur && removeBlur();
       utils.fadeOut(private_maskDom,400);
     }

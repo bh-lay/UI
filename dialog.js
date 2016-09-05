@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2016-9-5 22:24
+ * @modified 2016-9-6 11:2
  * 
  **/
 
@@ -346,7 +346,7 @@
     });
 
     //之前蒙层未显示，显示蒙层
-    if(lastHasMaskZindex == private_config_zIndex ){
+    if(lastHasMaskZindex <= private_config_zIndex ){
       blur && blur();
     }
   }
@@ -363,7 +363,7 @@
       zIndex : lastHasMaskZindex - 1
     });
 
-    if(lastHasMaskZindex == private_config_zIndex){
+    if(lastHasMaskZindex <= private_config_zIndex){
       removeBlur && removeBlur();
       utils.fadeOut(private_maskDom,400);
     }
