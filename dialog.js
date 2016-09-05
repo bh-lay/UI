@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2016-9-5 19:37
+ * @modified 2016-9-5 19:53
  * 
  **/
 
@@ -73,6 +73,7 @@
       private_winH,
       private_docH,
       private_scrollTop,
+      private_config_zIndex = 499,
       private_config_gap = {
         top : 0,
         left : 0,
@@ -82,16 +83,7 @@
       // 默认弹框动画
       private_config_defaultAnimationClass = [ 'UI-fadeIn', 'UI-fadeOut' ];
 
-  var private_CONFIG = {
-    zIndex : 499
-  };
-  var docDom;
-  if (document.compatMode == "BackCompat") {
-    docDom = private_body;
-  }else{
-    //"CSS1Compat"
-    docDom = document.documentElement;
-  }
+  var docDom = document.compatMode == "BackCompat" ? private_body : document.documentElement;
 
 //重新计算浏览器窗口尺寸
   function refreshSize(){
@@ -135,7 +127,7 @@
         }
       }
     }
-    return 0; // 无则返回 0
+    return private_config_zIndex; // 无则返回默认值
   }
   //调整正在显示的对象的位置
   var adapt_delay;
@@ -277,9 +269,10 @@
 
   //增加确认方法
   function add_confirm( dom, param, destroy ){
-    var callback = null;
-    var cancel = null;
-    var btns = ['\u786E\u8BA4','\u53D6\u6D88'];
+    var callback = null,
+        cancel = null,
+        btns = ['\u786E\u8BA4','\u53D6\u6D88'];
+
     if(typeof(param) == "function"){
       callback = param;
     }else if(typeof(param) == "object"){
@@ -297,7 +290,7 @@
       confirm : btns[0],
       cancel : btns[1]
     });
-    dom.appendChild(utils.createDom(this_html)[0]);
+    dom.appendChild( utils.createDom(this_html)[0] );
 
     //绑定事件，根据执行结果判断是否要关闭弹框
     bindEvent(dom,'click','.UI_pop_confirm_ok',function(){
@@ -767,7 +760,7 @@
       zIndex : function(num){
         var num = parseInt(num);
         if(num > 0){
-          private_CONFIG.zIndex = num;
+          private_config_zIndex = num;
           setCSS(private_allCnt,{
             zIndex : num
           });
