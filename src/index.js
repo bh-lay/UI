@@ -72,16 +72,17 @@
       private_docW,
       private_winH,
       private_docH,
-      private_scrollTop;
+      private_scrollTop,
+      private_config_gap = {
+        top : 0,
+        left : 0,
+        bottom : 0,
+        right : 0
+      },
+      // 默认弹框动画
+      private_config_defaultAnimationClass = [ 'UI-fadeIn', 'UI-fadeOut' ];
 
   var private_CONFIG = {
-    gap : {
-      top : 0,
-      left : 0,
-      bottom : 0,
-      right : 0
-    },
-    defaultAnimationClass: [ 'UI-fadeInDown', 'UI-fadeOutUp' ],
     zIndex : 499
   };
   var docDom;
@@ -206,24 +207,21 @@
       utils.addClass(private_allCnt,'UI_ie678');
     }
 
-    var rebuild_fn = null;
-    if(isIE67){
-      rebuild_fn = function(){
+    var rebuild_fn = isIE67 ? function(){
         refreshSize();
         adapt_active_obj();
         setCSS(private_maskDom,{
           marginTop : private_scrollTop
         });
+      } : function(){
+        refreshSize();
+        adapt_active_obj();
       };
-    }else{
+    if( !isIE67 ){
       setCSS(private_maskDom,{
         position : 'fixed',
         top : 0
       });
-      rebuild_fn = function(){
-        refreshSize();
-        adapt_active_obj();
-      }
     }
 
     //监听浏览器缩放、滚屏事件
@@ -233,7 +231,7 @@
 
   //限制位置区域的方法
   function fix_position( top, left, width, height ){
-    var gap = private_CONFIG.gap;
+    var gap = private_config_gap;
     if( top < private_scrollTop + gap.top ){
       //屏幕上方
       top = private_scrollTop  + gap.top;
@@ -259,15 +257,17 @@
     }
   }
   //为基类扩展自适应于页面的原型方法
-  BaseClass.prototype.adaption = function( param, time ){
-    var param = param ||{},
-        dom = this.dom,
+  BaseClass.prototype.adaption = function( param, useAnimation ){
+    param = param || {};
+    // 默认使用动画
+    useAnimation = typeof(useAnimation) == 'boolean' ? useAnimation : true;
+    var dom = this.dom,
         width = outerWidth( dom ),
         height = outerHeight( dom ),
         top = (private_winH - height)/2 + private_scrollTop,
         left = (private_docW - width)/2,
         newPosition = fix_position( top, left, width, height ),
-        useMethod = (isNum(time) && time > 0) ? animation : setCSS;;
+        useMethod =  useAnimation ? animation : setCSS;
 
     useMethod(dom,{
       top : isNum(param.top) ? param.top : Math.ceil(newPosition.top),
@@ -328,6 +328,7 @@
       travelRootElements(function(dom){
         utils.addClass(dom,'UI-blur');
       });
+      utils.fadeIn(private_maskDom,300);
     };
     removeBlur = function (){
       travelRootElements(function(dom){
@@ -351,10 +352,9 @@
       zIndex: lastHasMaskZindex + 1
     });
 
+    //之前蒙层未显示，显示蒙层
     if(lastHasMaskZindex == 0){
-      //之前蒙层未显示，显示蒙层
       blur && blur();
-      utils.fadeIn(private_maskDom,300);
     }
   }
   /**
@@ -372,36 +372,8 @@
 
     if(lastHasMaskZindex == 0){
       removeBlur && removeBlur();
-      utils.fadeOut(private_maskDom,150);
+      utils.fadeOut(private_maskDom,400);
     }
-  }
-
-  /**
-   * 计算动画所需的方向及目标值
-   *   @returns[0] 所需修改的方向(X/Y)
-   *   @returns[1] 计算后的值
-   */
-  function countTranslate(direction,range){
-    var prop,
-        start;
-    switch(direction){
-        case 'left':
-          prop = 'X';
-          start = -range;
-          break
-        case 'right':
-          prop = 'X';
-          start = range;
-          break
-        case 'bottom':
-          prop = 'Y';
-          start = range;
-          break
-        default:
-          prop = 'Y';
-          start = -range;
-    }
-    return [prop,start];
   }
 
   /**
@@ -427,21 +399,14 @@
   function closeAnimation(){
     var me = this,
         DOM = me.dom,
-        animationClass = private_CONFIG.defaultAnimationClass[1];
-
-    //检测自己是否已阵亡
-    if(me.dead){
-      return;
-    }
-    //把自己标记为已阵亡
-    me.dead = true;
+        animationClass = private_config_defaultAnimationClass[1];
 
     //从全局记录的对象内删除自己；
     remove_active_obj(me);
 
+    // 关闭蒙层（内部判断是否关闭）
+    closeMask.call(me);
     function end(){
-      // 关闭蒙层（内部判断是否关闭）
-      closeMask.call(me);
       //删除dom
       utils.removeNode(DOM);
     }
@@ -451,9 +416,7 @@
       end();
     }else{
       utils.addClass( DOM, animationClass );
-      setTimeout(function(){
-        end();
-      },200);
+      setTimeout(end, 500);
     }
   }
 
@@ -467,7 +430,7 @@
     }
     param = param || {};
     var me = this,
-        animationClass = param.animationClass || private_CONFIG.defaultAnimationClass[0] || null;
+        animationClass = param.animationClass || private_config_defaultAnimationClass[0] || null;
 
     me.dom = utils.createDom(pop_tpl)[0];
     me.cntDom = findByClassName(me.dom,'UI_cnt')[0];
@@ -485,9 +448,7 @@
     if(!param.title){
       utils.removeNode(caption_dom);
     }else{
-      var title = param.title || 'need title in parameter!';
-
-      caption_dom.innerHTML = title;
+      caption_dom.innerHTML = param.title;
       //can drag is pop
       utils.drag(caption_dom,me.dom,{
         move : function(mx,my,l_start,t_start,w_start,h_start){
@@ -517,7 +478,7 @@
     private_allCnt.appendChild(me.dom);
 
     //校正位置
-    this.adaption( param, 0 );
+    this.adaption( param, false );
 
     //处理是否易于关闭
     easyCloseHandle.call(me,param.easyClose,true);
@@ -538,7 +499,7 @@
     }
     param = param || {};
     var me = this,
-        animationClass = param.animationClass || private_CONFIG.defaultAnimationClass[0] || null;
+        animationClass = param.animationClass || private_config_defaultAnimationClass[0] || null;
 
     var this_html = utils.render(confirm_tpl,{
       text : param.text || 'need text in parameter!'
@@ -551,7 +512,7 @@
     });
     private_allCnt.appendChild(me.dom);
 
-    this.adaption( param );
+    this.adaption( param, false );
 
     //处理是否易于关闭
     easyCloseHandle.call(me,param.easyClose,true);
@@ -571,7 +532,7 @@
     }
     param = param || {};
     var me = this,
-        animationClass = param.animationClass || private_CONFIG.defaultAnimationClass[0] || null;
+        animationClass = param.animationClass || private_config_defaultAnimationClass[0] || null;
 
     var this_html = utils.render(ask_tpl,{
       text : text || 'need text in parameter!'
@@ -600,7 +561,7 @@
 
     private_allCnt.appendChild(me.dom);
 
-    this.adaption( param );
+    this.adaption( param, false );
 
     //处理是否易于关闭
     easyCloseHandle.call(me,param.easyClose,true);
@@ -625,14 +586,14 @@
     }
     param = param || {};
     var me = this,
-        animationClass = param.animationClass || private_CONFIG.defaultAnimationClass[0] || null;
+        animationClass = param.animationClass || private_config_defaultAnimationClass[0] || null;
     me.dom = utils.createDom(prompt_tpl)[0];
     me._mask = param.mask ? true : false;
     me.tips(text,time);
 
     // create pop
     private_allCnt.appendChild(me.dom);
-    this.adaption( param );
+    this.adaption( param, false );
 
     openAnimation.call( me, animationClass );
   }
@@ -659,7 +620,7 @@
     }
     var param = param || {};
     var me = this,
-        animationClass = param.animationClass || private_CONFIG.defaultAnimationClass[0] || null;
+        animationClass = param.animationClass || private_config_defaultAnimationClass[0] || null;
 
     me.dom = utils.createDom(plane_tpl)[0];
 
@@ -690,7 +651,7 @@
     }
     param = param || {};
     var me = this,
-        animationClass = param.animationClass || private_CONFIG.defaultAnimationClass[0] || null;
+        animationClass = param.animationClass || private_config_defaultAnimationClass[0] || null;
     me.dom = utils.createDom(cover_tpl)[0];
     me._mask = typeof(param.mask) == 'boolean' ? param.mask : false;
 
@@ -739,7 +700,7 @@
         list = list || [],
         fns = [],
         nameList = [],
-        animationClass = param.animationClass || private_CONFIG.defaultAnimationClass[0] || null;
+        animationClass = param.animationClass || private_config_defaultAnimationClass[0] || null;
 
     utils.each(list,function(i,item){
       nameList.push(item[0]);
@@ -795,13 +756,13 @@
     config : {
       gap : function(name,value){
         //name符合top/right/bottom/left,且value值为数字类型（兼容字符类型）
-        if(name && typeof(private_CONFIG.gap[name]) == 'number' && isNum(value)){
-            private_CONFIG.gap[name] = parseInt(value);
+        if(name && typeof(private_config_gap[name]) == 'number' && isNum(value)){
+            private_config_gap[name] = parseInt(value);
         }
       },
       setDefaultAnimationClass: function( startClassStr, endClassStr ){
-        private_CONFIG.defaultAnimationClass[0] = startClassStr;
-        endClassStr && (private_CONFIG.defaultAnimationClass[1] = endClassStr);
+        private_config_defaultAnimationClass[0] = startClassStr;
+        endClassStr && (private_config_defaultAnimationClass[1] = endClassStr);
       },
       zIndex : function(num){
         var num = parseInt(num);

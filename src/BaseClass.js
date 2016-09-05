@@ -13,7 +13,7 @@ define(function(){
 		}
 		param = param || {};
 		this._events = {};
-		this._isDestroy = false;
+		this._isDestroyed = false;
 		this._onDestroy = param.destroy;
 	}
 	BaseClass.prototype = {
@@ -62,7 +62,12 @@ define(function(){
 				this._events[eventName][i].apply( this, args );
 			}
 		},
+		// 保证只有一遍有效执行
 		destroy: function(){
+			if( this._isDestroyed ){
+				return;
+			}
+			this._isDestroyed = true;
 			this._onDestroy.call( this );
 			this.emit( 'destroy' );
 		}

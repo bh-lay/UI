@@ -243,6 +243,7 @@ position: absolute;
   }
   .UI_select_body {
     margin : 0 10px 10px;
+    top: initial !important;
   }
   .UI_selectCancel{
     display: block;
@@ -266,7 +267,7 @@ position: absolute;
 @-webkit-keyframes UI-fadeInDown{
   0%{
     opacity:0;
-    -webkit-transform:translateY(-10px)
+    -webkit-transform:translateY(10px)
   }
   100%{
     opacity:1;
@@ -276,11 +277,11 @@ position: absolute;
 @keyframes UI-fadeInDown{
   0%{
     opacity:0;
-    transform:translateY(-10px)
+    transform:translateY(10px)
   }
   100%{
     opacity:1;
-    transform:translateX(0)
+    transform:translateY(0)
   }
 }
 @-webkit-keyframes UI-fadeOutUp{
@@ -290,7 +291,7 @@ position: absolute;
   }
   100%{
     opacity:0;
-    -webkit-transform:translateY(-10px)
+    -webkit-transform:translateY(10px)
   }
 }
 
@@ -301,15 +302,15 @@ position: absolute;
   }
   100%{
     opacity:0;
-    transform:translateY(-10px)
+    transform:translateY(10px)
   }
 }
 
-.UI-fadeInDown{
+.UI-fadeIn{
   -webkit-animation:UI-fadeInDown 0.2s ease both;
   animation:UI-fadeInDown 0.2s ease both;
 }
-.UI-fadeOutUp{
+.UI-fadeOut{
   -webkit-animation:UI-fadeOutUp 0.2s ease both;
   animation:UI-fadeOutUp 0.2s ease both;
 }

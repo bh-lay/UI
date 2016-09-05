@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2016-9-5 18:50
+ * @modified 2016-9-5 19:37
  * 
  **/
 
@@ -48,7 +48,7 @@
       cover_tpl = '<div class="UI_cover"><div class="UI_cnt"></div><a href="javascript:;" class="UI_close UI_coverClose">×</a></div>',
       plane_tpl = '<div class="UI_plane"></div>',
       select_tpl = '<div class="UI_select"><div class="UI_select_body UI_cnt"><% if(title){ %><div class="UI_selectCpt"><h3><%=title %></h3><% if(intro){ %><p><%=intro %></p><% } %></div><% } %><div class="UI_selectCnt"><% for(var i=0,total=list.length;i<total;i++){ %><a class="UI_select_btn" href="javascript:;"><%=list[i] %></a><% } %></div></div><div class="UI_selectCancel"><a class="UI_select_btn" href="javascript:;">取消</a></div></div>',
-      popCSS = '.UI_lawyer{position:absolute;top:0;left:0;z-index:4999;width:100%;height:0;overflow:visible;font-family:"Microsoft Yahei"}.UI_lawyer a,.UI_lawyer a:hover,.UI_lawyer a:active{outline:none;text-decoration:none;-webkit-tap-highlight-color:rgba(0,0,0,0);-webkit-tap-highlight-color:transparent}.UI_mask{position:absolute;top:0;left:0;width:100%;height:100%;background:#000;opacity:0.6;filter:alpha(opacity=60);display:none}.UI-blur{transform:translate3d(0,0,0);-webkit-filter:blur(3px)}.UI-noscroll{overflow:hidden}.UI_pop{width:200px;position:absolute;top:400px;left:300px;background:#fff;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_pop_cpt{position:relative;height:36px;line-height:36px;overflow:hidden;border-bottom:1px solid #ebebeb;color:#777;font-size:16px;text-indent:15px;cursor:default}.UI_pop .UI_cnt{position:relative;min-height:100px;overflow:auto}.UI_pop_close{display:block;position:absolute;top:0;right:0;width:40px;height:36px;text-align:center;color:#ddd;font:bold 20px/36px "simsun";transition:0.1s}.UI_pop_close:hover{color:#888}.UI_pop_close:active{color:#222}.UI_confirm{width:300px;position:absolute;background:#fff;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_confirm_text{padding:30px 10px 20px;line-height:26px;text-align:center;font-size:20px;color:#333}.UI_ask{width:300px;position:absolute;background:#fff;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_ask_text{padding:25px 10px 15px;line-height:26px;text-align:center;font-size:18px;color:#333}.UI_ask input{display:block;margin:0 auto 15px;height:30px;padding:4px 4px;line-height:22px;box-sizing:border-box;width:90%}.UI_pop_confirm{overflow:hidden;text-align:center;border-top:1px solid #ddd;white-space:nowrap}.UI_pop_confirm a{display:inline-block;width:50%;font-size:14px;line-height:36px;color:#03f;transition:0.15s}.UI_pop_confirm a:hover{background:#eee}.UI_pop_confirm_ok{border-right:1px solid #ddd}.UI_prompt{position:absolute;width:240px;background:#fff;box-shadow:2px 2px 10px rgba(0,0,0,0.5)}.UI_prompt .UI_cnt{padding:30px 10px;font-size:18px;color:#333;text-align:center}.UI_plane{position:absolute}.UI_cover{position:absolute;left:0;width:100%;height:100%}.UI_cover .UI_cnt{position:relative;width:100%;height:100%;background:#fff;overflow:auto}.UI_coverClose{display:block;position:absolute;top:10px;right:20px;width:30px;height:30px;text-align:center;color:#aaa;font:18px/30px "simsun";background:#eee;border-radius:15px;border:1px solid #aaa}.UI_coverClose:hover{background:#333;color:#fff;transition:0.2s}.UI_select{position:absolute;width:200px;box-shadow:2px 2px 2px rgba(0,0,0,0.6)}.UI_select a{display:block;height:40px;line-height:40px;text-align:center;color:#03f;font-size:16px}.UI_select_body{overflow:hidden;background:#fff}.UI_selectCpt{padding:8px 0}.UI_selectCpt h3,.UI_selectCpt p{margin:0;font-size:15px;line-height:18px;text-align:center;color:#aaa;font-weight:normal}.UI_selectCpt p{font-size:12px}.UI_selectCnt a{height:34px;line-height:34px;font-size:14px;border-top:1px solid #ddd}.UI_selectCnt a:hover{background:#eee}.UI_selectCancel{display:none}@media(max-width:640px){.UI_select{position:fixed;bottom:0;width:100%;padding-bottom:10px}.UI_select_body, .UI_selectCancel{margin:0 10px;border-radius:8px}.UI_select_body{margin:0 10px 10px}.UI_selectCancel{display:block;background:#fff}}.UI_ie678 .UI_pop,.UI_ie678 .UI_confirm,.UI_ie678 .UI_ask,.UI_ie678 .UI_prompt,.UI_ie678 .UI_select{outline:3px solid #ccc}/** * CSS3动画 * **/@-webkit-keyframes UI-fadeInDown{0%{opacity:0;-webkit-transform:translateY(-10px)}100%{opacity:1;-webkit-transform:translateY(0)}}@keyframes UI-fadeInDown{0%{opacity:0;transform:translateY(-10px)}100%{opacity:1;transform:translateX(0)}}@-webkit-keyframes UI-fadeOutUp{0%{opacity:1;-webkit-transform:translateY(0)}100%{opacity:0;-webkit-transform:translateY(-10px)}}@keyframes UI-fadeOutUp{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-10px)}}.UI-fadeInDown{-webkit-animation:UI-fadeInDown 0.2s ease both;animation:UI-fadeInDown 0.2s ease both}.UI-fadeOutUp{-webkit-animation:UI-fadeOutUp 0.2s ease both;animation:UI-fadeOutUp 0.2s ease both}';
+      popCSS = '.UI_lawyer{position:absolute;top:0;left:0;z-index:4999;width:100%;height:0;overflow:visible;font-family:"Microsoft Yahei"}.UI_lawyer a,.UI_lawyer a:hover,.UI_lawyer a:active{outline:none;text-decoration:none;-webkit-tap-highlight-color:rgba(0,0,0,0);-webkit-tap-highlight-color:transparent}.UI_mask{position:absolute;top:0;left:0;width:100%;height:100%;background:#000;opacity:0.6;filter:alpha(opacity=60);display:none}.UI-blur{transform:translate3d(0,0,0);-webkit-filter:blur(3px)}.UI-noscroll{overflow:hidden}.UI_pop{width:200px;position:absolute;top:400px;left:300px;background:#fff;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_pop_cpt{position:relative;height:36px;line-height:36px;overflow:hidden;border-bottom:1px solid #ebebeb;color:#777;font-size:16px;text-indent:15px;cursor:default}.UI_pop .UI_cnt{position:relative;min-height:100px;overflow:auto}.UI_pop_close{display:block;position:absolute;top:0;right:0;width:40px;height:36px;text-align:center;color:#ddd;font:bold 20px/36px "simsun";transition:0.1s}.UI_pop_close:hover{color:#888}.UI_pop_close:active{color:#222}.UI_confirm{width:300px;position:absolute;background:#fff;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_confirm_text{padding:30px 10px 20px;line-height:26px;text-align:center;font-size:20px;color:#333}.UI_ask{width:300px;position:absolute;background:#fff;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_ask_text{padding:25px 10px 15px;line-height:26px;text-align:center;font-size:18px;color:#333}.UI_ask input{display:block;margin:0 auto 15px;height:30px;padding:4px 4px;line-height:22px;box-sizing:border-box;width:90%}.UI_pop_confirm{overflow:hidden;text-align:center;border-top:1px solid #ddd;white-space:nowrap}.UI_pop_confirm a{display:inline-block;width:50%;font-size:14px;line-height:36px;color:#03f;transition:0.15s}.UI_pop_confirm a:hover{background:#eee}.UI_pop_confirm_ok{border-right:1px solid #ddd}.UI_prompt{position:absolute;width:240px;background:#fff;box-shadow:2px 2px 10px rgba(0,0,0,0.5)}.UI_prompt .UI_cnt{padding:30px 10px;font-size:18px;color:#333;text-align:center}.UI_plane{position:absolute}.UI_cover{position:absolute;left:0;width:100%;height:100%}.UI_cover .UI_cnt{position:relative;width:100%;height:100%;background:#fff;overflow:auto}.UI_coverClose{display:block;position:absolute;top:10px;right:20px;width:30px;height:30px;text-align:center;color:#aaa;font:18px/30px "simsun";background:#eee;border-radius:15px;border:1px solid #aaa}.UI_coverClose:hover{background:#333;color:#fff;transition:0.2s}.UI_select{position:absolute;width:200px;box-shadow:2px 2px 2px rgba(0,0,0,0.6)}.UI_select a{display:block;height:40px;line-height:40px;text-align:center;color:#03f;font-size:16px}.UI_select_body{overflow:hidden;background:#fff}.UI_selectCpt{padding:8px 0}.UI_selectCpt h3,.UI_selectCpt p{margin:0;font-size:15px;line-height:18px;text-align:center;color:#aaa;font-weight:normal}.UI_selectCpt p{font-size:12px}.UI_selectCnt a{height:34px;line-height:34px;font-size:14px;border-top:1px solid #ddd}.UI_selectCnt a:hover{background:#eee}.UI_selectCancel{display:none}@media(max-width:640px){.UI_select{position:fixed;bottom:0;width:100%;padding-bottom:10px}.UI_select_body, .UI_selectCancel{margin:0 10px;border-radius:8px}.UI_select_body{margin:0 10px 10px;top:initial !important}.UI_selectCancel{display:block;background:#fff}}.UI_ie678 .UI_pop,.UI_ie678 .UI_confirm,.UI_ie678 .UI_ask,.UI_ie678 .UI_prompt,.UI_ie678 .UI_select{outline:3px solid #ccc}/** * CSS3动画 * **/@-webkit-keyframes UI-fadeInDown{0%{opacity:0;-webkit-transform:translateY(10px)}100%{opacity:1;-webkit-transform:translateY(0)}}@keyframes UI-fadeInDown{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:translateY(0)}}@-webkit-keyframes UI-fadeOutUp{0%{opacity:1;-webkit-transform:translateY(0)}100%{opacity:0;-webkit-transform:translateY(10px)}}@keyframes UI-fadeOutUp{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(10px)}}.UI-fadeIn{-webkit-animation:UI-fadeInDown 0.2s ease both;animation:UI-fadeInDown 0.2s ease both}.UI-fadeOut{-webkit-animation:UI-fadeOutUp 0.2s ease both;animation:UI-fadeOutUp 0.2s ease both}';
 
   var isIE67,
     isIE678;
@@ -72,16 +72,17 @@
       private_docW,
       private_winH,
       private_docH,
-      private_scrollTop;
+      private_scrollTop,
+      private_config_gap = {
+        top : 0,
+        left : 0,
+        bottom : 0,
+        right : 0
+      },
+      // 默认弹框动画
+      private_config_defaultAnimationClass = [ 'UI-fadeIn', 'UI-fadeOut' ];
 
   var private_CONFIG = {
-    gap : {
-      top : 0,
-      left : 0,
-      bottom : 0,
-      right : 0
-    },
-    defaultAnimationClass: [ 'UI-fadeInDown', 'UI-fadeOutUp' ],
     zIndex : 499
   };
   var docDom;
@@ -206,24 +207,21 @@
       utils.addClass(private_allCnt,'UI_ie678');
     }
 
-    var rebuild_fn = null;
-    if(isIE67){
-      rebuild_fn = function(){
+    var rebuild_fn = isIE67 ? function(){
         refreshSize();
         adapt_active_obj();
         setCSS(private_maskDom,{
           marginTop : private_scrollTop
         });
+      } : function(){
+        refreshSize();
+        adapt_active_obj();
       };
-    }else{
+    if( !isIE67 ){
       setCSS(private_maskDom,{
         position : 'fixed',
         top : 0
       });
-      rebuild_fn = function(){
-        refreshSize();
-        adapt_active_obj();
-      }
     }
 
     //监听浏览器缩放、滚屏事件
@@ -233,7 +231,7 @@
 
   //限制位置区域的方法
   function fix_position( top, left, width, height ){
-    var gap = private_CONFIG.gap;
+    var gap = private_config_gap;
     if( top < private_scrollTop + gap.top ){
       //屏幕上方
       top = private_scrollTop  + gap.top;
@@ -259,15 +257,17 @@
     }
   }
   //为基类扩展自适应于页面的原型方法
-  BaseClass.prototype.adaption = function( param, time ){
-    var param = param ||{},
-        dom = this.dom,
+  BaseClass.prototype.adaption = function( param, useAnimation ){
+    param = param || {};
+    // 默认使用动画
+    useAnimation = typeof(useAnimation) == 'boolean' ? useAnimation : true;
+    var dom = this.dom,
         width = outerWidth( dom ),
         height = outerHeight( dom ),
         top = (private_winH - height)/2 + private_scrollTop,
         left = (private_docW - width)/2,
         newPosition = fix_position( top, left, width, height ),
-        useMethod = (isNum(time) && time > 0) ? animation : setCSS;;
+        useMethod =  useAnimation ? animation : setCSS;
 
     useMethod(dom,{
       top : isNum(param.top) ? param.top : Math.ceil(newPosition.top),
@@ -328,6 +328,7 @@
       travelRootElements(function(dom){
         utils.addClass(dom,'UI-blur');
       });
+      utils.fadeIn(private_maskDom,300);
     };
     removeBlur = function (){
       travelRootElements(function(dom){
@@ -351,10 +352,9 @@
       zIndex: lastHasMaskZindex + 1
     });
 
+    //之前蒙层未显示，显示蒙层
     if(lastHasMaskZindex == 0){
-      //之前蒙层未显示，显示蒙层
       blur && blur();
-      utils.fadeIn(private_maskDom,300);
     }
   }
   /**
@@ -372,36 +372,8 @@
 
     if(lastHasMaskZindex == 0){
       removeBlur && removeBlur();
-      utils.fadeOut(private_maskDom,150);
+      utils.fadeOut(private_maskDom,400);
     }
-  }
-
-  /**
-   * 计算动画所需的方向及目标值
-   *   @returns[0] 所需修改的方向(X/Y)
-   *   @returns[1] 计算后的值
-   */
-  function countTranslate(direction,range){
-    var prop,
-        start;
-    switch(direction){
-        case 'left':
-          prop = 'X';
-          start = -range;
-          break
-        case 'right':
-          prop = 'X';
-          start = range;
-          break
-        case 'bottom':
-          prop = 'Y';
-          start = range;
-          break
-        default:
-          prop = 'Y';
-          start = -range;
-    }
-    return [prop,start];
   }
 
   /**
@@ -427,21 +399,14 @@
   function closeAnimation(){
     var me = this,
         DOM = me.dom,
-        animationClass = private_CONFIG.defaultAnimationClass[1];
-
-    //检测自己是否已阵亡
-    if(me.dead){
-      return;
-    }
-    //把自己标记为已阵亡
-    me.dead = true;
+        animationClass = private_config_defaultAnimationClass[1];
 
     //从全局记录的对象内删除自己；
     remove_active_obj(me);
 
+    // 关闭蒙层（内部判断是否关闭）
+    closeMask.call(me);
     function end(){
-      // 关闭蒙层（内部判断是否关闭）
-      closeMask.call(me);
       //删除dom
       utils.removeNode(DOM);
     }
@@ -451,9 +416,7 @@
       end();
     }else{
       utils.addClass( DOM, animationClass );
-      setTimeout(function(){
-        end();
-      },200);
+      setTimeout(end, 500);
     }
   }
 
@@ -467,7 +430,7 @@
     }
     param = param || {};
     var me = this,
-        animationClass = param.animationClass || private_CONFIG.defaultAnimationClass[0] || null;
+        animationClass = param.animationClass || private_config_defaultAnimationClass[0] || null;
 
     me.dom = utils.createDom(pop_tpl)[0];
     me.cntDom = findByClassName(me.dom,'UI_cnt')[0];
@@ -485,9 +448,7 @@
     if(!param.title){
       utils.removeNode(caption_dom);
     }else{
-      var title = param.title || 'need title in parameter!';
-
-      caption_dom.innerHTML = title;
+      caption_dom.innerHTML = param.title;
       //can drag is pop
       utils.drag(caption_dom,me.dom,{
         move : function(mx,my,l_start,t_start,w_start,h_start){
@@ -517,7 +478,7 @@
     private_allCnt.appendChild(me.dom);
 
     //校正位置
-    this.adaption( param, 0 );
+    this.adaption( param, false );
 
     //处理是否易于关闭
     easyCloseHandle.call(me,param.easyClose,true);
@@ -538,7 +499,7 @@
     }
     param = param || {};
     var me = this,
-        animationClass = param.animationClass || private_CONFIG.defaultAnimationClass[0] || null;
+        animationClass = param.animationClass || private_config_defaultAnimationClass[0] || null;
 
     var this_html = utils.render(confirm_tpl,{
       text : param.text || 'need text in parameter!'
@@ -551,7 +512,7 @@
     });
     private_allCnt.appendChild(me.dom);
 
-    this.adaption( param );
+    this.adaption( param, false );
 
     //处理是否易于关闭
     easyCloseHandle.call(me,param.easyClose,true);
@@ -571,7 +532,7 @@
     }
     param = param || {};
     var me = this,
-        animationClass = param.animationClass || private_CONFIG.defaultAnimationClass[0] || null;
+        animationClass = param.animationClass || private_config_defaultAnimationClass[0] || null;
 
     var this_html = utils.render(ask_tpl,{
       text : text || 'need text in parameter!'
@@ -600,7 +561,7 @@
 
     private_allCnt.appendChild(me.dom);
 
-    this.adaption( param );
+    this.adaption( param, false );
 
     //处理是否易于关闭
     easyCloseHandle.call(me,param.easyClose,true);
@@ -625,14 +586,14 @@
     }
     param = param || {};
     var me = this,
-        animationClass = param.animationClass || private_CONFIG.defaultAnimationClass[0] || null;
+        animationClass = param.animationClass || private_config_defaultAnimationClass[0] || null;
     me.dom = utils.createDom(prompt_tpl)[0];
     me._mask = param.mask ? true : false;
     me.tips(text,time);
 
     // create pop
     private_allCnt.appendChild(me.dom);
-    this.adaption( param );
+    this.adaption( param, false );
 
     openAnimation.call( me, animationClass );
   }
@@ -659,7 +620,7 @@
     }
     var param = param || {};
     var me = this,
-        animationClass = param.animationClass || private_CONFIG.defaultAnimationClass[0] || null;
+        animationClass = param.animationClass || private_config_defaultAnimationClass[0] || null;
 
     me.dom = utils.createDom(plane_tpl)[0];
 
@@ -690,7 +651,7 @@
     }
     param = param || {};
     var me = this,
-        animationClass = param.animationClass || private_CONFIG.defaultAnimationClass[0] || null;
+        animationClass = param.animationClass || private_config_defaultAnimationClass[0] || null;
     me.dom = utils.createDom(cover_tpl)[0];
     me._mask = typeof(param.mask) == 'boolean' ? param.mask : false;
 
@@ -739,7 +700,7 @@
         list = list || [],
         fns = [],
         nameList = [],
-        animationClass = param.animationClass || private_CONFIG.defaultAnimationClass[0] || null;
+        animationClass = param.animationClass || private_config_defaultAnimationClass[0] || null;
 
     utils.each(list,function(i,item){
       nameList.push(item[0]);
@@ -795,13 +756,13 @@
     config : {
       gap : function(name,value){
         //name符合top/right/bottom/left,且value值为数字类型（兼容字符类型）
-        if(name && typeof(private_CONFIG.gap[name]) == 'number' && isNum(value)){
-            private_CONFIG.gap[name] = parseInt(value);
+        if(name && typeof(private_config_gap[name]) == 'number' && isNum(value)){
+            private_config_gap[name] = parseInt(value);
         }
       },
       setDefaultAnimationClass: function( startClassStr, endClassStr ){
-        private_CONFIG.defaultAnimationClass[0] = startClassStr;
-        endClassStr && (private_CONFIG.defaultAnimationClass[1] = endClassStr);
+        private_config_defaultAnimationClass[0] = startClassStr;
+        endClassStr && (private_config_defaultAnimationClass[1] = endClassStr);
       },
       zIndex : function(num){
         var num = parseInt(num);
@@ -835,7 +796,7 @@
 		}
 		param = param || {};
 		this._events = {};
-		this._isDestroy = false;
+		this._isDestroyed = false;
 		this._onDestroy = param.destroy;
 	}
 	BaseClass.prototype = {
@@ -884,7 +845,12 @@
 				this._events[eventName][i].apply( this, args );
 			}
 		},
+		// 保证只有一遍有效执行
 		destroy: function(){
+			if( this._isDestroyed ){
+				return;
+			}
+			this._isDestroyed = true;
 			this._onDestroy.call( this );
 			this.emit( 'destroy' );
 		}
