@@ -138,51 +138,6 @@
 		right: 20px;
 		width: 120px;
 	}
-	#from_selected{
-		position: relative;
-		height: 120px;
-	}
-	#from_selected a{
-		display: block;
-		position : absolute;
-		width: 33%;
-		height: 33%;
-		text-align: center;
-		line-height: 40px;
-		font-size: 20px;
-		color:#fff;
-		background: #888;
-	}
-	#from_selected a.isSelected{
-		background: #333;
-		color:#fff;
-	}
-	.from-top{
-		top: 0;
-		left: 33%;
-	}
-	.from-bottom{
-		top: 66%;
-		left: 33%;
-	}
-	.from-left{
-		top: 33%;
-		left: 0;
-	}
-	.from-right{
-		left: 66%;
-		top: 33%;
-	}
-	#from_selected .from-none{
-		left: 66%;
-		top: 0;
-		background:#aaa;
-	}
-	#from_selected .from-dom{
-		top: 33%;
-		left: 33%;
-		font-size: 30px;
-	}
       
 
 .btn{

@@ -2,17 +2,17 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2015-7-15 12:20
+ * @modified 2016-9-6 17:56
  * 
  **/
 
-(function(global,doc,UI_factory,utils_factory){
+(function( global, doc, UI_factory, BaseClass_factory, utils_factory){
 
-  //初始化工具类
-  var utils = utils_factory(global,doc);
-
-  //初始化UI模块
-  var UI = UI_factory(global,doc,utils);
+      //初始化工具类
+  var utils = utils_factory(global,doc),
+      BaseClass = BaseClass_factory( utils ),
+      //初始化UI模块
+      UI = UI_factory( global, doc, utils, BaseClass );
 
   //提供window.UI的接口
   global.UI = global.UI || UI;
@@ -22,7 +22,7 @@
   global.define && define(function(){
     return UI;
   });
-})(window,document,function(window,document,utils){
+})(window,document,function( window, document, utils, BaseClass ){
   /**
    * 缓存utils下常用工具
    *   为压缩变量名做准备
@@ -48,7 +48,7 @@
       cover_tpl = '<div class="UI_cover"><div class="UI_cnt"></div><a href="javascript:;" class="UI_close UI_coverClose">×</a></div>',
       plane_tpl = '<div class="UI_plane"></div>',
       select_tpl = '<div class="UI_select"><div class="UI_select_body UI_cnt"><% if(title){ %><div class="UI_selectCpt"><h3><%=title %></h3><% if(intro){ %><p><%=intro %></p><% } %></div><% } %><div class="UI_selectCnt"><% for(var i=0,total=list.length;i<total;i++){ %><a class="UI_select_btn" href="javascript:;"><%=list[i] %></a><% } %></div></div><div class="UI_selectCancel"><a class="UI_select_btn" href="javascript:;">取消</a></div></div>',
-      popCSS = '.UI_lawyer{position:absolute;top:0;left:0;z-index:4999;width:100%;height:0;overflow:visible;font-family:"Microsoft Yahei"}.UI_lawyer a,.UI_lawyer a:hover,.UI_lawyer a:active{outline:none;text-decoration:none;-webkit-tap-highlight-color:rgba(0,0,0,0);-webkit-tap-highlight-color:transparent}.UI_mask{position:absolute;top:0;left:0;width:100%;height:100%;background:#000;opacity:0.6;filter:alpha(opacity=60);display:none}.UI-blur{-webkit-filter:blur(3px)}.UI_pop{width:200px;position:absolute;top:400px;left:300px;background:#fff;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_pop_cpt{position:relative;height:36px;line-height:36px;overflow:hidden;border-bottom:1px solid #ebebeb;color:#777;font-size:16px;text-indent:15px;cursor:default}.UI_pop .UI_cnt{position:relative;min-height:100px;overflow:auto}.UI_pop_close{display:block;position:absolute;top:0;right:0;width:40px;height:36px;text-align:center;color:#ddd;font:bold 20px/36px "simsun";transition:0.1s}.UI_pop_close:hover{color:#888}.UI_pop_close:active{color:#222}.UI_confirm{width:300px;position:absolute;background:#fff;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_confirm_text{padding:30px 10px 20px;line-height:26px;text-align:center;font-size:20px;color:#333}.UI_ask{width:300px;position:absolute;background:#fff;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_ask_text{padding:25px 10px 15px;line-height:26px;text-align:center;font-size:18px;color:#333}.UI_ask input{display:block;margin:0 auto 15px;height:30px;padding:4px 4px;line-height:22px;box-sizing:border-box;width:90%}.UI_pop_confirm{overflow:hidden;text-align:center;border-top:1px solid #ddd;white-space:nowrap}.UI_pop_confirm a{display:inline-block;width:50%;font-size:14px;line-height:36px;color:#03f;transition:0.15s}.UI_pop_confirm a:hover{background:#eee}.UI_pop_confirm_ok{border-right:1px solid #ddd}.UI_prompt{position:absolute;width:240px;background:#fff;box-shadow:2px 2px 10px rgba(0,0,0,0.5)}.UI_prompt .UI_cnt{padding:30px 10px;font-size:18px;color:#333;text-align:center}.UI_plane{position:absolute}.UI_cover{position:absolute;left:0;width:100%;height:100%}.UI_cover .UI_cnt{position:relative;width:100%;height:100%;background:#fff;overflow:auto}.UI_coverClose{display:block;position:absolute;top:10px;right:20px;width:30px;height:30px;text-align:center;color:#aaa;font:18px/30px "simsun";background:#eee;border-radius:15px;border:1px solid #aaa}.UI_coverClose:hover{background:#333;color:#fff;transition:0.2s}.UI_select{position:absolute;width:200px;box-shadow:2px 2px 2px rgba(0,0,0,0.6)}.UI_select a{display:block;height:40px;line-height:40px;text-align:center;color:#03f;font-size:16px}.UI_select_body{overflow:hidden;background:#fff}.UI_selectCpt{padding:8px 0}.UI_selectCpt h3,.UI_selectCpt p{margin:0;font-size:15px;line-height:18px;text-align:center;color:#aaa;font-weight:normal}.UI_selectCpt p{font-size:12px}.UI_selectCnt a{height:34px;line-height:34px;font-size:14px;border-top:1px solid #ddd}.UI_selectCnt a:hover{background:#eee}.UI_selectCancel{display:none}@media(max-width:640px){.UI_select{position:fixed;bottom:0;width:100%;padding-bottom:10px}.UI_select_body, .UI_selectCancel{margin:0 10px;border-radius:8px}.UI_select_body{margin:0 10px 10px}.UI_selectCancel{display:block;background:#fff}}.UI_ie678 .UI_pop,.UI_ie678 .UI_confirm,.UI_ie678 .UI_ask,.UI_ie678 .UI_prompt,.UI_ie678 .UI_select{outline:3px solid #ccc}';
+      popCSS = '.UI_lawyer{position:absolute;top:0;left:0;z-index:4999;width:100%;height:0;overflow:visible;font-family:"Microsoft Yahei"}.UI_lawyer a,.UI_lawyer a:hover,.UI_lawyer a:active{outline:none;text-decoration:none;-webkit-tap-highlight-color:rgba(0,0,0,0);-webkit-tap-highlight-color:transparent}.UI_mask{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;opacity:0.6;filter:alpha(opacity=60);display:none}.UI-blur{transform:translate3d(0,0,0);-webkit-filter:blur(3px)}.UI-noscroll{overflow:hidden}.UI_pop{width:200px;position:absolute;top:400px;left:300px;background:#fff;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_pop_cpt{position:relative;height:36px;line-height:36px;overflow:hidden;border-bottom:1px solid #ebebeb;color:#777;font-size:16px;text-indent:15px;cursor:default}.UI_pop .UI_cnt{position:relative;min-height:100px;overflow:auto}.UI_pop_close{display:block;position:absolute;top:0;right:0;width:40px;height:36px;text-align:center;color:#ddd;font:bold 20px/36px "simsun";transition:0.1s}.UI_pop_close:hover{color:#888}.UI_pop_close:active{color:#222}.UI_confirm{width:300px;position:absolute;background:#fff;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_confirm_text{padding:30px 10px 20px;line-height:26px;text-align:center;font-size:20px;color:#333}.UI_ask{width:300px;position:absolute;background:#fff;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_ask_text{padding:25px 10px 15px;line-height:26px;text-align:center;font-size:18px;color:#333}.UI_ask input{display:block;margin:0 auto 15px;height:30px;padding:4px 4px;line-height:22px;box-sizing:border-box;width:90%}.UI_pop_confirm{overflow:hidden;text-align:center;border-top:1px solid #ddd;white-space:nowrap}.UI_pop_confirm a{display:inline-block;width:50%;font-size:14px;line-height:36px;color:#03f;transition:0.15s}.UI_pop_confirm a:hover{background:#eee}.UI_pop_confirm_ok{border-right:1px solid #ddd}.UI_prompt{position:absolute;width:240px;background:#fff;box-shadow:2px 2px 10px rgba(0,0,0,0.5)}.UI_prompt .UI_cnt{padding:30px 10px;font-size:18px;color:#333;text-align:center}.UI_plane{position:absolute}.UI_cover{position:absolute;left:0;width:100%;height:100%}.UI_cover .UI_cnt{position:relative;width:100%;height:100%;background:#fff;overflow:auto}.UI_coverClose{display:block;position:absolute;top:10px;right:20px;width:30px;height:30px;text-align:center;color:#aaa;font:18px/30px "simsun";background:#eee;border-radius:15px;border:1px solid #aaa}.UI_coverClose:hover{background:#333;color:#fff;transition:0.2s}.UI_select{position:absolute;width:200px;box-shadow:2px 2px 2px rgba(0,0,0,0.6)}.UI_select a{display:block;height:40px;line-height:40px;text-align:center;color:#03f;font-size:16px}.UI_select_body{overflow:hidden;background:#fff}.UI_selectCpt{padding:8px 0}.UI_selectCpt h3,.UI_selectCpt p{margin:0;font-size:15px;line-height:18px;text-align:center;color:#aaa;font-weight:normal}.UI_selectCpt p{font-size:12px}.UI_selectCnt a{height:34px;line-height:34px;font-size:14px;border-top:1px solid #ddd}.UI_selectCnt a:hover{background:#eee}.UI_selectCancel{display:none}@media(max-width:640px){.UI_select{position:fixed;bottom:0;width:100%;padding-bottom:10px}.UI_select_body, .UI_selectCancel{margin:0 10px;border-radius:8px}.UI_select_body{margin:0 10px 10px;top:initial !important}.UI_selectCancel{display:block;background:#fff}}.UI_ie678 .UI_pop,.UI_ie678 .UI_confirm,.UI_ie678 .UI_ask,.UI_ie678 .UI_prompt,.UI_ie678 .UI_select{outline:3px solid #ccc}.UI_ie67 .UI_mask{position:absolute}/** * CSS3动画 * **/@-webkit-keyframes UI-fadeInDown{0%{opacity:0;-webkit-transform:translateY(10px)}100%{opacity:1;-webkit-transform:translateY(0)}}@keyframes UI-fadeInDown{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:translateY(0)}}@-webkit-keyframes UI-fadeOutUp{0%{opacity:1;-webkit-transform:translateY(0)}100%{opacity:0;-webkit-transform:translateY(10px)}}@keyframes UI-fadeOutUp{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(10px)}}.UI-fadeIn{-webkit-animation:UI-fadeInDown 0.2s ease both;animation:UI-fadeInDown 0.2s ease both}.UI-fadeOut{-webkit-animation:UI-fadeOutUp 0.2s ease both;animation:UI-fadeOutUp 0.2s ease both}';
 
   var isIE67,
     isIE678;
@@ -69,35 +69,28 @@
   var private_allCnt = utils.createDom(allCnt_tpl)[0],
       private_maskDom = findByClassName(private_allCnt,'UI_mask')[0],
       private_body = document.body,
+      private_root_node = document.compatMode == "BackCompat" ? private_body : document.documentElement,
       private_docW,
       private_winH,
       private_docH,
-      private_scrollTop;
-
-  var private_CONFIG = {
-    gap : {
-      top : 0,
-      left : 0,
-      bottom : 0,
-      right : 0
-    },
-    zIndex : 499
-  };
-  var docDom;
-  if (document.compatMode == "BackCompat") {
-    docDom = private_body;
-  }else{
-    //"CSS1Compat"
-    docDom = document.documentElement;
-  }
+      private_scrollTop,
+      private_config_zIndex = 499,
+      private_config_gap = {
+        top : 0,
+        left : 0,
+        bottom : 0,
+        right : 0
+      },
+      // 默认弹框动画
+      private_config_defaultAnimationClass = [ 'UI-fadeIn', 'UI-fadeOut' ];
 
 //重新计算浏览器窗口尺寸
   function refreshSize(){
-    private_scrollTop = docDom.scrollTop == 0 ? private_body.scrollTop : docDom.scrollTop;
+    private_scrollTop = private_root_node.scrollTop == 0 ? private_body.scrollTop : private_root_node.scrollTop;
     private_winH = window.innerHeight || document.documentElement.clientHeight;
     private_winW = window.innerWidth || document.documentElement.clientWidth;
-    private_docH = docDom.scrollHeight;
-    private_docW = docDom.clientWidth;
+    private_docH = private_root_node.scrollHeight;
+    private_docW = private_root_node.clientWidth;
   }
   //记录当前正在显示的对象
   var active_objs = [];
@@ -114,25 +107,10 @@
   function close_last_easyClose_obj(){
     for(var i= active_objs.length-1;i>=0;i--){
       if(active_objs[i]['_easyClose']){
-        active_objs[i].close();
+        active_objs[i].destroy && active_objs[i].destroy();
         break;
       }
     }
-  }
-  //最后一个有蒙层的对象的zIndex值，
-  function last_has_mask_zIndex(){
-    //逆序遍历所有显示中的对象
-    for(var i= active_objs.length-1;i>=0;i--){
-      //判断是否含有蒙层
-      if(active_objs[i]._mask){
-        var zIndex = getCSS(active_objs[i].dom,'zIndex');
-        //是否为数值
-        if(isNum(zIndex)){
-          return parseInt(zIndex);
-        }
-      }
-    }
-    return 0; // 无则返回 0
   }
   //调整正在显示的对象的位置
   var adapt_delay;
@@ -140,7 +118,7 @@
     clearTimeout(adapt_delay);
     adapt_delay = setTimeout(function(){
       utils.each(active_objs,function(index,item){
-        item.adapt && item.adapt();
+        item.adaption && item.adaption();
       });
     },150);
   }
@@ -200,28 +178,21 @@
     refreshSize();
     setTimeout(refreshSize,500);
 
-    if(isIE678){
-      utils.addClass(private_allCnt,'UI_ie678');
-    }
-
-    var rebuild_fn = null;
-    if(isIE67){
-      rebuild_fn = function(){
+    var rebuild_fn = isIE67 ? function(){
         refreshSize();
         adapt_active_obj();
         setCSS(private_maskDom,{
           marginTop : private_scrollTop
         });
-      };
-    }else{
-      setCSS(private_maskDom,{
-        position : 'fixed',
-        top : 0
-      });
-      rebuild_fn = function(){
+      } : function(){
         refreshSize();
         adapt_active_obj();
-      }
+      };
+    if( isIE67 ){
+      utils.addClass(private_allCnt,'UI_ie67');
+    }
+    if(isIE678){
+      utils.addClass(private_allCnt,'UI_ie678');
     }
 
     //监听浏览器缩放、滚屏事件
@@ -230,12 +201,12 @@
 //  });
 
   //限制位置区域的方法
-  function fix_position(top,left,width,height){
-    var gap = private_CONFIG.gap;
-    if(top<private_scrollTop + gap.top){
+  function fix_position( top, left, width, height ){
+    var gap = private_config_gap;
+    if( top < private_scrollTop + gap.top ){
       //屏幕上方
       top = private_scrollTop  + gap.top;
-    }else if(top + height - private_scrollTop > private_winH - gap.bottom) {
+    }else if( top + height - private_scrollTop > private_winH - gap.bottom ) {
       //屏幕下方
       if(height > private_winH - gap.top - gap.bottom){
         //比屏幕高
@@ -245,9 +216,9 @@
         top = private_scrollTop + private_winH - height - gap.bottom;
       }
     }
-    if(left < gap.left){
+    if( left < gap.left ){
       left =  gap.left;
-    }else if(left + width > private_docW - gap.right){
+    }else if( left + width > private_docW - gap.right ){
       left = private_docW - width - gap.right;
     }
 
@@ -256,30 +227,31 @@
       left : Math.ceil(left)
     }
   }
-  //设置dom自适应于页面
-  function adaption(dom,param,time){
-    var param = param ||{},
-        width = outerWidth(dom),
-        height = outerHeight(dom),
+  //为基类扩展自适应于页面的原型方法
+  BaseClass.prototype.adaption = function( param, useAnimation ){
+    param = param || {};
+    // 默认使用动画
+    useAnimation = typeof(useAnimation) == 'boolean' ? useAnimation : true;
+    var dom = this.dom,
+        width = outerWidth( dom ),
+        height = outerHeight( dom ),
         top = (private_winH - height)/2 + private_scrollTop,
         left = (private_docW - width)/2,
-        newPosition = fix_position(top,left,width,height);
+        newPosition = fix_position( top, left, width, height ),
+        useMethod =  useAnimation ? animation : setCSS;
 
-    var method = isNum(time) ? animation : setCSS;
-    method(dom,{
+    useMethod(dom,{
       top : isNum(param.top) ? param.top : Math.ceil(newPosition.top),
       left : isNum(param.left) ? param.left : Math.ceil(newPosition.left)
-    },time);
-  }
-  //自适应于页面的原型方法
-  function ADAPT(){
-    adaption(this.dom,null,80);
-  }
+    }, 80 );
+  };
+
   //增加确认方法
-  function add_confirm(dom,param,close){
-    var callback = null;
-    var cancel = null;
-    var btns = ['\u786E\u8BA4','\u53D6\u6D88'];
+  function add_confirm( dom, param, destroy ){
+    var callback = null,
+        cancel = null,
+        btns = ['\u786E\u8BA4','\u53D6\u6D88'];
+
     if(typeof(param) == "function"){
       callback = param;
     }else if(typeof(param) == "object"){
@@ -297,16 +269,16 @@
       confirm : btns[0],
       cancel : btns[1]
     });
-    dom.appendChild(utils.createDom(this_html)[0]);
+    dom.appendChild( utils.createDom(this_html)[0] );
 
     //绑定事件，根据执行结果判断是否要关闭弹框
     bindEvent(dom,'click','.UI_pop_confirm_ok',function(){
       //点击确认按钮
-      callback ? ((callback() != false) && close()) : close();
+      callback ? ((callback() != false) && destroy()) : destroy();
     });
     bindEvent(dom,'click','.UI_pop_confirm_cancel',function(){
       //点击取消按钮
-      cancel ? ((cancel() != false) && close()) : close();
+      cancel ? ((cancel() != false) && destroy()) : destroy();
     });
   }
 
@@ -328,212 +300,97 @@
       travelRootElements(function(dom){
         utils.addClass(dom,'UI-blur');
       });
+      utils.fadeIn(private_maskDom,300);
     };
     removeBlur = function (){
       travelRootElements(function(dom){
         utils.removeClass(dom,'UI-blur');
       });
+      utils.fadeOut(private_maskDom,400);
     };
   }
 
-  /**
-   * 显示蒙层 
-   */
-  function showMask(){
-    var lastHasMaskZindex = last_has_mask_zIndex();
-    setCSS(this.dom,{
-      zIndex: lastHasMaskZindex + 2
-    });
-    if(!this._mask){
-      return;
+  //最后一个有蒙层的对象
+  function last_has_mask_item(){
+    //逆序遍历所有显示中的对象
+    for(var i= active_objs.length-1;i>=0;i--){
+      //判断是否含有蒙层
+      if(active_objs[i]._mask){
+        return active_objs[i];
+      }
     }
-    setCSS(private_maskDom,{
-      zIndex: lastHasMaskZindex + 1
-    });
-
-    if(lastHasMaskZindex == 0){
-      //之前蒙层未显示，显示蒙层
-      blur && blur();
-      utils.fadeIn(private_maskDom,300);
-    }
+    return null;
   }
-  /**
-   * 关闭蒙层
-   */
-  function closeMask(){
-    var me = this;
-    if( !me._mask){
-      return;
-    }
-    var lastHasMaskZindex = last_has_mask_zIndex();
-    setCSS(private_maskDom,{
-      zIndex : lastHasMaskZindex - 1
-    });
-
-    if(lastHasMaskZindex == 0){
-      removeBlur && removeBlur();
-      utils.fadeOut(private_maskDom,150);
-    }
+  //最后一个有蒙层的对象的zIndex值，
+  function last_has_mask_zIndex(){
+    var item = last_has_mask_item();
+    return item ? item._zIndex : private_config_zIndex; // 无则返回默认值
   }
-
-  /**
-   * 计算动画所需的方向及目标值
-   *   @returns[0] 所需修改的方向(X/Y)
-   *   @returns[1] 计算后的值
-   */
-  function countTranslate(direction,range){
-    var prop,
-        start;
-    switch(direction){
-        case 'left':
-          prop = 'X';
-          start = -range;
-          break
-        case 'right':
-          prop = 'X';
-          start = range;
-          break
-        case 'bottom':
-          prop = 'Y';
-          start = range;
-          break
-        default:
-          prop = 'Y';
-          start = -range;
-    }
-    return [prop,start];
-  }
-
   /**
    * 开场动画
    **/
-  function openAnimation(fn){
-    var me = this;
-    var DOM = me.dom;
-    var from = me._from;
-    var time = 80;
+  function openAnimation( animationClass ){
+    var me = this,
+        lastHasMaskZindex = last_has_mask_zIndex();
+
+    this._zIndex = lastHasMaskZindex + 2;
+    setCSS(this.dom,{
+      zIndex: this._zIndex
+    });
+
+    // 若有蒙层则显示蒙层
+    if( this._mask ){
+      setCSS(private_maskDom,{
+        zIndex: lastHasMaskZindex + 1
+      });
+
+      //之前蒙层未显示，显示蒙层
+      if( lastHasMaskZindex <= private_config_zIndex ){
+        blur && blur();
+      }
+    }
+
     //向全局记录的对象内添加对象
     active_objs.push(me);
-
-    //显示蒙层（内部判断是否显示）
-    showMask.call(me);
-
-    //ie系列或无from信息，不显示效果
-    if(isIE678 || !from || from == 'none'){
-      fn && fn();
-      return
+    //非ie系列 且 有动画配置，显示效果
+    if( !isIE678 && animationClass ){
+      utils.addClass( me.dom, animationClass );
     }
-    var offset = utils.offset(DOM),
-        //动画第一帧css
-        cssStart = {},
-        //动画需要改变的css
-        cssAnim = {};
-    //参数是dom对象
-    if(from.tagName && from.parentNode){
-      var offset_from = utils.offset(from);
-      cssStart = {
-        top : offset_from.top,
-        left : offset_from.left,
-        clip: 'rect(0,' + outerWidth(from) + 'px,' + outerHeight(from) + 'px,0)',
-        overflow : 'hidden'
-      };
-      cssAnim = {
-        clip: 'rect(0,' + outerWidth(DOM) + 'px,' + outerHeight(DOM) + 'px,0)',
-        top : getCSS(DOM,'top'),
-        left : getCSS(DOM,'left')
-      };
-    //参数是字符串
-    }else if(typeof(from) == 'string'){
-      var countResult = countTranslate(from,10);
-      cssStart.transform = 'translate' + countResult[0] + '(' + countResult[1] + 'px)';
-      cssAnim.transform = 'translateX(0) translateY(0)';
-    }else{
-      //参数出错，不显示效果
-      fn && fn();
-      return
-    }
-
-    //先隐藏,再显示
-    cssStart.opacity = 0;
-    cssAnim.opacity = 1;
-
-    //动画开始
-    setCSS(DOM,cssStart);
-    animation(DOM,cssAnim,time,'ease-out',function(){
-      //恢复动画样式
-      setCSS(DOM,{
-        clip: 'auto'
-      });
-      fn && fn();
-    });
   }
 
   /**
    * 处理对象关闭及结束动画
    */
-  function closeAnimation(time_define,fn){
-    return function(time){
-      var me = this;
+  function closeAnimation(){
+    var me = this,
+        DOM = me.dom,
+        animationClass = private_config_defaultAnimationClass[1];
 
-      //检测自己是否已阵亡
-      if(me.dead){
-        return;
+    //从全局记录的对象内删除自己；
+    remove_active_obj(me);
+
+    // 若有蒙层，则关闭或移至下一个需要显示蒙层的位置
+    if( me._mask ){
+      var lastHasMaskZindex = last_has_mask_zIndex();
+      setCSS(private_maskDom,{
+        zIndex : lastHasMaskZindex - 1
+      });
+
+      if(lastHasMaskZindex <= private_config_zIndex){
+        removeBlur && removeBlur();
       }
-      //把自己标记为已阵亡
-      me.dead = true;
+    }
+    function end(){
+      //删除dom
+      utils.removeNode(DOM);
+    }
 
-      //从全局记录的对象内删除自己；
-      remove_active_obj(me);
-
-      //触发关闭回调
-      me.closeFn && me.closeFn();
-			function end(){
-				// 关闭蒙层（内部判断是否关闭）
-  	  	closeMask.call(me);
-      	//删除dom
-        utils.removeNode(DOM);
-			}
-
-      //执行生成此function的方法提供的回调
-      fn && fn.call(me);
-      var DOM = me.dom;
-
-      //ie系列或无from信息，不显示效果
-      if(isIE678 || from == 'none'){
-        end();
-        return
-      }
-
-      var time = isNum(time) ? time : parseInt(time_define) || 80;
-      var from = me._from;
-      if(from && from.tagName && from.parentNode){
-        //缩放回启动按钮
-        var offset =  utils.offset(from);
-        setCSS(DOM,{
-          overflow : 'hidden',
-          clip: 'rect(0,' + outerWidth(DOM) + 'px,' + outerHeight(DOM) + 'px,0)'
-        });
-        animation(DOM,{
-          top : offset.top,
-          left : offset.left,
-          clip: 'rect(0,' + outerWidth(from) + 'px,' + outerHeight(from) + 'px,0)',
-          opacity : 0.3
-        },time,function(){
-          animation(DOM,{
-            opacity : 0
-          },50,end);
-        });
-      }else if(typeof(from) == 'string'){
-        var countResult = countTranslate(from,10);			
-        //动画开始
-        animation(DOM,{
-          opacity : 0,
-          transform : 'translate' + countResult[0] + '(' + countResult[1] + 'px)'
-        },time,end);
-      }else{
-        //参数出错时，直接结束
-        end();
-      }
+    //ie系列或未配置动画class，立即结束
+    if( isIE678 || !animationClass ){
+      end();
+    }else{
+      utils.addClass( DOM, animationClass );
+      setTimeout(end, 500);
     }
   }
 
@@ -545,20 +402,19 @@
     if(!(this instanceof POP)){
       return new POP(param);
     }
-    var param = param || {};
-    var me = this;
+    param = param || {};
+    var me = this,
+        animationClass = param.animationClass || private_config_defaultAnimationClass[0] || null;
 
     me.dom = utils.createDom(pop_tpl)[0];
     me.cntDom = findByClassName(me.dom,'UI_cnt')[0];
-    me.closeFn = param.closeFn || null;
     me._mask = param.mask || false;
-    me._from = param.from || 'top';
 
 
     //当有确认参数时
     if(param.confirm){
       add_confirm(me.dom,param.confirm,function(){
-        me.close();
+        me.destroy();
       });
     }
     //处理title参数
@@ -566,9 +422,7 @@
     if(!param.title){
       utils.removeNode(caption_dom);
     }else{
-      var title = param.title || 'need title in parameter!';
-
-      caption_dom.innerHTML = title;
+      caption_dom.innerHTML = param.title;
       //can drag is pop
       utils.drag(caption_dom,me.dom,{
         move : function(mx,my,l_start,t_start,w_start,h_start){
@@ -585,7 +439,7 @@
     }
 
     bindEvent(me.dom,'click','.UI_pop_close',function(){
-      me.close();
+      me.destroy();
     });
 
     //插入内容
@@ -598,19 +452,17 @@
     private_allCnt.appendChild(me.dom);
 
     //校正位置
-    adaption(me.dom,param);
+    this.adaption( param, false );
 
     //处理是否易于关闭
     easyCloseHandle.call(me,param.easyClose,true);
 
     //开场动画
-    openAnimation.call(me,function(){
-      param.init && param.init.call(me,me.cntDom);
-    });
+    openAnimation.call( me, animationClass );
   }
-  //使用close方法
-  POP.prototype.close = closeAnimation(80);
-  POP.prototype.adapt = ADAPT;
+  POP.prototype = new BaseClass({
+    destroy: closeAnimation
+  });
 
   /**
    * CONFIRM 
@@ -619,32 +471,30 @@
     if(!(this instanceof CONFIRM)){
       return new CONFIRM(param);
     }
-    var param = param || {};
-    var me = this;
+    param = param || {};
+    var me = this,
+        animationClass = param.animationClass || private_config_defaultAnimationClass[0] || null;
 
     var this_html = utils.render(confirm_tpl,{
       text : param.text || 'need text in parameter!'
     });
     me.dom = utils.createDom(this_html)[0];
-    me.closeFn = param.closeFn || null;
     me._mask = typeof(param.mask) == 'boolean' ? param.mask : true;
-    me._from = param.from || 'top';
 
     add_confirm(me.dom,param,function(){
-        me.close();
+        me.destroy();
     });
     private_allCnt.appendChild(me.dom);
 
-    adaption(me.dom);
+    this.adaption( param, false );
 
     //处理是否易于关闭
     easyCloseHandle.call(me,param.easyClose,true);
-    openAnimation.call(me,function(){
-      param.init && param.init.call(me,me.dom);
-    });
+    openAnimation.call( me, animationClass );
   }
-  CONFIRM.prototype.close = closeAnimation(80);
-  CONFIRM.prototype.adapt = ADAPT;
+  CONFIRM.prototype = new BaseClass({
+    destroy: closeAnimation
+  });
 
 
   /**
@@ -654,8 +504,9 @@
     if(!(this instanceof ASK)){
       return new ASK(text,callback,param);
     }
-    var me = this;
-    var param = param || {};
+    param = param || {};
+    var me = this,
+        animationClass = param.animationClass || private_config_defaultAnimationClass[0] || null;
 
     var this_html = utils.render(ask_tpl,{
       text : text || 'need text in parameter!'
@@ -663,9 +514,7 @@
 
     me.dom = utils.createDom(this_html)[0];
     me._mask = typeof(param.mask) == 'boolean' ? param.mask : true;
-    me._from = param.from || 'top';
     me.inputDom = findByClassName(me.dom,'UI_ask_key')[0];
-    me.closeFn =  null;
 
     var confirm_html = utils.render(confirmBar_tpl,{
       confirm : '确定',
@@ -677,29 +526,28 @@
     //确定
     bindEvent(me.dom,'click','.UI_pop_confirm_ok',function(){
       //根据执行结果判断是否要关闭弹框
-      callback ? ((callback(me.inputDom.value) != false) && me.close()) : me.close();
+      callback ? ((callback(me.inputDom.value) != false) && me.destroy()) : me.destroy();
     });
     //取消
     bindEvent(me.dom,'click','.UI_pop_confirm_cancel',function(){
-      me.close();
+      me.destroy();
     });
 
     private_allCnt.appendChild(me.dom);
 
-    adaption(me.dom);
+    this.adaption( param, false );
 
     //处理是否易于关闭
     easyCloseHandle.call(me,param.easyClose,true);
-    openAnimation.call(me,function(){
-      me.inputDom.focus();
-      param.init && param.init.call(me,me.dom);
-    });
+    openAnimation.call( me, animationClass );
+    me.inputDom.focus();
   }
-  ASK.prototype.close = closeAnimation(80);
+  ASK.prototype = new BaseClass({
+    destroy: closeAnimation
+  });
   ASK.prototype.setValue = function(text){
       this.inputDom.value = text.toString();
   };
-  ASK.prototype.adapt = ADAPT;
 
 
   /**
@@ -710,22 +558,22 @@
     if(!(this instanceof PROMPT)){
       return new PROMPT(text,time,param);
     }
-    var param = param || {};
-    var me = this;
+    param = param || {};
+    var me = this,
+        animationClass = param.animationClass || private_config_defaultAnimationClass[0] || null;
     me.dom = utils.createDom(prompt_tpl)[0];
-    me._from = param.from || 'bottom';
     me._mask = param.mask ? true : false;
     me.tips(text,time);
 
     // create pop
     private_allCnt.appendChild(me.dom);
-    adaption(me.dom);
+    this.adaption( param, false );
 
-    openAnimation.call(me,function(){
-      param.init && param.init.call(me,me.dom);
-    });
+    openAnimation.call( me, animationClass );
   }
-  PROMPT.prototype.close = closeAnimation(60);
+  PROMPT.prototype = new BaseClass({
+    destroy: closeAnimation
+  });
   PROMPT.prototype.tips = function(txt,time){
     var me = this;
     if(txt){
@@ -733,11 +581,10 @@
     }
     if(time != 0){
       setTimeout(function(){
-        me.close();
+        me.destroy();
       },(time || 1500));
     }
   };
-  PROMPT.prototype.adapt = ADAPT;
   /**
    *	PLANE 
    */
@@ -745,12 +592,11 @@
     if(!(this instanceof PLANE)){
       return new PLANE(param);
     }
-    var me = this;
     var param = param || {};
+    var me = this,
+        animationClass = param.animationClass || private_config_defaultAnimationClass[0] || null;
 
-    me.closeFn = param.closeFn || null;
     me.dom = utils.createDom(plane_tpl)[0];
-    me._from = param.from || null;
 
     //insert html
     me.dom.innerHTML = param.html || '';
@@ -764,13 +610,11 @@
     private_allCnt.appendChild(me.dom);
 
     easyCloseHandle.call(me,true);
-    openAnimation.call(me,function(){
-      param.init && param.init.call(me,me.dom);
-    });
+    openAnimation.call( me, animationClass );
   }
-  PLANE.prototype.close = closeAnimation(80);
-  PLANE.prototype.adapt = ADAPT;
-
+  PLANE.prototype = new BaseClass({
+    destroy: closeAnimation
+  });
   /***
    * 全屏弹框
    * COVER 
@@ -779,52 +623,45 @@
     if(!(this instanceof COVER)){
       return new COVER(param);
     }
-    var param = param || {};
-    var me = this;
+    param = param || {};
+    var me = this,
+        animationClass = param.animationClass || private_config_defaultAnimationClass[0] || null;
     me.dom = utils.createDom(cover_tpl)[0];
     me._mask = typeof(param.mask) == 'boolean' ? param.mask : false;
-    me._from = param.from || 'top';
 
     me.cntDom = findByClassName(me.dom,'UI_cnt')[0];
-    me.closeFn = param.closeFn || null;
 
 
     //关闭事件
     bindEvent(me.dom,'click','.UI_close',function(){
-      me.close();
+      me.destroy();
     });
 
 
     //记录body的scrollY设置
-    me._bodyOverflowY = getCSS(private_body,'overflowY');
 
-      setCSS(me.dom,{
-        height: private_winH,
-        top: private_scrollTop
-      });
+    setCSS(me.dom,{
+      height: private_winH,
+      top: private_scrollTop
+    });
     private_allCnt.appendChild(me.dom);
 
     //处理是否易于关闭
     easyCloseHandle.call(me,param.easyClose,true);
-    openAnimation.call(me,function(){
-      setCSS(private_body,{
-        overflowY : 'hidden'
-      });
-      param.init && param.init.call(me,me.cntDom);
-    });
+    openAnimation.call( me, animationClass );
+    utils.addClass( private_body, 'UI-noscroll' );
     //insert html
     me.cntDom.innerHTML = param.html || '';
+
+    me.on('destroy',function(){
+      utils.addClass( me.cntDom, 'UI-noscroll' );
+      utils.removeClass( private_body, 'UI-noscroll' );
+    });
   }
   //使用close方法
-  COVER.prototype.close = closeAnimation(200,function(){
-    setCSS(this.cntDom,{
-      overflowY : 'hidden'
-    });
-    setCSS(private_body,{
-      overflowY : this._bodyOverflowY
-    });
+  COVER.prototype = new BaseClass({
+    destroy: closeAnimation
   });
-  COVER.prototype.adapt = ADAPT;
   /**
    * 选择功能
    */
@@ -832,11 +669,12 @@
     if(!(this instanceof SELECT)){
       return new SELECT(list,param);
     }
+    param = param || {};
     var me = this,
-        param = param || {},
         list = list || [],
         fns = [],
-        nameList = [];
+        nameList = [],
+        animationClass = param.animationClass || private_config_defaultAnimationClass[0] || null;
 
     utils.each(list,function(i,item){
       nameList.push(item[0]);
@@ -849,8 +687,6 @@
     });
 
     me.dom = utils.createDom(this_html)[0];
-    me.closeFn = param.closeFn || null;
-    me._from = param.from || 'bottom';
     me._mask = private_docW > 640 ? param.mask : true;
 
     //绑定事件
@@ -858,13 +694,12 @@
     utils.each(btns,function(index,btn){
       bindEvent(btn,'click',function(){
         fns[index] && fns[index]();
-        me.close();
+        me.destroy();
       });
     });
 
     if(private_docW < 640 && !isIE678){
       //手机版
-      me._from = 'bottom';
       private_allCnt.appendChild(me.dom);
     }else{
       var cssObj = {
@@ -880,14 +715,13 @@
         left : newSize.left,
         top : newSize.top
       });
-			me.adapt = ADAPT;
     }
     easyCloseHandle.call(me,param.easyClose,true);
-    openAnimation.call(me,function(){
-      param.init && param.init.call(me,me.dom);
-    });
+    openAnimation.call( me, animationClass );
   }
-  SELECT.prototype.close = closeAnimation(100);
+  SELECT.prototype = new BaseClass({
+    destroy: closeAnimation
+  });
   /**
    *  抛出对外接口
    */
@@ -896,14 +730,18 @@
     config : {
       gap : function(name,value){
         //name符合top/right/bottom/left,且value值为数字类型（兼容字符类型）
-        if(name && typeof(private_CONFIG.gap[name]) == 'number' && isNum(value)){
-            private_CONFIG.gap[name] = parseInt(value);
+        if(name && typeof(private_config_gap[name]) == 'number' && isNum(value)){
+            private_config_gap[name] = parseInt(value);
         }
+      },
+      setDefaultAnimationClass: function( startClassStr, endClassStr ){
+        private_config_defaultAnimationClass[0] = startClassStr;
+        endClassStr && (private_config_defaultAnimationClass[1] = endClassStr);
       },
       zIndex : function(num){
         var num = parseInt(num);
         if(num > 0){
-          private_CONFIG.zIndex = num;
+          private_config_zIndex = num;
           setCSS(private_allCnt,{
             zIndex : num
           });
@@ -917,7 +755,82 @@
     cover : COVER,
     select : SELECT
   };
-},function (window,document) {
+}, function(){
+	function isFunction( input ){
+		return typeof( input ) === 'function'
+	}
+	function isNotEmptyString( input ){
+		return typeof( input ) === 'string' && input.length > 0
+	}
+
+
+	function BaseClass( param ){
+		if( !param || !isFunction( param.destroy ) ){
+	      throw new Error("use BaseClass must define param & param.destroy");
+		}
+		param = param || {};
+		this._events = {};
+		this._isDestroyed = false;
+		this._onDestroy = param.destroy;
+	}
+	BaseClass.prototype = {
+		//监听自定义事件
+		on: function( eventName, callback ){
+			if( isNotEmptyString( eventName ) && isFunction( callback ) ){
+				//事件堆无该事件，创建一个事件堆
+				this._events[eventName] = this._events[eventName] || [];
+				// 追加至事件列表
+				this._events[eventName].push( callback );
+			}
+			//提供链式调用的支持
+			return this;
+		},
+		//解除自定义事件监听
+		un: function( eventName, callback ){
+			var eventList = this._events[eventName];
+			//事件堆无该事件队列，或未传入事件名结束运行
+			if( !eventList || !isNotEmptyString( eventName ) ){
+				return
+			}
+			// 若未传入回调参数，则直接置空事件队列
+			if( !isFunction( callback ) ){
+				eventList = [];
+			}else{
+				// 逆序遍历事件队列
+				for( var i = eventList.length-1; i!=-1; i-- ){
+					// 回调相同，移除当前项
+					if( eventList[i] == callback ){
+						eventList.splice(i,1);
+					}
+				}
+			}
+			//提供链式调用的支持
+			return this;
+		},
+		// 主动触发自定义事件
+		emit: function( eventName ){
+			// 获取除了事件名之外的参数
+			var args = Array.prototype.slice.call( arguments, 1, arguments.length );
+			//事件堆无该事件，结束运行
+			if(!this._events[eventName]){
+				return
+			}
+			for(var i=0,total=this._events[eventName].length;i<total;i++){
+				this._events[eventName][i].apply( this, args );
+			}
+		},
+		// 保证只有一遍有效执行
+		destroy: function(){
+			if( this._isDestroyed ){
+				return;
+			}
+			this._isDestroyed = true;
+			this._onDestroy.call( this );
+			this.emit( 'destroy' );
+		}
+	};
+	return BaseClass;
+}, function (window,document) {
   /**
    * 判断对象类型
    * string number array
@@ -1008,16 +921,34 @@
     };
   })();
 
-
-  var private_css3 = (supports('transition') && supports('transform')) ? true : false;
-
   /**
-   * 判断dom是否拥有某个class
+   * class 操作
    */
-  function hasClass(dom,classSingle){
-    return dom.className && dom.className.match(new RegExp('(\\s|^)' + classSingle + '(\\s|$)')) || false;
-  }
-
+  var private_css3 = !!(supports('transition') && supports('transform')),
+      supports_classList = !!document.createElement('div').classList,
+      // 是否含有某个 class
+      hasClass = supports_classList ? function( node, classSingle ){
+        return node && node.classList && node.classList.contains( classSingle );
+      } : function ( node, classSingle ){
+        if( !node || typeof( node.className ) !== 'string'  ){
+          return false;
+        }
+        return !! node.className.match(new RegExp('(\\s|^)' + classSingle + '(\\s|$)'));
+      },
+      // 增加一个 class
+      addClass = supports_classList ? function( node, classSingle ){
+        node && node.classList && node.classList.add( classSingle );
+      } : function ( node, cls) {
+        !hasClass(node, cls) && ( node.className += " " + cls );
+      },
+      // 移除一个 class
+      removeClass = supports_classList ? function ( node, classSingle ) {
+        node && node.classList && node.classList.remove( classSingle );  
+      } : function ( node, classSingle ) {
+        if ( hasClass( node, classSingle ) ) {
+          node.className = node.className.replace( new RegExp('(\\s+|^)' + classSingle + '(\\s+|$)'), '' );
+        }
+      };
   //获取样式
   function getStyle(elem, prop) {
     var value;
@@ -1176,74 +1107,51 @@
       onEnd && onEnd.call(elem);
     }
   }
-  var outerWidth,
-      outerHeight;
-  var testDom = document.createElement('div');
-  //用生命在计算宽度
-  function count_outerWidth (elem){
-    return (getStyle(elem,'borderLeftWidth') + getStyle(elem,'paddingLeft') + getStyle(elem,'width') + getStyle(elem,'paddingRight') + getStyle(elem,'borderRightWidth'));
-  }
-  //用生命在计算高度
-  function count_outerHeight (elem){
-    return (getStyle(elem,'borderTopWidth') + getStyle(elem,'paddingTop') + getStyle(elem,'height') + getStyle(elem,'paddingBottom') + getStyle(elem,'borderBottomWidth'));
-  }
-  if(testDom.getBoundingClientRect !== 'undefined'){
-    outerWidth = function(elem){
-      var output = elem.getBoundingClientRect().width;
+  var isSupportGBCR = !!document.createElement('div').getBoundingClientRect,
+      //用生命在计算宽度
+      count_outerWidth = function ( node ){
+        return (getStyle(node,'borderLeftWidth') + getStyle(node,'paddingLeft') + getStyle(node,'width') + getStyle(node,'paddingRight') + getStyle(node,'borderRightWidth'));
+      },
+      //用生命在计算高度
+      count_outerHeight = function ( node ){
+        return (getStyle(node,'borderTopWidth') + getStyle(node,'paddingTop') + getStyle(node,'height') + getStyle(node,'paddingBottom') + getStyle(node,'borderBottomWidth'));
+      },
+      // 外部宽度
+      outerWidth = isSupportGBCR ? function( node ){
+        var output = node.getBoundingClientRect().width;
+        return typeof(output) == 'number' ? output : count_outerWidth( node );
+      } : count_outerWidth,
+      // 外部高度
+      outerHeight = isSupportGBCR ? function( node ){
+        var output = node.getBoundingClientRect().height;
+        return typeof(output) == 'number' ? output : count_outerHeight( node );
+      } : count_outerHeight;
 
-      return typeof(output) == 'number' ? output : count_outerWidth(elem);
-    };
-    outerHeight = function(elem){
-      var output = elem.getBoundingClientRect().height;
-
-      return typeof(output) == 'number' ? output : count_outerHeight(elem);
-    };
-  }else{
-    outerWidth = count_outerWidth;
-    outerHeight = count_outerHeight;
-  }
-
-  /**
-   * 事件绑定
-   * elem:节点
-   * type:事件类型
-   * handler:回调
-   */
-  var bindHandler = (function() {
-    // 标准浏览器
-    if (window.addEventListener) {
-      return function(elem, type, handler) {
-        // 最后一个参数为true:在捕获阶段调用事件处理程序
-        //为false:在冒泡阶段调用事件处理程序
-        elem.addEventListener(type, handler, false);
-      }
-    } else if (window.attachEvent) {
-      // IE浏览器
-      return function(elem, type, handler) {
+  var supportEventListener = !!window.addEventListener,
+    /**
+     * 事件绑定
+     * elem:节点
+     * type:事件类型
+     * handler:回调
+     */
+    bindHandler = supportEventListener ? function(elem, type, handler) {
+      // 最后一个参数为true:在捕获阶段调用事件处理程序
+      //为false:在冒泡阶段调用事件处理程序
+      elem.addEventListener(type, handler, false);
+    } : function(elem, type, handler) {
         elem.attachEvent("on" + type, handler);
-      }
-    }
-  })();
-
-  /**
-   * 事件解除
-   * elem:节点
-   * type:事件类型
-   * handler:回调
-   */
-  var removeHandler = (function() {
-    // 标准浏览器
-    if (window.removeEventListener) {
-      return function(elem, type, handler) {
-        elem.removeEventListener(type, handler, false);
-      }
-    } else if (window.detachEvent) {
-      // IE浏览器
-      return function(elem, type, handler) {
-        elem.detachEvent("on" + type, handler);
-      }
-    }
-  })();
+    },
+    /**
+     * 事件解除
+     * elem:节点
+     * type:事件类型
+     * handler:回调
+     */
+    removeHandler = supportEventListener ? function(elem, type, handler) {
+      elem.removeEventListener(type, handler, false);
+    } : function(elem, type, handler) {
+      elem.detachEvent("on" + type, handler);
+    };
 
   function checkEventForClass(event,classStr,dom){
     var target = event.srcElement || event.target;
@@ -1290,15 +1198,8 @@
     clone : clone,
     unbind : removeHandler,
     hasClass : hasClass,
-    addClass : function (dom, cls) {
-      if (!this.hasClass(dom, cls)) dom.className += " " + cls;
-    },
-    removeClass : function (dom, cls) {
-      if (hasClass(dom, cls)) {
-        var reg = new RegExp('(\\s+|^)' + cls + '(\\s+|$)');
-        dom.className = dom.className.replace(reg, ' ');
-      }
-    },
+    addClass : addClass,
+    removeClass : removeClass,
     /**
      * 页面加载
      */

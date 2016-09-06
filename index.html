@@ -62,15 +62,6 @@
 		<a href="javascript:void(0)" onclick="toggleParam(this,'mask',true,false)" class="isSelected"><span>√</span>蒙层</a>
 		<a href="javascript:void(0)" onclick="toggleParam(this,'easyClose',true,false)" class="isSelected"><span>√</span>easyClose</a>
 	</div>
-	
-	<div id="from_selected">
-		<a href="javascript:void(0)" title="上" onclick="toggleFrom(this,'top')" class="from-top">﹀</a>
-		<a href="javascript:void(0)" title="下" onclick="toggleFrom(this,'bottom')" class="from-bottom">︿</a>
-		<a href="javascript:void(0)" title="左" onclick="toggleFrom(this,'left')" class="from-left">〉</a>
-		<a href="javascript:void(0)" title="右" onclick="toggleFrom(this,'right')" class="from-right">〈</a>
-		<a href="javascript:void(0)" title="缩放" onclick="toggleFrom(this,'dom')" class="from-dom isSelected">○</a>
-		<a href="javascript:void(0)" title="默认" onclick="toggleFrom(this,'none')" class="from-none">×</a>
-	</div>
 </div>
 	<div id="loading_mask">
 		<div class="loading_mask_txt">
@@ -79,10 +70,10 @@
 	</div>
 	<script type="text/javascript" src="src/dialog.js"></script>
 	<script type="text/javascript">
+
 		var param = {
 			'easyClose' : true,
-			'mask' : true,
-			'from' : 'dom'
+			'mask' : true
 		};
 		function toggleParam(elem,type,value,defaultValue){
 			if(param[type]){
@@ -92,21 +83,6 @@
 				UI._utils.addClass(elem,'isSelected');
 				param[type] = value;
 			}
-		}
-		
-		function toggleFrom(elem,from){
-			param.from = from;
-			if(from == 'none'){
-				param.from = null;
-			}
-			
-			UI._utils.each(elem.parentNode.getElementsByTagName('a'),function(i,dom){
-				if(UI._utils.hasClass(dom,'from-'+from)){
-					UI._utils.addClass(dom,'isSelected');
-				}else{
-					UI._utils.removeClass(dom,'isSelected');
-				}
-			});
 		}
 		
 		//弹框
@@ -120,12 +96,11 @@
 				'confirm' : param.confirm,
 				'width' : 600,
 				'easyClose' : param.easyClose,
-				'from' : param.from == "dom" ? elem : param.from,
 				'mask' : param.mask,
-				'html' : '<div style="height:280px;background:url(http://layasset.qiniudn.com/images/cover/newSkin.jpg) no-repeat center"></div>',
-				'closeFn' : function(){
-					active_pop = null;
-				}
+				'html' : '<div style="height:280px;background:url(http://layasset.qiniudn.com/images/cover/newSkin.jpg) no-repeat center"></div>'
+			});
+			active_pop.on('destroy', function(){
+				active_pop = null;
 			});
 		}
 		/**
@@ -139,15 +114,14 @@
 			active_confirm = UI.confirm({
 				'text' : '请我吃饭吧！',
 				'btns' : ['好的呀','不愿意'],
-				'from' : param.from == "dom" ? elem : param.from,
 				'easyClose' : param.easyClose,
 				'mask' : param.mask,
 				'callback' : function(){
 					UI.prompt('你是好人！');
-				},
-				'closeFn' : function(){
-					active_confirm = null;
 				}
+			});
+			active_confirm.on('destroy', function(){
+				active_confirm = null;
 			});
 		}
 		
@@ -155,19 +129,15 @@
 		function showMessage(elem){
 			if(active_prompt){
 				elem.innerHTML = '一直显示（别点）';
-				active_prompt.close();
+				active_prompt.destroy();
 				active_prompt = null;
 			}else{
 				elem.innerHTML = '想关掉它，点我啊';
-				active_prompt = UI.prompt('再点一下按钮，关掉我',0,{
-					from : param.from == "dom" ? elem : param.from
-				});
+				active_prompt = UI.prompt('再点一下按钮，关掉我',0);
 			}
 		}
 		function showPrompt(elem,title,time){
-			UI.prompt(title,time,{
-				from : param.from == "dom" ? elem : param.from
-			});
+			UI.prompt( title, time );
 		}
 		var active_select = null;
 		function showSelect(elem){
@@ -191,40 +161,16 @@
 				'top' : offset.top + UI._utils.outerHeight(elem),
 				'width' : 300,
 				'left' : offset.left + 30,
-				'from' : param.from == "dom" ? elem : param.from,
 				'easyClose' : param.easyClose,
-				'mask' : param.mask,
-				'closeFn' : function(){
-					active_select = null;
-				}
+				'mask' : param.mask
+			});
+			active_select.on('destroy', function(){
+				active_select = null;
 			});
 		}
-		var active_plane = null;
 		function showPlane(elem){
-			if(active_plane){
-				active_plane.close();
-				return
-			}
-			var offset = UI._utils.offset(elem);
-			active_plane = UI.plane({
-				'width' : UI._utils.outerWidth(elem) - 20,
-				'top' : offset.top - 140,
-				'left' : offset.left + 10,
-				'from' : param.from == "dom" ? elem : param.from,
-				'easyClose' : param.easyClose,
-				'mask' : param.mask,
-				'html' : '<div style="height:150px;line-height:150px;text-align:center;color:#333;background:#fff;box-shadow: 0px 0px 10px #000;">我最可怜，一丁点儿样式都没有</div>',
-				'closeFn' : function(){
-					active_plane = null;
-				}
-			});
-		}
-		
-		function showPlane(elem){
-			var from = param.from == "dom" ? elem : param.from;
 			var offset = UI._utils.offset(elem);
 			var param1 = {
-				'from' : from,
 				'top' : offset.top + UI._utils.outerHeight(elem),
 				'left' : offset.left + 30,
 				'easyClose' : param.easyClose,
@@ -234,26 +180,11 @@
 			UI.plane(param1);
 		}
 		function showCover(elem){
-			var from = param.from == "dom" ? elem : param.from;
 			var param1 = {
-				'from' : from,
 				'mask' : param.mask,
 				'easyClose' : param.easyClose,
 				'html' : '<table width="100%" height="100%"><tr><td style="text-align:center;vertical-align:middle;"><img src="http://layasset.qiniudn.com/labs/UI.jpg" /></td></tr></table>'
 			};
-			if(from == 'left'){
-				param1.left = 0;
-				param1.width = 400;
-			}else if(from == 'right'){
-				param1.right = 0;
-				param1.width = 400;
-			}else if(from == 'top'){
-				param1.top = 0;
-				param1.height = 400;
-			}else if(from == 'bottom'){
-				param1.bottom = 0;
-				param1.height = 400;
-			}
 			
 			UI.cover(param1);
 		}
@@ -278,15 +209,12 @@
 				}
 			},{
 				'easyClose' : param.easyClose,
-				'from' : param.from == "dom" ? elem : param.from,
 				'mask' : param.mask
 			});
-			active_ask.closeFn = function(){
+			active_ask.on('destroy', function(){
 				active_ask = null;
-			};
+			});
 		}
-		
-		
 		
 		
 		var bodyDom;
@@ -301,7 +229,7 @@
 			var deviceDom = document.getElementsByTagName('b')[0];
 			numDom.innerHTML = width + 'px';
 			if(width > 640){
-				deviceDom.innerHTML = 'WEB端';
+				deviceDom.innerHTML = 'PC端';
 			}else{
 				deviceDom.innerHTML = '手机端';
 			}
