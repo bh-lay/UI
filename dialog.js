@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2016-9-6 11:2
+ * @modified 2016-9-6 17:56
  * 
  **/
 
@@ -48,7 +48,7 @@
       cover_tpl = '<div class="UI_cover"><div class="UI_cnt"></div><a href="javascript:;" class="UI_close UI_coverClose">×</a></div>',
       plane_tpl = '<div class="UI_plane"></div>',
       select_tpl = '<div class="UI_select"><div class="UI_select_body UI_cnt"><% if(title){ %><div class="UI_selectCpt"><h3><%=title %></h3><% if(intro){ %><p><%=intro %></p><% } %></div><% } %><div class="UI_selectCnt"><% for(var i=0,total=list.length;i<total;i++){ %><a class="UI_select_btn" href="javascript:;"><%=list[i] %></a><% } %></div></div><div class="UI_selectCancel"><a class="UI_select_btn" href="javascript:;">取消</a></div></div>',
-      popCSS = '.UI_lawyer{position:absolute;top:0;left:0;z-index:4999;width:100%;height:0;overflow:visible;font-family:"Microsoft Yahei"}.UI_lawyer a,.UI_lawyer a:hover,.UI_lawyer a:active{outline:none;text-decoration:none;-webkit-tap-highlight-color:rgba(0,0,0,0);-webkit-tap-highlight-color:transparent}.UI_mask{position:absolute;top:0;left:0;width:100%;height:100%;background:#000;opacity:0.6;filter:alpha(opacity=60);display:none}.UI-blur{transform:translate3d(0,0,0);-webkit-filter:blur(3px)}.UI-noscroll{overflow:hidden}.UI_pop{width:200px;position:absolute;top:400px;left:300px;background:#fff;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_pop_cpt{position:relative;height:36px;line-height:36px;overflow:hidden;border-bottom:1px solid #ebebeb;color:#777;font-size:16px;text-indent:15px;cursor:default}.UI_pop .UI_cnt{position:relative;min-height:100px;overflow:auto}.UI_pop_close{display:block;position:absolute;top:0;right:0;width:40px;height:36px;text-align:center;color:#ddd;font:bold 20px/36px "simsun";transition:0.1s}.UI_pop_close:hover{color:#888}.UI_pop_close:active{color:#222}.UI_confirm{width:300px;position:absolute;background:#fff;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_confirm_text{padding:30px 10px 20px;line-height:26px;text-align:center;font-size:20px;color:#333}.UI_ask{width:300px;position:absolute;background:#fff;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_ask_text{padding:25px 10px 15px;line-height:26px;text-align:center;font-size:18px;color:#333}.UI_ask input{display:block;margin:0 auto 15px;height:30px;padding:4px 4px;line-height:22px;box-sizing:border-box;width:90%}.UI_pop_confirm{overflow:hidden;text-align:center;border-top:1px solid #ddd;white-space:nowrap}.UI_pop_confirm a{display:inline-block;width:50%;font-size:14px;line-height:36px;color:#03f;transition:0.15s}.UI_pop_confirm a:hover{background:#eee}.UI_pop_confirm_ok{border-right:1px solid #ddd}.UI_prompt{position:absolute;width:240px;background:#fff;box-shadow:2px 2px 10px rgba(0,0,0,0.5)}.UI_prompt .UI_cnt{padding:30px 10px;font-size:18px;color:#333;text-align:center}.UI_plane{position:absolute}.UI_cover{position:absolute;left:0;width:100%;height:100%}.UI_cover .UI_cnt{position:relative;width:100%;height:100%;background:#fff;overflow:auto}.UI_coverClose{display:block;position:absolute;top:10px;right:20px;width:30px;height:30px;text-align:center;color:#aaa;font:18px/30px "simsun";background:#eee;border-radius:15px;border:1px solid #aaa}.UI_coverClose:hover{background:#333;color:#fff;transition:0.2s}.UI_select{position:absolute;width:200px;box-shadow:2px 2px 2px rgba(0,0,0,0.6)}.UI_select a{display:block;height:40px;line-height:40px;text-align:center;color:#03f;font-size:16px}.UI_select_body{overflow:hidden;background:#fff}.UI_selectCpt{padding:8px 0}.UI_selectCpt h3,.UI_selectCpt p{margin:0;font-size:15px;line-height:18px;text-align:center;color:#aaa;font-weight:normal}.UI_selectCpt p{font-size:12px}.UI_selectCnt a{height:34px;line-height:34px;font-size:14px;border-top:1px solid #ddd}.UI_selectCnt a:hover{background:#eee}.UI_selectCancel{display:none}@media(max-width:640px){.UI_select{position:fixed;bottom:0;width:100%;padding-bottom:10px}.UI_select_body, .UI_selectCancel{margin:0 10px;border-radius:8px}.UI_select_body{margin:0 10px 10px;top:initial !important}.UI_selectCancel{display:block;background:#fff}}.UI_ie678 .UI_pop,.UI_ie678 .UI_confirm,.UI_ie678 .UI_ask,.UI_ie678 .UI_prompt,.UI_ie678 .UI_select{outline:3px solid #ccc}/** * CSS3动画 * **/@-webkit-keyframes UI-fadeInDown{0%{opacity:0;-webkit-transform:translateY(10px)}100%{opacity:1;-webkit-transform:translateY(0)}}@keyframes UI-fadeInDown{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:translateY(0)}}@-webkit-keyframes UI-fadeOutUp{0%{opacity:1;-webkit-transform:translateY(0)}100%{opacity:0;-webkit-transform:translateY(10px)}}@keyframes UI-fadeOutUp{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(10px)}}.UI-fadeIn{-webkit-animation:UI-fadeInDown 0.2s ease both;animation:UI-fadeInDown 0.2s ease both}.UI-fadeOut{-webkit-animation:UI-fadeOutUp 0.2s ease both;animation:UI-fadeOutUp 0.2s ease both}';
+      popCSS = '.UI_lawyer{position:absolute;top:0;left:0;z-index:4999;width:100%;height:0;overflow:visible;font-family:"Microsoft Yahei"}.UI_lawyer a,.UI_lawyer a:hover,.UI_lawyer a:active{outline:none;text-decoration:none;-webkit-tap-highlight-color:rgba(0,0,0,0);-webkit-tap-highlight-color:transparent}.UI_mask{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;opacity:0.6;filter:alpha(opacity=60);display:none}.UI-blur{transform:translate3d(0,0,0);-webkit-filter:blur(3px)}.UI-noscroll{overflow:hidden}.UI_pop{width:200px;position:absolute;top:400px;left:300px;background:#fff;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_pop_cpt{position:relative;height:36px;line-height:36px;overflow:hidden;border-bottom:1px solid #ebebeb;color:#777;font-size:16px;text-indent:15px;cursor:default}.UI_pop .UI_cnt{position:relative;min-height:100px;overflow:auto}.UI_pop_close{display:block;position:absolute;top:0;right:0;width:40px;height:36px;text-align:center;color:#ddd;font:bold 20px/36px "simsun";transition:0.1s}.UI_pop_close:hover{color:#888}.UI_pop_close:active{color:#222}.UI_confirm{width:300px;position:absolute;background:#fff;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_confirm_text{padding:30px 10px 20px;line-height:26px;text-align:center;font-size:20px;color:#333}.UI_ask{width:300px;position:absolute;background:#fff;overflow:hidden;box-shadow:2px 3px 10px rgba(0,0,0,0.6)}.UI_ask_text{padding:25px 10px 15px;line-height:26px;text-align:center;font-size:18px;color:#333}.UI_ask input{display:block;margin:0 auto 15px;height:30px;padding:4px 4px;line-height:22px;box-sizing:border-box;width:90%}.UI_pop_confirm{overflow:hidden;text-align:center;border-top:1px solid #ddd;white-space:nowrap}.UI_pop_confirm a{display:inline-block;width:50%;font-size:14px;line-height:36px;color:#03f;transition:0.15s}.UI_pop_confirm a:hover{background:#eee}.UI_pop_confirm_ok{border-right:1px solid #ddd}.UI_prompt{position:absolute;width:240px;background:#fff;box-shadow:2px 2px 10px rgba(0,0,0,0.5)}.UI_prompt .UI_cnt{padding:30px 10px;font-size:18px;color:#333;text-align:center}.UI_plane{position:absolute}.UI_cover{position:absolute;left:0;width:100%;height:100%}.UI_cover .UI_cnt{position:relative;width:100%;height:100%;background:#fff;overflow:auto}.UI_coverClose{display:block;position:absolute;top:10px;right:20px;width:30px;height:30px;text-align:center;color:#aaa;font:18px/30px "simsun";background:#eee;border-radius:15px;border:1px solid #aaa}.UI_coverClose:hover{background:#333;color:#fff;transition:0.2s}.UI_select{position:absolute;width:200px;box-shadow:2px 2px 2px rgba(0,0,0,0.6)}.UI_select a{display:block;height:40px;line-height:40px;text-align:center;color:#03f;font-size:16px}.UI_select_body{overflow:hidden;background:#fff}.UI_selectCpt{padding:8px 0}.UI_selectCpt h3,.UI_selectCpt p{margin:0;font-size:15px;line-height:18px;text-align:center;color:#aaa;font-weight:normal}.UI_selectCpt p{font-size:12px}.UI_selectCnt a{height:34px;line-height:34px;font-size:14px;border-top:1px solid #ddd}.UI_selectCnt a:hover{background:#eee}.UI_selectCancel{display:none}@media(max-width:640px){.UI_select{position:fixed;bottom:0;width:100%;padding-bottom:10px}.UI_select_body, .UI_selectCancel{margin:0 10px;border-radius:8px}.UI_select_body{margin:0 10px 10px;top:initial !important}.UI_selectCancel{display:block;background:#fff}}.UI_ie678 .UI_pop,.UI_ie678 .UI_confirm,.UI_ie678 .UI_ask,.UI_ie678 .UI_prompt,.UI_ie678 .UI_select{outline:3px solid #ccc}.UI_ie67 .UI_mask{position:absolute}/** * CSS3动画 * **/@-webkit-keyframes UI-fadeInDown{0%{opacity:0;-webkit-transform:translateY(10px)}100%{opacity:1;-webkit-transform:translateY(0)}}@keyframes UI-fadeInDown{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:translateY(0)}}@-webkit-keyframes UI-fadeOutUp{0%{opacity:1;-webkit-transform:translateY(0)}100%{opacity:0;-webkit-transform:translateY(10px)}}@keyframes UI-fadeOutUp{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(10px)}}.UI-fadeIn{-webkit-animation:UI-fadeInDown 0.2s ease both;animation:UI-fadeInDown 0.2s ease both}.UI-fadeOut{-webkit-animation:UI-fadeOutUp 0.2s ease both;animation:UI-fadeOutUp 0.2s ease both}';
 
   var isIE67,
     isIE678;
@@ -69,6 +69,7 @@
   var private_allCnt = utils.createDom(allCnt_tpl)[0],
       private_maskDom = findByClassName(private_allCnt,'UI_mask')[0],
       private_body = document.body,
+      private_root_node = document.compatMode == "BackCompat" ? private_body : document.documentElement,
       private_docW,
       private_winH,
       private_docH,
@@ -83,15 +84,13 @@
       // 默认弹框动画
       private_config_defaultAnimationClass = [ 'UI-fadeIn', 'UI-fadeOut' ];
 
-  var docDom = document.compatMode == "BackCompat" ? private_body : document.documentElement;
-
 //重新计算浏览器窗口尺寸
   function refreshSize(){
-    private_scrollTop = docDom.scrollTop == 0 ? private_body.scrollTop : docDom.scrollTop;
+    private_scrollTop = private_root_node.scrollTop == 0 ? private_body.scrollTop : private_root_node.scrollTop;
     private_winH = window.innerHeight || document.documentElement.clientHeight;
     private_winW = window.innerWidth || document.documentElement.clientWidth;
-    private_docH = docDom.scrollHeight;
-    private_docW = docDom.clientWidth;
+    private_docH = private_root_node.scrollHeight;
+    private_docW = private_root_node.clientWidth;
   }
   //记录当前正在显示的对象
   var active_objs = [];
@@ -108,26 +107,10 @@
   function close_last_easyClose_obj(){
     for(var i= active_objs.length-1;i>=0;i--){
       if(active_objs[i]['_easyClose']){
-        active_objs[i].close && active_objs[i].close();
         active_objs[i].destroy && active_objs[i].destroy();
         break;
       }
     }
-  }
-  //最后一个有蒙层的对象的zIndex值，
-  function last_has_mask_zIndex(){
-    //逆序遍历所有显示中的对象
-    for(var i= active_objs.length-1;i>=0;i--){
-      //判断是否含有蒙层
-      if(active_objs[i]._mask){
-        var zIndex = getCSS(active_objs[i].dom,'zIndex');
-        //是否为数值
-        if(isNum(zIndex)){
-          return parseInt(zIndex);
-        }
-      }
-    }
-    return private_config_zIndex; // 无则返回默认值
   }
   //调整正在显示的对象的位置
   var adapt_delay;
@@ -195,10 +178,6 @@
     refreshSize();
     setTimeout(refreshSize,500);
 
-    if(isIE678){
-      utils.addClass(private_allCnt,'UI_ie678');
-    }
-
     var rebuild_fn = isIE67 ? function(){
         refreshSize();
         adapt_active_obj();
@@ -209,11 +188,11 @@
         refreshSize();
         adapt_active_obj();
       };
-    if( !isIE67 ){
-      setCSS(private_maskDom,{
-        position : 'fixed',
-        top : 0
-      });
+    if( isIE67 ){
+      utils.addClass(private_allCnt,'UI_ie67');
+    }
+    if(isIE678){
+      utils.addClass(private_allCnt,'UI_ie678');
     }
 
     //监听浏览器缩放、滚屏事件
@@ -327,59 +306,52 @@
       travelRootElements(function(dom){
         utils.removeClass(dom,'UI-blur');
       });
+      utils.fadeOut(private_maskDom,400);
     };
   }
 
-  /**
-   * 显示蒙层 
-   */
-  function showMask(){
-    var lastHasMaskZindex = last_has_mask_zIndex();
-    setCSS(this.dom,{
-      zIndex: lastHasMaskZindex + 2
-    });
-    if(!this._mask){
-      return;
+  //最后一个有蒙层的对象
+  function last_has_mask_item(){
+    //逆序遍历所有显示中的对象
+    for(var i= active_objs.length-1;i>=0;i--){
+      //判断是否含有蒙层
+      if(active_objs[i]._mask){
+        return active_objs[i];
+      }
     }
-    setCSS(private_maskDom,{
-      zIndex: lastHasMaskZindex + 1
-    });
-
-    //之前蒙层未显示，显示蒙层
-    if(lastHasMaskZindex <= private_config_zIndex ){
-      blur && blur();
-    }
+    return null;
   }
-  /**
-   * 关闭蒙层
-   */
-  function closeMask(){
-    var me = this;
-    if( !me._mask){
-      return;
-    }
-    var lastHasMaskZindex = last_has_mask_zIndex();
-    setCSS(private_maskDom,{
-      zIndex : lastHasMaskZindex - 1
-    });
-
-    if(lastHasMaskZindex <= private_config_zIndex){
-      removeBlur && removeBlur();
-      utils.fadeOut(private_maskDom,400);
-    }
+  //最后一个有蒙层的对象的zIndex值，
+  function last_has_mask_zIndex(){
+    var item = last_has_mask_item();
+    return item ? item._zIndex : private_config_zIndex; // 无则返回默认值
   }
-
   /**
    * 开场动画
    **/
   function openAnimation( animationClass ){
-    var me = this;
+    var me = this,
+        lastHasMaskZindex = last_has_mask_zIndex();
+
+    this._zIndex = lastHasMaskZindex + 2;
+    setCSS(this.dom,{
+      zIndex: this._zIndex
+    });
+
+    // 若有蒙层则显示蒙层
+    if( this._mask ){
+      setCSS(private_maskDom,{
+        zIndex: lastHasMaskZindex + 1
+      });
+
+      //之前蒙层未显示，显示蒙层
+      if( lastHasMaskZindex <= private_config_zIndex ){
+        blur && blur();
+      }
+    }
+
     //向全局记录的对象内添加对象
     active_objs.push(me);
-
-    //显示蒙层（内部判断是否显示）
-    showMask.call(me);
-
     //非ie系列 且 有动画配置，显示效果
     if( !isIE678 && animationClass ){
       utils.addClass( me.dom, animationClass );
@@ -397,8 +369,17 @@
     //从全局记录的对象内删除自己；
     remove_active_obj(me);
 
-    // 关闭蒙层（内部判断是否关闭）
-    closeMask.call(me);
+    // 若有蒙层，则关闭或移至下一个需要显示蒙层的位置
+    if( me._mask ){
+      var lastHasMaskZindex = last_has_mask_zIndex();
+      setCSS(private_maskDom,{
+        zIndex : lastHasMaskZindex - 1
+      });
+
+      if(lastHasMaskZindex <= private_config_zIndex){
+        removeBlur && removeBlur();
+      }
+    }
     function end(){
       //删除dom
       utils.removeNode(DOM);

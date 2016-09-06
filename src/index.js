@@ -310,20 +310,21 @@
     };
   }
 
-  //最后一个有蒙层的对象的zIndex值，
-  function last_has_mask_zIndex(){
+  //最后一个有蒙层的对象
+  function last_has_mask_item(){
     //逆序遍历所有显示中的对象
     for(var i= active_objs.length-1;i>=0;i--){
       //判断是否含有蒙层
       if(active_objs[i]._mask){
-        var zIndex = active_objs[i]._zIndex;
-        //是否为数值
-        if(isNum(zIndex)){
-          return parseInt(zIndex);
-        }
+        return active_objs[i];
       }
     }
-    return private_config_zIndex; // 无则返回默认值
+    return null;
+  }
+  //最后一个有蒙层的对象的zIndex值，
+  function last_has_mask_zIndex(){
+    var item = last_has_mask_item();
+    return item ? item._zIndex : private_config_zIndex; // 无则返回默认值
   }
   /**
    * 开场动画
