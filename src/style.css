@@ -18,7 +18,7 @@
   -webkit-tap-highlight-color : transparent;
 }
 .UI_mask {
-  position : absolute;
+  position : fixed;
   top : 0;
   left : 0;
   width : 100%;
@@ -257,6 +257,9 @@ position: absolute;
 .UI_ie678 .UI_prompt,
 .UI_ie678 .UI_select{
   outline:3px solid #ccc;
+}
+.UI_ie67 .UI_mask{
+  position: absolute;
 }
 
 

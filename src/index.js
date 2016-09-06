@@ -69,6 +69,7 @@
   var private_allCnt = utils.createDom(allCnt_tpl)[0],
       private_maskDom = findByClassName(private_allCnt,'UI_mask')[0],
       private_body = document.body,
+      private_root_node = document.compatMode == "BackCompat" ? private_body : document.documentElement,
       private_docW,
       private_winH,
       private_docH,
@@ -83,15 +84,13 @@
       // 默认弹框动画
       private_config_defaultAnimationClass = [ 'UI-fadeIn', 'UI-fadeOut' ];
 
-  var docDom = document.compatMode == "BackCompat" ? private_body : document.documentElement;
-
 //重新计算浏览器窗口尺寸
   function refreshSize(){
-    private_scrollTop = docDom.scrollTop == 0 ? private_body.scrollTop : docDom.scrollTop;
+    private_scrollTop = private_root_node.scrollTop == 0 ? private_body.scrollTop : private_root_node.scrollTop;
     private_winH = window.innerHeight || document.documentElement.clientHeight;
     private_winW = window.innerWidth || document.documentElement.clientWidth;
-    private_docH = docDom.scrollHeight;
-    private_docW = docDom.clientWidth;
+    private_docH = private_root_node.scrollHeight;
+    private_docW = private_root_node.clientWidth;
   }
   //记录当前正在显示的对象
   var active_objs = [];
@@ -108,26 +107,10 @@
   function close_last_easyClose_obj(){
     for(var i= active_objs.length-1;i>=0;i--){
       if(active_objs[i]['_easyClose']){
-        active_objs[i].close && active_objs[i].close();
         active_objs[i].destroy && active_objs[i].destroy();
         break;
       }
     }
-  }
-  //最后一个有蒙层的对象的zIndex值，
-  function last_has_mask_zIndex(){
-    //逆序遍历所有显示中的对象
-    for(var i= active_objs.length-1;i>=0;i--){
-      //判断是否含有蒙层
-      if(active_objs[i]._mask){
-        var zIndex = getCSS(active_objs[i].dom,'zIndex');
-        //是否为数值
-        if(isNum(zIndex)){
-          return parseInt(zIndex);
-        }
-      }
-    }
-    return private_config_zIndex; // 无则返回默认值
   }
   //调整正在显示的对象的位置
   var adapt_delay;
@@ -195,10 +178,6 @@
     refreshSize();
     setTimeout(refreshSize,500);
 
-    if(isIE678){
-      utils.addClass(private_allCnt,'UI_ie678');
-    }
-
     var rebuild_fn = isIE67 ? function(){
         refreshSize();
         adapt_active_obj();
@@ -209,11 +188,11 @@
         refreshSize();
         adapt_active_obj();
       };
-    if( !isIE67 ){
-      setCSS(private_maskDom,{
-        position : 'fixed',
-        top : 0
-      });
+    if( isIE67 ){
+      utils.addClass(private_allCnt,'UI_ie67');
+    }
+    if(isIE678){
+      utils.addClass(private_allCnt,'UI_ie678');
     }
 
     //监听浏览器缩放、滚屏事件
@@ -327,59 +306,51 @@
       travelRootElements(function(dom){
         utils.removeClass(dom,'UI-blur');
       });
+      utils.fadeOut(private_maskDom,400);
     };
   }
 
-  /**
-   * 显示蒙层 
-   */
-  function showMask(){
-    var lastHasMaskZindex = last_has_mask_zIndex();
-    setCSS(this.dom,{
-      zIndex: lastHasMaskZindex + 2
-    });
-    if(!this._mask){
-      return;
+  //最后一个有蒙层的对象的zIndex值，
+  function last_has_mask_zIndex(){
+    //逆序遍历所有显示中的对象
+    for(var i= active_objs.length-1;i>=0;i--){
+      //判断是否含有蒙层
+      if(active_objs[i]._mask){
+        var zIndex = active_objs[i]._zIndex;
+        //是否为数值
+        if(isNum(zIndex)){
+          return parseInt(zIndex);
+        }
+      }
     }
-    setCSS(private_maskDom,{
-      zIndex: lastHasMaskZindex + 1
-    });
-
-    //之前蒙层未显示，显示蒙层
-    if(lastHasMaskZindex <= private_config_zIndex ){
-      blur && blur();
-    }
+    return private_config_zIndex; // 无则返回默认值
   }
-  /**
-   * 关闭蒙层
-   */
-  function closeMask(){
-    var me = this;
-    if( !me._mask){
-      return;
-    }
-    var lastHasMaskZindex = last_has_mask_zIndex();
-    setCSS(private_maskDom,{
-      zIndex : lastHasMaskZindex - 1
-    });
-
-    if(lastHasMaskZindex <= private_config_zIndex){
-      removeBlur && removeBlur();
-      utils.fadeOut(private_maskDom,400);
-    }
-  }
-
   /**
    * 开场动画
    **/
   function openAnimation( animationClass ){
-    var me = this;
+    var me = this,
+        lastHasMaskZindex = last_has_mask_zIndex();
+
+    this._zIndex = lastHasMaskZindex + 2;
+    setCSS(this.dom,{
+      zIndex: this._zIndex
+    });
+
+    // 若有蒙层则显示蒙层
+    if( this._mask ){
+      setCSS(private_maskDom,{
+        zIndex: lastHasMaskZindex + 1
+      });
+
+      //之前蒙层未显示，显示蒙层
+      if( lastHasMaskZindex <= private_config_zIndex ){
+        blur && blur();
+      }
+    }
+
     //向全局记录的对象内添加对象
     active_objs.push(me);
-
-    //显示蒙层（内部判断是否显示）
-    showMask.call(me);
-
     //非ie系列 且 有动画配置，显示效果
     if( !isIE678 && animationClass ){
       utils.addClass( me.dom, animationClass );
@@ -397,8 +368,17 @@
     //从全局记录的对象内删除自己；
     remove_active_obj(me);
 
-    // 关闭蒙层（内部判断是否关闭）
-    closeMask.call(me);
+    // 若有蒙层，则关闭或移至下一个需要显示蒙层的位置
+    if( me._mask ){
+      var lastHasMaskZindex = last_has_mask_zIndex();
+      setCSS(private_maskDom,{
+        zIndex : lastHasMaskZindex - 1
+      });
+
+      if(lastHasMaskZindex <= private_config_zIndex){
+        removeBlur && removeBlur();
+      }
+    }
     function end(){
       //删除dom
       utils.removeNode(DOM);
