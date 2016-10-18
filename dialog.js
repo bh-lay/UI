@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2016-9-6 17:56
+ * @modified 2016-10-18 15:58
  * 
  **/
 
@@ -227,22 +227,31 @@
       left : Math.ceil(left)
     }
   }
-  //为基类扩展自适应于页面的原型方法
-  BaseClass.prototype.adaption = function( param, useAnimation ){
-    param = param || {};
-    // 默认使用动画
-    useAnimation = typeof(useAnimation) == 'boolean' ? useAnimation : true;
+  //为基类扩展自适应于页面位置的原型方法
+  BaseClass.prototype.adaption = function(){
+    // 初始时不使用动画
+    var initTop,
+        initLeft,
+        useAnimation = true,
+        initPosition = this._initPosition;
+    if( initPosition ){
+      initTop = initPosition.top;
+      initLeft = initPosition.left;
+      useAnimation = false;
+      // 删除初始位置
+      delete this._initPosition;
+    }
     var dom = this.dom,
         width = outerWidth( dom ),
         height = outerHeight( dom ),
-        top = (private_winH - height)/2 + private_scrollTop,
-        left = (private_docW - width)/2,
+        top = isNum(initTop) ? initTop : (private_winH - height)/2 + private_scrollTop,
+        left = isNum(initLeft) ? initLeft : (private_docW - width)/2,
         newPosition = fix_position( top, left, width, height ),
-        useMethod =  useAnimation ? animation : setCSS;
+        useMethod = useAnimation ? animation : setCSS;
 
     useMethod(dom,{
-      top : isNum(param.top) ? param.top : Math.ceil(newPosition.top),
-      left : isNum(param.left) ? param.left : Math.ceil(newPosition.left)
+      top : Math.ceil(newPosition.top),
+      left : Math.ceil(newPosition.left)
     }, 80 );
   };
 
@@ -329,7 +338,7 @@
   /**
    * 开场动画
    **/
-  function openAnimation( animationClass ){
+  function openAnimation(){
     var me = this,
         lastHasMaskZindex = last_has_mask_zIndex();
 
@@ -351,10 +360,10 @@
     }
 
     //向全局记录的对象内添加对象
-    active_objs.push(me);
+    active_objs.push( me );
     //非ie系列 且 有动画配置，显示效果
-    if( !isIE678 && animationClass ){
-      utils.addClass( me.dom, animationClass );
+    if( !isIE678 && this.animationClass ){
+      utils.addClass( me.dom, this.animationClass[0] );
     }
   }
 
@@ -364,7 +373,7 @@
   function closeAnimation(){
     var me = this,
         DOM = me.dom,
-        animationClass = private_config_defaultAnimationClass[1];
+        animationClass = this.animationClass[1];
 
     //从全局记录的对象内删除自己；
     remove_active_obj(me);
@@ -393,23 +402,34 @@
       setTimeout(end, 500);
     }
   }
-
+  // 过滤参数
+  function filterParam( param, defaults ){
+    param = param || {};
+    // 动画定义
+    this.animationClass = ( param.animationClass || '' ).constructor == Array ? param.animationClass : private_config_defaultAnimationClass;
+    // 蒙层参数
+    this._mask = typeof( param.mask ) == 'boolean' ? param.mask : defaults.mask;
+    // 初始位置
+    this._initPosition = {
+      top: param.top,
+      left: param.left
+    };
+  }
   /**
    * 弹框
    * pop 
    */
-  function POP(param){
-    if(!(this instanceof POP)){
-      return new POP(param);
+  function POP( param ){
+    if( !(this instanceof POP) ){
+      return new POP( param );
     }
     param = param || {};
-    var me = this,
-        animationClass = param.animationClass || private_config_defaultAnimationClass[0] || null;
-
+    var me = this;
+    filterParam.call( this, param, {
+      mask: true
+    });
     me.dom = utils.createDom(pop_tpl)[0];
     me.cntDom = findByClassName(me.dom,'UI_cnt')[0];
-    me._mask = param.mask || false;
-
 
     //当有确认参数时
     if(param.confirm){
@@ -419,7 +439,7 @@
     }
     //处理title参数
     var caption_dom = findByClassName(me.dom,'UI_pop_cpt')[0];
-    if(!param.title){
+    if( !param.title ){
       utils.removeNode(caption_dom);
     }else{
       caption_dom.innerHTML = param.title;
@@ -452,13 +472,13 @@
     private_allCnt.appendChild(me.dom);
 
     //校正位置
-    this.adaption( param, false );
+    this.adaption();
 
     //处理是否易于关闭
     easyCloseHandle.call(me,param.easyClose,true);
 
     //开场动画
-    openAnimation.call( me, animationClass );
+    openAnimation.call( me );
   }
   POP.prototype = new BaseClass({
     destroy: closeAnimation
@@ -471,26 +491,26 @@
     if(!(this instanceof CONFIRM)){
       return new CONFIRM(param);
     }
+    
     param = param || {};
-    var me = this,
-        animationClass = param.animationClass || private_config_defaultAnimationClass[0] || null;
-
-    var this_html = utils.render(confirm_tpl,{
-      text : param.text || 'need text in parameter!'
+    var me = this;
+    filterParam.call( this, param, {
+      mask: true
     });
-    me.dom = utils.createDom(this_html)[0];
-    me._mask = typeof(param.mask) == 'boolean' ? param.mask : true;
+    me.dom = utils.createDom( utils.render(confirm_tpl,{
+      text : param.text || 'need text in parameter!'
+    }) )[0];
 
     add_confirm(me.dom,param,function(){
         me.destroy();
     });
     private_allCnt.appendChild(me.dom);
 
-    this.adaption( param, false );
+    this.adaption();
 
     //处理是否易于关闭
     easyCloseHandle.call(me,param.easyClose,true);
-    openAnimation.call( me, animationClass );
+    openAnimation.call( me );
   }
   CONFIRM.prototype = new BaseClass({
     destroy: closeAnimation
@@ -505,15 +525,17 @@
       return new ASK(text,callback,param);
     }
     param = param || {};
-    var me = this,
-        animationClass = param.animationClass || private_config_defaultAnimationClass[0] || null;
+    var me = this;
+    filterParam.call( this, param, {
+      mask: true
+    });
 
     var this_html = utils.render(ask_tpl,{
       text : text || 'need text in parameter!'
     });
 
     me.dom = utils.createDom(this_html)[0];
-    me._mask = typeof(param.mask) == 'boolean' ? param.mask : true;
+
     me.inputDom = findByClassName(me.dom,'UI_ask_key')[0];
 
     var confirm_html = utils.render(confirmBar_tpl,{
@@ -535,11 +557,11 @@
 
     private_allCnt.appendChild(me.dom);
 
-    this.adaption( param, false );
+    this.adaption();
 
     //处理是否易于关闭
     easyCloseHandle.call(me,param.easyClose,true);
-    openAnimation.call( me, animationClass );
+    openAnimation.call( me );
     me.inputDom.focus();
   }
   ASK.prototype = new BaseClass({
@@ -559,17 +581,18 @@
       return new PROMPT(text,time,param);
     }
     param = param || {};
-    var me = this,
-        animationClass = param.animationClass || private_config_defaultAnimationClass[0] || null;
+    var me = this;
+    filterParam.call( this, param, {
+      mask: false
+    });
     me.dom = utils.createDom(prompt_tpl)[0];
-    me._mask = param.mask ? true : false;
     me.tips(text,time);
 
     // create pop
     private_allCnt.appendChild(me.dom);
-    this.adaption( param, false );
+    this.adaption();
 
-    openAnimation.call( me, animationClass );
+    openAnimation.call( me );
   }
   PROMPT.prototype = new BaseClass({
     destroy: closeAnimation
@@ -592,9 +615,11 @@
     if(!(this instanceof PLANE)){
       return new PLANE(param);
     }
-    var param = param || {};
-    var me = this,
-        animationClass = param.animationClass || private_config_defaultAnimationClass[0] || null;
+    param = param || {};
+    var me = this;
+    filterParam.call( this, param, {
+      mask: false
+    });
 
     me.dom = utils.createDom(plane_tpl)[0];
 
@@ -610,7 +635,7 @@
     private_allCnt.appendChild(me.dom);
 
     easyCloseHandle.call(me,true);
-    openAnimation.call( me, animationClass );
+    openAnimation.call( me );
   }
   PLANE.prototype = new BaseClass({
     destroy: closeAnimation
@@ -624,10 +649,11 @@
       return new COVER(param);
     }
     param = param || {};
-    var me = this,
-        animationClass = param.animationClass || private_config_defaultAnimationClass[0] || null;
+    var me = this;
+    filterParam.call( this, param, {
+      mask: false
+    });
     me.dom = utils.createDom(cover_tpl)[0];
-    me._mask = typeof(param.mask) == 'boolean' ? param.mask : false;
 
     me.cntDom = findByClassName(me.dom,'UI_cnt')[0];
 
@@ -648,7 +674,7 @@
 
     //处理是否易于关闭
     easyCloseHandle.call(me,param.easyClose,true);
-    openAnimation.call( me, animationClass );
+    openAnimation.call( me );
     utils.addClass( private_body, 'UI-noscroll' );
     //insert html
     me.cntDom.innerHTML = param.html || '';
@@ -673,8 +699,10 @@
     var me = this,
         list = list || [],
         fns = [],
-        nameList = [],
-        animationClass = param.animationClass || private_config_defaultAnimationClass[0] || null;
+        nameList = [];
+    filterParam.call( this, param, {
+      mask: true
+    });
 
     utils.each(list,function(i,item){
       nameList.push(item[0]);
@@ -687,7 +715,6 @@
     });
 
     me.dom = utils.createDom(this_html)[0];
-    me._mask = private_docW > 640 ? param.mask : true;
 
     //绑定事件
     var btns = findByClassName(me.dom,'UI_select_btn');
@@ -717,7 +744,7 @@
       });
     }
     easyCloseHandle.call(me,param.easyClose,true);
-    openAnimation.call( me, animationClass );
+    openAnimation.call( me );
   }
   SELECT.prototype = new BaseClass({
     destroy: closeAnimation
