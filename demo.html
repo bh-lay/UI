@@ -274,8 +274,13 @@
 				'btns' : ['好的呀','不愿意'],
 				'easyClose' : param.easyClose,
 				'mask' : param.mask,
-				'callback' : function(){
+				callback : function(){
 					UI.prompt('你是好人！');
+					// return false
+				},
+				cancel: function(){
+					UI.prompt('真抠门儿！');
+					// return false
 				}
 			});
 			active_confirm.on('destroy', function(){

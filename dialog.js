@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2016-10-18 19:33
+ * @modified 2016-10-18 19:47
  * 
  **/
 
@@ -257,22 +257,24 @@
   };
 
   //增加确认方法
-  function add_confirm( node, param, destroy ){
-    var callback = null,
+  function add_confirm( confirmParams ){
+    var me = this,
+        callback = null,
         cancel = null,
-        btns = ['\u786E\u8BA4','\u53D6\u6D88'];
+        btns = ['\u786E\u8BA4','\u53D6\u6D88'],
+        node = me.node;
 
-    if(typeof(param) == "function"){
-      callback = param;
-    }else if(typeof(param) == "object"){
-      var paramBtns = param.btns || [];
+    if(typeof( confirmParams ) == "function"){
+      callback = confirmParams;
+    }else if(typeof( confirmParams ) == "object"){
+      var paramBtns = confirmParams.btns || [];
       btns[0] = paramBtns[0] || btns[0];
       btns[1] = paramBtns[1] || btns[1];
-      if(typeof(param.callback) == "function"){
-        callback = param.callback;
+      if(typeof(confirmParams.callback) == "function"){
+        callback = confirmParams.callback;
       }
-      if(typeof(param.cancel) == "function"){
-        cancel = param.cancel;
+      if( typeof(confirmParams.cancel) == "function" ){
+        cancel = confirmParams.cancel;
       }
     }
     var this_html = utils.render(confirmBar_tpl,{
@@ -280,15 +282,18 @@
       cancel : btns[1]
     });
     node.appendChild( utils.createDom(this_html)[0] );
-
+    // 关闭弹窗的方法
+    function close(){
+      me.destroy();
+    }
     //绑定事件，根据执行结果判断是否要关闭弹框
     bindEvent( node, 'click','.UI_pop_confirm_ok', function(){
       //点击确认按钮
-      callback ? ((callback() != false) && destroy()) : destroy();
+      callback ? ((callback() !== false) && close()) : close();
     });
     bindEvent( node, 'click','.UI_pop_confirm_cancel',function(){
       //点击取消按钮
-      cancel ? ((cancel() != false) && destroy()) : destroy();
+      cancel ? ((cancel() !== false) && close()) : close();
     });
   }
 
@@ -436,9 +441,7 @@
 
     //当有确认参数时
     if(param.confirm){
-      add_confirm( me.node, param.confirm, function(){
-        me.destroy();
-      });
+      add_confirm.call( me, param.confirm );
     }
     //处理title参数
     if( param.title ){
@@ -499,9 +502,7 @@
       text : param.text || 'need text in parameter!'
     }) )[0];
 
-    add_confirm( me.node, param, function(){
-        me.destroy();
-    });
+    add_confirm.call( me, param );
     private_allCnt.appendChild( me.node );
 
     me.adaption();
