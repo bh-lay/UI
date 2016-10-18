@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2016-10-18 17:7
+ * @modified 2016-10-18 19:33
  * 
  **/
 
@@ -794,15 +794,18 @@
 	      throw new Error("use BaseClass must define param & param.destroy");
 		}
 		param = param || {};
-		this._events = {};
+		// 切勿在此处定义事件集合
+		// 避免实例化在其他原型链上导致内存共享的问题
+		// this._events = {};
 		this._isDestroyed = false;
 		this._onDestroy = param.destroy;
 	}
 	BaseClass.prototype = {
 		//监听自定义事件
 		on: function( eventName, callback ){
+			this._events = this._events || {}
 			if( isNotEmptyString( eventName ) && isFunction( callback ) ){
-				//事件堆无该事件，创建一个事件堆
+				//事件集合无该事件，创建一个事件集合
 				this._events[eventName] = this._events[eventName] || [];
 				// 追加至事件列表
 				this._events[eventName].push( callback );
@@ -812,8 +815,9 @@
 		},
 		//解除自定义事件监听
 		un: function( eventName, callback ){
+			this._events = this._events || {}
 			var eventList = this._events[eventName];
-			//事件堆无该事件队列，或未传入事件名结束运行
+			//事件集合无该事件队列，或未传入事件名结束运行
 			if( !eventList || !isNotEmptyString( eventName ) ){
 				return
 			}
@@ -834,9 +838,10 @@
 		},
 		// 主动触发自定义事件
 		emit: function( eventName ){
+			this._events = this._events || {}
 			// 获取除了事件名之外的参数
 			var args = Array.prototype.slice.call( arguments, 1, arguments.length );
-			//事件堆无该事件，结束运行
+			//事件集合无该事件，结束运行
 			if(!this._events[eventName]){
 				return
 			}
