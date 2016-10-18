@@ -63,7 +63,7 @@ UI.config.zIndex(5000);
 
 ### returns 返回值
  * *Object* **pop** 弹框对象
- * *Object* **pop.dom** 弹框所属DOM
+ * *Object* **pop.node** 弹框所属DOM
  * *Object* **pop.cntDom** 弹框内容部分DOM
  * *Function* **pop.close** 关闭弹框的方法
  * *Function* **pop.adapt** 自动调整对象在页面中的位置（用于弹框内容发生变化时）
@@ -103,7 +103,7 @@ UI.pop({
 
 ### returns 返回值
  * *Object* **confirm**
- * *Object* **confirm.dom** 弹框所属DOM
+ * *Object* **confirm.node** 弹框所属DOM
  * *Function* **confirm.close** 关闭弹框的方法
 
 ###demo
@@ -135,7 +135,7 @@ UI.confirm({
 
 ### returns 返回值
  * *Object* **select** select对象
- * *Object* **select.dom** select所属DOM
+ * *Object* **select.node** select所属DOM
 
 ###demo
 ```javascript
@@ -161,7 +161,7 @@ UI.select([
 
 ### returns 返回值
  * *Object* **prompt**
- * *Object* **prompt.dom** prompt所属DOM
+ * *Object* **prompt.node** prompt所属DOM
  * *Function* **prompt.tips** 为prompt设置内容
  接收text 和 time两个参数，关闭时间处理同UI.prompt主方法
  * *Function* **prompt.close** 关闭prompt
@@ -190,7 +190,7 @@ UI.select([
 
 ### returns 返回值
  * *Object* **cover** cover对象
- * *Object* **cover.dom** cover所属DOM
+ * *Object* **cover.node** cover所属DOM
  * *Object* **cover.closeDom** 关闭按钮DOM
  * *Function* **cover.close** 关闭cover
 
@@ -212,7 +212,7 @@ UI.cover({
 
 ### returns 返回值
  * *Object* **ask** ask对象
- * *Object* **ask.dom** ask所属DOM
+ * *Object* **ask.node** ask所属DOM
  * *Function* **ask.setValue** 设置内容
  * *Function* **ask.close** 关闭ask对象
 

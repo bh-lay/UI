@@ -155,7 +155,7 @@
   function easyCloseHandle(mark,default_value){
     var me = this;
     if(typeof(mark) == 'boolean' ? mark : default_value){
-      utils.addClass(me.dom,'UI_easyClose');
+      utils.addClass( me.node, 'UI_easyClose' );
       setTimeout(function(){
         me._easyClose = true;
       });
@@ -243,21 +243,21 @@
       // 删除初始位置
       delete this._initPosition;
     }
-    var dom = this.dom,
-        width = outerWidth( dom ),
-        height = outerHeight( dom ),
+    var node = this.node,
+        width = outerWidth( node ),
+        height = outerHeight( node ),
         top = isNum(initTop) ? initTop : (private_winH - height)/2 + private_scrollTop,
         left = isNum(initLeft) ? initLeft : (private_docW - width)/2,
         newPosition = fix_position( top, left, width, height );
 
-    useMethod(dom,{
+    useMethod( node, {
       top : Math.ceil(newPosition.top),
       left : Math.ceil(newPosition.left)
     }, 80 );
   };
 
   //增加确认方法
-  function add_confirm( dom, param, destroy ){
+  function add_confirm( node, param, destroy ){
     var callback = null,
         cancel = null,
         btns = ['\u786E\u8BA4','\u53D6\u6D88'];
@@ -279,14 +279,14 @@
       confirm : btns[0],
       cancel : btns[1]
     });
-    dom.appendChild( utils.createDom(this_html)[0] );
+    node.appendChild( utils.createDom(this_html)[0] );
 
     //绑定事件，根据执行结果判断是否要关闭弹框
-    bindEvent(dom,'click','.UI_pop_confirm_ok',function(){
+    bindEvent( node, 'click','.UI_pop_confirm_ok', function(){
       //点击确认按钮
       callback ? ((callback() != false) && destroy()) : destroy();
     });
-    bindEvent(dom,'click','.UI_pop_confirm_cancel',function(){
+    bindEvent( node, 'click','.UI_pop_confirm_cancel',function(){
       //点击取消按钮
       cancel ? ((cancel() != false) && destroy()) : destroy();
     });
@@ -344,7 +344,7 @@
         lastHasMaskZindex = last_has_mask_zIndex();
 
     me._zIndex = lastHasMaskZindex + 2;
-    setCSS( me.dom, {
+    setCSS( me.node, {
       zIndex: me._zIndex
     });
 
@@ -364,7 +364,7 @@
     active_objs.push( me );
     //非ie系列 且 有动画配置，显示效果
     if( !isIE678 && me.animationClass ){
-      utils.addClass( me.dom, me.animationClass[0] );
+      utils.addClass( me.node, me.animationClass[0] );
     }
   }
 
@@ -373,7 +373,7 @@
    */
   function closeAnimation(){
     var me = this,
-        DOM = me.dom,
+        DOM = me.node,
         animationClass = me.animationClass[1];
 
     //从全局记录的对象内删除自己；
@@ -429,26 +429,26 @@
     filterParam.call( me, param, {
       mask: true
     });
-    me.dom = utils.createDom( utils.render( pop_tpl, {
+    me.node = utils.createDom( utils.render( pop_tpl, {
       title: param.title
     }) )[0];
-    me.cntDom = findByClassName(me.dom,'UI_cnt')[0];
+    me.cntDom = findByClassName( me.node, 'UI_cnt' )[0];
 
     //当有确认参数时
     if(param.confirm){
-      add_confirm(me.dom,param.confirm,function(){
+      add_confirm( me.node, param.confirm, function(){
         me.destroy();
       });
     }
     //处理title参数
     if( param.title ){
       //can drag is pop
-      utils.drag( findByClassName(me.dom,'UI_pop_cpt')[0], me.dom, {
+      utils.drag( findByClassName( me.node, 'UI_pop_cpt' )[0], me.node, {
         move : function( mx, my, l_start, t_start, w_start, h_start ){
           var left = mx + l_start,
               top = my + t_start,
               newSize = fix_position( top, left, w_start, h_start );
-          setCSS( me.dom, {
+          setCSS( me.node, {
             left : newSize.left,
             top : newSize.top
           });
@@ -456,7 +456,7 @@
       });
     }
 
-    bindEvent(me.dom,'click','.UI_pop_close',function(){
+    bindEvent( me.node, 'click', '.UI_pop_close', function(){
       me.destroy();
     });
 
@@ -464,10 +464,10 @@
     me.cntDom.innerHTML = param.html || '';
 
     //设置宽度，为计算位置尺寸做准备
-    setCSS(me.dom,{
+    setCSS( me.node, {
       width:  Math.min(param.width || 600,private_docW-20)
     });
-    private_allCnt.appendChild(me.dom);
+    private_allCnt.appendChild( me.node );
 
     //校正位置
     me.adaption();
@@ -495,14 +495,14 @@
     filterParam.call( me, param, {
       mask: true
     });
-    me.dom = utils.createDom( utils.render(confirm_tpl,{
+    me.node = utils.createDom( utils.render(confirm_tpl,{
       text : param.text || 'need text in parameter!'
     }) )[0];
 
-    add_confirm(me.dom,param,function(){
+    add_confirm( me.node, param, function(){
         me.destroy();
     });
-    private_allCnt.appendChild(me.dom);
+    private_allCnt.appendChild( me.node );
 
     me.adaption();
 
@@ -532,28 +532,28 @@
       text : text || 'need text in parameter!'
     });
 
-    me.dom = utils.createDom(this_html)[0];
+    me.node = utils.createDom(this_html)[0];
 
-    me.inputDom = findByClassName(me.dom,'UI_ask_key')[0];
+    me.inputDom = findByClassName( me.node, 'UI_ask_key' )[0];
 
     var confirm_html = utils.render(confirmBar_tpl,{
       confirm : '确定',
       cancel : '取消'
     });
 
-    me.dom.appendChild(utils.createDom(confirm_html)[0]);
+    me.node.appendChild(utils.createDom(confirm_html)[0]);
 
     //确定
-    bindEvent(me.dom,'click','.UI_pop_confirm_ok',function(){
+    bindEvent( me.node, 'click', '.UI_pop_confirm_ok', function(){
       //根据执行结果判断是否要关闭弹框
       callback ? ((callback(me.inputDom.value) != false) && me.destroy()) : me.destroy();
     });
     //取消
-    bindEvent(me.dom,'click','.UI_pop_confirm_cancel',function(){
+    bindEvent( me.node, 'click', '.UI_pop_confirm_cancel', function(){
       me.destroy();
     });
 
-    private_allCnt.appendChild(me.dom);
+    private_allCnt.appendChild( me.node );
 
     me.adaption();
 
@@ -583,11 +583,11 @@
     filterParam.call( me, param, {
       mask: false
     });
-    me.dom = utils.createDom(prompt_tpl)[0];
+    me.node = utils.createDom(prompt_tpl)[0];
     me.tips(text,time);
 
     // create pop
-    private_allCnt.appendChild(me.dom);
+    private_allCnt.appendChild( me.node );
     me.adaption();
 
     openAnimation.call( me );
@@ -598,7 +598,7 @@
   PROMPT.prototype.tips = function(txt,time){
     var me = this;
     if(txt){
-      findByClassName( me.dom, 'UI_cnt' )[0].innerHTML = txt;
+      findByClassName( me.node, 'UI_cnt' )[0].innerHTML = txt;
     }
     if(time != 0){
       setTimeout(function(){
@@ -619,18 +619,18 @@
       mask: false
     });
 
-    me.dom = utils.createDom(plane_tpl)[0];
+    me.node = utils.createDom(plane_tpl)[0];
 
     //insert html
-    me.dom.innerHTML = param.html || '';
+    me.node.innerHTML = param.html || '';
 
-    setCSS(me.dom,{
+    setCSS( me.node, {
       width : param.width || 240,
       height : param.height || null,
       top : isNum(param.top) ? param.top : 300,
       left : isNum(param.left) ? param.left : 800
     });
-    private_allCnt.appendChild(me.dom);
+    private_allCnt.appendChild( me.node );
 
     easyCloseHandle.call(me,true);
     openAnimation.call( me );
@@ -651,24 +651,24 @@
     filterParam.call( me, param, {
       mask: false
     });
-    me.dom = utils.createDom(cover_tpl)[0];
+    me.node = utils.createDom(cover_tpl)[0];
 
-    me.cntDom = findByClassName(me.dom,'UI_cnt')[0];
+    me.cntDom = findByClassName(me.node,'UI_cnt')[0];
 
 
     //关闭事件
-    bindEvent(me.dom,'click','.UI_close',function(){
+    bindEvent(me.node,'click','.UI_close',function(){
       me.destroy();
     });
 
 
     //记录body的scrollY设置
 
-    setCSS(me.dom,{
+    setCSS( me.node, {
       height: private_winH,
       top: private_scrollTop
     });
-    private_allCnt.appendChild(me.dom);
+    private_allCnt.appendChild( me.node );
 
     //处理是否易于关闭
     easyCloseHandle.call(me,param.easyClose,true);
@@ -712,10 +712,10 @@
       intro : param.intro || null
     });
 
-    me.dom = utils.createDom(this_html)[0];
+    me.node = utils.createDom(this_html)[0];
 
     //绑定事件
-    var btns = findByClassName(me.dom,'UI_select_btn');
+    var btns = findByClassName( me.node, 'UI_select_btn' );
     utils.each(btns,function(index,btn){
       bindEvent(btn,'click',function(){
         fns[index] && fns[index]();
@@ -725,18 +725,18 @@
 
     if(private_docW < 640 && !isIE678){
       //手机版
-      private_allCnt.appendChild(me.dom);
+      private_allCnt.appendChild( me.node );
     }else{
       var cssObj = {
         top : param.top || 100,
         left : param.left || 100,
         width : param.width || 200
       };
-      private_allCnt.appendChild(me.dom);
+      private_allCnt.appendChild( me.node );
 
-      setCSS(me.dom,cssObj);
-      var newSize = fix_position(cssObj.top,cssObj.left,cssObj.width,outerHeight(me.dom));
-      setCSS(me.dom,{
+      setCSS( me.node, cssObj );
+      var newSize = fix_position( cssObj.top, cssObj.left, cssObj.width, outerHeight( me.node ) );
+      setCSS( me.node, {
         left : newSize.left,
         top : newSize.top
       });
