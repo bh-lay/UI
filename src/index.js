@@ -229,15 +229,17 @@
   }
   //为基类扩展自适应于页面位置的原型方法
   BaseClass.prototype.adaption = function(){
-    // 初始时不使用动画
+    
     var initTop,
         initLeft,
-        useAnimation = true,
+        useMethod = animation,
         initPosition = this._initPosition;
+
     if( initPosition ){
       initTop = initPosition.top;
       initLeft = initPosition.left;
-      useAnimation = false;
+      // 初始时不使用动画
+      useMethod = setCSS;
       // 删除初始位置
       delete this._initPosition;
     }
@@ -246,8 +248,7 @@
         height = outerHeight( dom ),
         top = isNum(initTop) ? initTop : (private_winH - height)/2 + private_scrollTop,
         left = isNum(initLeft) ? initLeft : (private_docW - width)/2,
-        newPosition = fix_position( top, left, width, height ),
-        useMethod = useAnimation ? animation : setCSS;
+        newPosition = fix_position( top, left, width, height );
 
     useMethod(dom,{
       top : Math.ceil(newPosition.top),
@@ -342,13 +343,13 @@
     var me = this,
         lastHasMaskZindex = last_has_mask_zIndex();
 
-    this._zIndex = lastHasMaskZindex + 2;
-    setCSS(this.dom,{
-      zIndex: this._zIndex
+    me._zIndex = lastHasMaskZindex + 2;
+    setCSS( me.dom, {
+      zIndex: me._zIndex
     });
 
     // 若有蒙层则显示蒙层
-    if( this._mask ){
+    if( me._mask ){
       setCSS(private_maskDom,{
         zIndex: lastHasMaskZindex + 1
       });
@@ -362,8 +363,8 @@
     //向全局记录的对象内添加对象
     active_objs.push( me );
     //非ie系列 且 有动画配置，显示效果
-    if( !isIE678 && this.animationClass ){
-      utils.addClass( me.dom, this.animationClass[0] );
+    if( !isIE678 && me.animationClass ){
+      utils.addClass( me.dom, me.animationClass[0] );
     }
   }
 
@@ -373,7 +374,7 @@
   function closeAnimation(){
     var me = this,
         DOM = me.dom,
-        animationClass = this.animationClass[1];
+        animationClass = me.animationClass[1];
 
     //从全局记录的对象内删除自己；
     remove_active_obj(me);
@@ -425,7 +426,7 @@
     }
     param = param || {};
     var me = this;
-    filterParam.call( this, param, {
+    filterParam.call( me, param, {
       mask: true
     });
     me.dom = utils.createDom( utils.render( pop_tpl, {
@@ -443,12 +444,11 @@
     if( param.title ){
       //can drag is pop
       utils.drag( findByClassName(me.dom,'UI_pop_cpt')[0], me.dom, {
-        move : function(mx,my,l_start,t_start,w_start,h_start){
-          var left = mx + l_start;
-          var top = my + t_start;
-
-          var newSize = fix_position(top,left,w_start,h_start);
-          setCSS(me.dom,{
+        move : function( mx, my, l_start, t_start, w_start, h_start ){
+          var left = mx + l_start,
+              top = my + t_start,
+              newSize = fix_position( top, left, w_start, h_start );
+          setCSS( me.dom, {
             left : newSize.left,
             top : newSize.top
           });
@@ -470,7 +470,7 @@
     private_allCnt.appendChild(me.dom);
 
     //校正位置
-    this.adaption();
+    me.adaption();
 
     //处理是否易于关闭
     easyCloseHandle.call(me,param.easyClose,true);
@@ -492,7 +492,7 @@
     
     param = param || {};
     var me = this;
-    filterParam.call( this, param, {
+    filterParam.call( me, param, {
       mask: true
     });
     me.dom = utils.createDom( utils.render(confirm_tpl,{
@@ -504,7 +504,7 @@
     });
     private_allCnt.appendChild(me.dom);
 
-    this.adaption();
+    me.adaption();
 
     //处理是否易于关闭
     easyCloseHandle.call(me,param.easyClose,true);
@@ -524,7 +524,7 @@
     }
     param = param || {};
     var me = this;
-    filterParam.call( this, param, {
+    filterParam.call( me, param, {
       mask: true
     });
 
@@ -555,7 +555,7 @@
 
     private_allCnt.appendChild(me.dom);
 
-    this.adaption();
+    me.adaption();
 
     //处理是否易于关闭
     easyCloseHandle.call(me,param.easyClose,true);
@@ -580,7 +580,7 @@
     }
     param = param || {};
     var me = this;
-    filterParam.call( this, param, {
+    filterParam.call( me, param, {
       mask: false
     });
     me.dom = utils.createDom(prompt_tpl)[0];
@@ -588,7 +588,7 @@
 
     // create pop
     private_allCnt.appendChild(me.dom);
-    this.adaption();
+    me.adaption();
 
     openAnimation.call( me );
   }
@@ -598,7 +598,7 @@
   PROMPT.prototype.tips = function(txt,time){
     var me = this;
     if(txt){
-      findByClassName(this.dom,'UI_cnt')[0].innerHTML = txt;
+      findByClassName( me.dom, 'UI_cnt' )[0].innerHTML = txt;
     }
     if(time != 0){
       setTimeout(function(){
@@ -615,7 +615,7 @@
     }
     param = param || {};
     var me = this;
-    filterParam.call( this, param, {
+    filterParam.call( me, param, {
       mask: false
     });
 
@@ -648,7 +648,7 @@
     }
     param = param || {};
     var me = this;
-    filterParam.call( this, param, {
+    filterParam.call( me, param, {
       mask: false
     });
     me.dom = utils.createDom(cover_tpl)[0];
@@ -698,7 +698,7 @@
         list = list || [],
         fns = [],
         nameList = [];
-    filterParam.call( this, param, {
+    filterParam.call( me, param, {
       mask: true
     });
 
