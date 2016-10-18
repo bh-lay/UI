@@ -55,7 +55,6 @@ UI.config.zIndex(5000);
  * *String* [**param.left**] 弹框与页面左侧距离
  * *Boolean* [**param.mask**] 是否显示蒙层（默认不显示）
  * *Boolean* [**param.easyClose**] 点击空白或按下esc，关闭自己
- * *Function* [**param.closeFn**] 被关闭时的回调
  * *Function* [**param.init**] 对象构建完成时的回调（主要是动画）
  * *Object|Function* [**param.confirm**] 使用对话方式（详细定义或只定义回调）
  * *Array* [**param.confirm.btns**] 按钮自定义名称
@@ -65,7 +64,7 @@ UI.config.zIndex(5000);
  * *Object* **pop** 弹框对象
  * *Object* **pop.node** 弹框所属DOM
  * *Object* **pop.cntDom** 弹框内容部分DOM
- * *Function* **pop.close** 关闭弹框的方法
+ * *Function* **pop.destroy** 关闭弹框的方法
  * *Function* **pop.adapt** 自动调整对象在页面中的位置（用于弹框内容发生变化时）
  
 ###demo
@@ -95,7 +94,6 @@ UI.pop({
 ### param 传入参数
  * *Object* **param** 参数对象
  * *String* **param.text** 提示内容
- * *Function* [**param.closeFn**] 被关闭时的回调
  * *Array* [**param.btns**] 按钮自定义名称
  * *String* [**param.mask**] 是否显示蒙层(默认显示)
  * *Function* [**param.callback**] 确定时的回调方法
@@ -104,7 +102,7 @@ UI.pop({
 ### returns 返回值
  * *Object* **confirm**
  * *Object* **confirm.node** 弹框所属DOM
- * *Function* **confirm.close** 关闭弹框的方法
+ * *Function* **confirm.destroy** 关闭弹框的方法
 
 ###demo
 ```javascript
@@ -164,7 +162,7 @@ UI.select([
  * *Object* **prompt.node** prompt所属DOM
  * *Function* **prompt.tips** 为prompt设置内容
  接收text 和 time两个参数，关闭时间处理同UI.prompt主方法
- * *Function* **prompt.close** 关闭prompt
+ * *Function* **prompt.destroy** 关闭prompt
 
 ###demo
 ```javascript
@@ -177,7 +175,7 @@ UI.select([
     a.tips('发送成功'，1200);
     
     var b = UI.prompt('请等待……',0);
-    b.close();
+    b.destroy();
 ```
 ## 2.6、UI.cover 全屏浮层
 覆盖整个页面的浮层，目前对关闭的设计有点生硬，欢迎提出宝贵意见。
@@ -185,14 +183,12 @@ UI.select([
 ### param 传入参数
  * *Object* **param** 参数对象
  * *String* **param.html** 弹层内容
- * *Function* [**param.closeFn**] 被关闭时的回调
  * *Function* [**param.init**] 对象构建完成时的回调（主要是动画）
 
 ### returns 返回值
  * *Object* **cover** cover对象
  * *Object* **cover.node** cover所属DOM
- * *Object* **cover.closeDom** 关闭按钮DOM
- * *Function* **cover.close** 关闭cover
+ * *Function* **cover.destroy** 关闭cover
 
 ###demo
 ```javascript
@@ -214,7 +210,7 @@ UI.cover({
  * *Object* **ask** ask对象
  * *Object* **ask.node** ask所属DOM
  * *Function* **ask.setValue** 设置内容
- * *Function* **ask.close** 关闭ask对象
+ * *Function* **ask.destroy** 关闭ask对象
 
 ###demo
 ```javascript
