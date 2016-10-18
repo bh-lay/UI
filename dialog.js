@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2016-10-18 15:58
+ * @modified 2016-10-18 16:24
  * 
  **/
 
@@ -40,7 +40,7 @@
    * 基础模版
    */
   var allCnt_tpl = '<div class="UI_lawyer"><div class="UI_mask"></div></div>',
-      pop_tpl = '<div class="UI_pop"><div class="UI_pop_cpt"></div><div class="UI_cnt"></div><a href="javascript:;" class="UI_pop_close" title="\u5173\u95ED">×</a></div>',
+      pop_tpl = '<div class="UI_pop"><% if(title){ %><div class="UI_pop_cpt"><%=title %></div><% } %><div class="UI_cnt"></div><a href="javascript:;" class="UI_pop_close" title="\u5173\u95ED">×</a></div>',
       confirm_tpl = '<div class="UI_confirm"><div class="UI_confirm_text"><%=text %></div></div>',
       ask_tpl = '<div class="UI_ask"><div class="UI_ask_text"><%=text %></div><input class="UI_ask_key" type="text" name="UI_ask_key"/></div>',
       confirmBar_tpl = '<div class="UI_pop_confirm"><a href="javascript:;" class="UI_pop_confirm_ok"><%=confirm %></a><a href="javascript:;" class="UI_pop_confirm_cancel"><%=cancel %></a></div>',
@@ -428,7 +428,9 @@
     filterParam.call( this, param, {
       mask: true
     });
-    me.dom = utils.createDom(pop_tpl)[0];
+    me.dom = utils.createDom( utils.render( pop_tpl, {
+      title: param.title
+    }) )[0];
     me.cntDom = findByClassName(me.dom,'UI_cnt')[0];
 
     //当有确认参数时
@@ -438,13 +440,9 @@
       });
     }
     //处理title参数
-    var caption_dom = findByClassName(me.dom,'UI_pop_cpt')[0];
-    if( !param.title ){
-      utils.removeNode(caption_dom);
-    }else{
-      caption_dom.innerHTML = param.title;
+    if( param.title ){
       //can drag is pop
-      utils.drag(caption_dom,me.dom,{
+      utils.drag( findByClassName(me.dom,'UI_pop_cpt')[0], me.dom, {
         move : function(mx,my,l_start,t_start,w_start,h_start){
           var left = mx + l_start;
           var top = my + t_start;
