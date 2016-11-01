@@ -2,7 +2,7 @@
  * @author bh-lay
  * 
  * @github https://github.com/bh-lay/UI
- * @modified 2016-10-18 19:47
+ * @modified 2016-11-1 20:43
  * 
  **/
 
@@ -315,13 +315,11 @@
       travelRootElements(function(dom){
         utils.addClass(dom,'UI-blur');
       });
-      utils.fadeIn(private_maskDom,300);
     };
     removeBlur = function (){
       travelRootElements(function(dom){
         utils.removeClass(dom,'UI-blur');
       });
-      utils.fadeOut(private_maskDom,400);
     };
   }
 
@@ -362,6 +360,7 @@
       //之前蒙层未显示，显示蒙层
       if( lastHasMaskZindex <= private_config_zIndex ){
         blur && blur();
+        utils.fadeIn(private_maskDom,300);
       }
     }
 
@@ -393,6 +392,7 @@
 
       if(lastHasMaskZindex <= private_config_zIndex){
         removeBlur && removeBlur();
+        utils.fadeOut(private_maskDom,400);
       }
     }
     function end(){
