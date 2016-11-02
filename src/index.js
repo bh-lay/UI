@@ -182,7 +182,7 @@
         refreshSize();
         adapt_active_obj();
         setCSS(private_maskDom,{
-          marginTop : private_scrollTop
+          height: private_docH
         });
       } : function(){
         refreshSize();
