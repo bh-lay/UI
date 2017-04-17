@@ -1,13 +1,13 @@
 响应式用户交互组件库UI
 ======
-##demo:[最新版](http://bh-lay.github.io/UI/)
-##下载：只需要一个文件，多神奇 [dialog.js](src/dialog.js)
-#一、简介
+## demo:[最新版](http://bh-lay.github.io/UI/)
+## 下载：只需要一个文件，多神奇 [dialog.js](src/dialog.js)
+# 一、简介
 
-##1.1、UI是什么?
+## 1.1、UI是什么?
 UI是前端公用的视觉交互（user interface 、 user interaction）类公用组建，用于和用户间的对话及动态界面展示。
 
-##1.2、UI目前有哪儿些内容？
+## 1.2、UI目前有哪儿些内容？
 
 * 目前有虚拟弹层、弹框、提示信息、确认对话、列表选择等功能
 * 支持对象化事件的调用
@@ -17,7 +17,7 @@ UI是前端公用的视觉交互（user interface 、 user interaction）类公�
 * 不依赖任何库，随拿随用
 * 动画使用CSS3实现，IE无动画效果（策略问题）
 
-##1.3、问题反馈
+## 1.3、问题反馈
 在使用中有任何问题，欢迎反馈给我，可以用以下联系方式跟我交流
 
 * 邮件：bh-lay#126.com
@@ -25,7 +25,7 @@ UI是前端公用的视觉交互（user interface 、 user interaction）类公�
 * weibo: [@剧中人](http://weibo.com/bhlay)
 
 
-#二、如何使用
+# 二、如何使用
 
 ## 2.0 基本配置
 ### UI.config.gap
@@ -34,7 +34,7 @@ UI是前端公用的视觉交互（user interface 、 user interaction）类公�
 ### UI.config.zIndex
 设置组件在页面中的**z-index**层级
 
-###demo
+### demo
 ```javascript
 //设置边界
 //top right bottom left
@@ -67,7 +67,7 @@ UI.config.zIndex(5000);
  * *Function* **pop.destroy** 关闭弹框的方法
  * *Function* **pop.adapt** 自动调整对象在页面中的位置（用于弹框内容发生变化时）
  
-###demo
+### demo
 ```javascript
 var pop = UI.pop({
   'title' : '我的弹框',
@@ -104,7 +104,7 @@ UI.pop({
  * *Object* **confirm.node** 弹框所属DOM
  * *Function* **confirm.destroy** 关闭弹框的方法
 
-###demo
+### demo
 ```javascript
 UI.confirm({
   'text' : '请我吃饭吧！',
@@ -135,7 +135,7 @@ UI.confirm({
  * *Object* **select** select对象
  * *Object* **select.node** select所属DOM
 
-###demo
+### demo
 ```javascript
 UI.select([
 	['劈脸呼你',function(){
@@ -164,7 +164,7 @@ UI.select([
  接收text 和 time两个参数，关闭时间处理同UI.prompt主方法
  * *Function* **prompt.destroy** 关闭prompt
 
-###demo
+### demo
 ```javascript
 //默认时间
     UI.prompt('操作失败');
@@ -190,7 +190,7 @@ UI.select([
  * *Object* **cover.node** cover所属DOM
  * *Function* **cover.destroy** 关闭cover
 
-###demo
+### demo
 ```javascript
 UI.cover({
     'html' : '<div>....</div>'
@@ -212,7 +212,7 @@ UI.cover({
  * *Function* **ask.setValue** 设置内容
  * *Function* **ask.destroy** 关闭ask对象
 
-###demo
+### demo
 ```javascript
 UI.ask('你今年多大了？',function(year){
 	if(year == +year){
